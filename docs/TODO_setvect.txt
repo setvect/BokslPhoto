@@ -1,0 +1,27 @@
+[범례]
+-- 이슈 명명 규칙 --
+	NEW_yyyyMMdd: NEW - Job  			  - 새로 진행할 작업 일자 
+	PBM_yyyyMMdd: PBM - Problem  		- 문제 발견 일자 
+	REF_yyyyMMdd: REF - Refactoring	- 소스 개선 사항	
+	ISS_yyyyMMdd: ISS - Issue				- 이슈사항
+
+[메모]
+사용가능한 이미지 메타 정보
+	[JPEG] Image Height - 2988 pixels
+	[JPEG] Image Width - 5312 pixels
+	[Exif SubIFD] Date/Time Digitized - 2017:01:07 09:45:11
+	
+	
+	[GPS] GPS Latitude - 37° 29' 14.27"
+	[GPS] GPS Longitude - 130° 55' 9.85"
+	
+[진행 해야된는 것]
+NEW_20170422: 디자인 페이지 적하기
+
+[진행 된 것]
+NEW_20170422: 이미지 데이터 추출 샘플 코드 
+
+[중복된것]
+
+
+[안하기로 한 것]

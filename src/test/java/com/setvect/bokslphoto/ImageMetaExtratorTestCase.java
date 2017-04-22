@@ -23,7 +23,7 @@ import com.drew.metadata.iptc.IptcReader;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class SampleUsage {
+public class ImageMetaExtratorTestCase {
 	/**
 	 * Executes the sample usage program.
 	 *
@@ -31,8 +31,9 @@ public class SampleUsage {
 	 *            command line parameters
 	 */
 	public static void main(String[] args) {
-		File file = new File("Tests/Data/withIptcExifGps.jpg");
+		File file = new File("temp/IMG_0355.jpg");
 
+		System.out.println("AAAA");
 		// There are multiple ways to get a Metadata object for a file
 
 		//
@@ -54,6 +55,8 @@ public class SampleUsage {
 		} catch (IOException e) {
 			// handle exception
 		}
+
+		System.out.println("=======================================================");
 
 		//
 		// SCENARIO 2: SPECIFIC FILE TYPE
@@ -77,7 +80,7 @@ public class SampleUsage {
 		} catch (IOException e) {
 			// handle exception
 		}
-
+		System.out.println("=======================================================");
 		//
 		// APPROACH 3: SPECIFIC METADATA TYPE
 		//
@@ -95,8 +98,10 @@ public class SampleUsage {
 
 			print(metadata);
 		} catch (JpegProcessingException e) {
+			e.printStackTrace();
 			// handle exception
 		} catch (IOException e) {
+			e.printStackTrace();
 			// handle exception
 		}
 	}
