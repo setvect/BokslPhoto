@@ -2,6 +2,9 @@ package com.setvect.bokslphoto;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -24,4 +27,17 @@ public class ApplicationUtil {
 		}
 		return md5;
 	}
+
+	public static Stream<Path> listFiles(Path path) {
+		if (Files.isDirectory(path)) {
+			try {
+				return Files.list(path).flatMap(ApplicationUtil::listFiles);
+			} catch (Exception e) {
+				return Stream.empty();
+			}
+		} else {
+			return Stream.of(path);
+		}
+	}
+
 }
