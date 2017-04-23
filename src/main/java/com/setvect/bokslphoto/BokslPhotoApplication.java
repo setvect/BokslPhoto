@@ -1,5 +1,8 @@
 package com.setvect.bokslphoto;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,8 +15,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
+import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
@@ -25,6 +30,9 @@ public class BokslPhotoApplication {
 	private PhotoRepository photoRepository;
 
 	@Autowired
+	private FolderRepository folderRepository;
+
+	@Autowired
 	private UserRepository userRepository;
 
 	public static void main(String[] args) {
@@ -34,9 +42,19 @@ public class BokslPhotoApplication {
 	@Bean
 	InitializingBean insertFixtureUsers() {
 		return () -> {
+			FolderVo folder = new FolderVo();
+			folder.setFolderSeq(0);
+			folder.setParentId(0);
+			folder.setName("ROOT");
+			folderRepository.save(folder);
+
 			PhotoVo photo = new PhotoVo();
-			photo.setId(2);
-			photo.setFileName("aaa.jpg");
+			photo.setPhotoId("asasasas");
+			photo.setPath("aaa.jpg");
+			photo.setRegData(new Date());
+
+			photo.setFolders(Arrays.asList(folder));
+
 			photoRepository.save(photo);
 
 			UserVo user = new UserVo();

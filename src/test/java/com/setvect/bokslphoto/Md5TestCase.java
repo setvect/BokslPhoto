@@ -11,7 +11,7 @@ public class Md5TestCase {
 
 		Stream.of(list.listFiles()).forEach(f -> {
 			String md5 = ApplicationUtil.getMd5(f);
-			System.out.printf("%s: %s\n", f, md5);
+			System.out.printf("%s: %s\n", md5, f);
 		});
 	}
 }
