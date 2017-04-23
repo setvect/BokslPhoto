@@ -35,7 +35,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	}
 
 	private User buildUserForAuthentication(UserVo user, List<GrantedAuthority> authorities) {
-		return new User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, authorities);
+		return new User(user.getUserId(), user.getPassword(), user.isDeleteF(), true, true, true, authorities);
 	}
 
 	private List<GrantedAuthority> buildUserAuthority(Set<UserRoleVo> userRoles) {

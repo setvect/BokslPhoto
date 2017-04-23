@@ -10,55 +10,83 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.Type;
+
 @Entity
-@Table(name = "users")
+@Table(name = "TBAA_USER")
 public class UserVo {
 	@Id
-	@Column(name = "username", unique = true, nullable = false, length = 45)
-	private String username;
+	@Column(name = "USER_ID", unique = true, nullable = false, length = 20)
+	private String userId;
 
-	@Column(name = "password", nullable = false, length = 60)
+	@Column(name = "NAME", nullable = false, length = 50)
+	private String name;
+
+	@Column(name = "PASSWD", nullable = false, length = 60)
 	private String password;
 
-	@Column(name = "enabled", nullable = false)
-	private boolean enabled;
+	@Column(name = "EMAIL", nullable = false, length = 100)
+	private String email;
+
+	@Column(name = "DELETE_F", nullable = false, length = 1)
+	@Type(type = "yes_no")
+	private boolean deleteF;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<UserRoleVo> userRole;
 
-	public UserVo() {
+	public String getUserId() {
+		return userId;
 	}
 
-	public String getUsername() {
-		return this.username;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPassword() {
-		return this.password;
+		return password;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public boolean isEnabled() {
-		return this.enabled;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public boolean isDeleteF() {
+		return deleteF;
+	}
+
+	public void setDeleteF(boolean deleteF) {
+		this.deleteF = deleteF;
 	}
 
 	public Set<UserRoleVo> getUserRole() {
-		return this.userRole;
+		return userRole;
 	}
 
 	public void setUserRole(Set<UserRoleVo> userRole) {
 		this.userRole = userRole;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 }

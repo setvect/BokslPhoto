@@ -40,8 +40,11 @@ public class BokslPhotoApplication {
 			photoRepository.save(photo);
 
 			UserVo user = new UserVo();
-			user.setUsername("admin");
-			user.setEnabled(true);
+			user.setUserId("admin");
+			user.setName("관리자");
+			user.setEmail("a@abcde.com");
+
+			user.setDeleteF(true);
 
 			PasswordEncoder encoder = new BCryptPasswordEncoder();
 			user.setPassword(encoder.encode("1234"));
