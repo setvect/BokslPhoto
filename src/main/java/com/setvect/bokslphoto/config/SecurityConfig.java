@@ -21,7 +21,6 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	@Qualifier("userDetailsService")
 	UserDetailsService userDetailsService;
 
 	@Autowired

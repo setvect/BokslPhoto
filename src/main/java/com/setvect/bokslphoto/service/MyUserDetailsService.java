@@ -1,7 +1,5 @@
 package com.setvect.bokslphoto.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
-@Service("userDetailsService")
+@Service
 public class MyUserDetailsService implements UserDetailsService {
 
 	@Autowired
