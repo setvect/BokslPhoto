@@ -1,8 +1,10 @@
-package com.setvect.bokslphoto;
+package com.setvect.bokslphoto.etc;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import com.setvect.bokslphoto.ApplicationUtil;
 
 public class Md5TestCase {
 	public static void main(String[] args) throws IOException {
