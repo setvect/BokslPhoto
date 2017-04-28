@@ -51,7 +51,7 @@ public class BokslPhotoApplication {
 			URL configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
 			EnvirmentProperty.init(configUrl);
 
-			photoService.retrievalPhoto();
+//			photoService.retrievalPhoto();
 
 			FolderVo folder = new FolderVo();
 			folder.setFolderSeq(0);
