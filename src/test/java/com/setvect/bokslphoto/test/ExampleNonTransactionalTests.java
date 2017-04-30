@@ -18,8 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
-import com.setvect.bokslphoto.MainTestBase.TestConfiguration;
 import com.setvect.bokslphoto.repository.UserRepository;
+import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 

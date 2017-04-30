@@ -1,9 +1,13 @@
-package com.setvect.bokslphoto;
+package com.setvect.bokslphoto.test.java8;
 
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
+
+import com.setvect.bokslphoto.ApplicationUtil;
+import com.setvect.bokslphoto.BokslPhotoConstant;
+import com.setvect.bokslphoto.test.MainTestBase;
 
 public class RecursiveStreamTestCase extends MainTestBase {
 

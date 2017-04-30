@@ -1,4 +1,4 @@
-package com.setvect.bokslphoto.etc;
+package com.setvect.bokslphoto.test.java8;
 
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
