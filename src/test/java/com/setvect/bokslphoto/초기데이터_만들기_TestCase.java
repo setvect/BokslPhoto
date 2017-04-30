@@ -13,23 +13,24 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.setvect.bokslphoto.MainTestBase.TestConfiguration;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-@Transactional
-@Rollback(false)
 @RunWith(SpringRunner.class)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 @SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
-
 public class 초기데이터_만들기_TestCase {
 	@Autowired
 	private PhotoService photoService;
@@ -54,7 +55,7 @@ public class 초기데이터_만들기_TestCase {
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");
-		user.setName("관리자-testcase");
+		user.setName("관리자");
 		user.setEmail("a@abcde.com");
 
 		user.setDeleteF(false);
@@ -76,6 +77,6 @@ public class 초기데이터_만들기_TestCase {
 
 		userRepository.save(user);
 
-		logger.info("================================= 끝.");
+		logger.info("================================= 끝.2222222222222222222222");
 	}
 }

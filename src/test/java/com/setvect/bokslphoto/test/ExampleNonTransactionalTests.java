@@ -3,38 +3,40 @@ package com.setvect.bokslphoto.test;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.MainTestBase.TestConfiguration;
-import com.setvect.bokslphoto.초기데이터_만들기_TestCase;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
 @RunWith(SpringRunner.class)
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
-@SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
+@ContextConfiguration(classes = { BokslPhotoApplication.class, TestConfiguration.class })
+@Transactional
+@Rollback(true)
 public class ExampleNonTransactionalTests {
 
 	@Autowired
 	private UserRepository userRepository;
 
-	private Logger logger = LoggerFactory.getLogger(초기데이터_만들기_TestCase.class);
+	private Logger logger = LoggerFactory.getLogger(ExampleNonTransactionalTests.class);
 
 	@Test
-	@Rollback(false)
+	// @Commit
 	public void test() throws InterruptedException {
 		// photoService.retrievalPhoto();
 
@@ -45,8 +47,8 @@ public class ExampleNonTransactionalTests {
 		// folderRepository.save(folder);
 
 		UserVo user = new UserVo();
-		user.setUserId("admin");
-		user.setName("관리자-testcase");
+		user.setUserId("33332");
+		user.setName("관리자-testcase111111111111111");
 		user.setEmail("a@abcde.com");
 
 		user.setDeleteF(false);
