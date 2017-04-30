@@ -1,4 +1,14 @@
-	@Autowired
+import java.net.URL;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
+
+import com.setvect.bokslphoto.BokslPhotoApplication;
+import com.setvect.bokslphoto.EnvirmentProperty;
+
+@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -38,3 +48,28 @@
 	user.setUserRole(userRole);
 
 	userRepository.save(user);
+	
+	
+	
+	
+	===========================
+			
+			
+			
+	public class BokslPhotoApplication extends SpringBootServletInitializer {
+		private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
+
+		@Override
+		protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+			return application.sources(BokslPhotoApplication.class);
+		}
+
+		@Bean
+		InitializingBean init() {
+			return () -> {
+				URL configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
+				EnvirmentProperty.init(configUrl);
+			};
+		}
+	}
+			
