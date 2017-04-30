@@ -19,12 +19,12 @@
 			<AppenderRef ref="file" />
 		</Logger>
 		
-<!-- 		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false"> -->
-<!-- 			<AppenderRef ref="console" /> -->
-<!-- 			<AppenderRef ref="file" /> -->
-<!-- 		</Logger> -->
+		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</Logger>
 		
-		<Logger name="com.setvect" level="INFO" additivity="false">
+		<Logger name="com.setvect" level="DEBUG" additivity="false">
 			<AppenderRef ref="console" />
 			<AppenderRef ref="file" />
 		</Logger>

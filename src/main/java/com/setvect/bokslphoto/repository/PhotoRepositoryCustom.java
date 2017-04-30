@@ -1,6 +1,6 @@
 package com.setvect.bokslphoto.repository;
 
-import com.setvect.bokslphoto.service.CommentSearch;
+import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
@@ -13,6 +13,6 @@ public interface PhotoRepositoryCustom {
 
 	/**
 	 */
-	public GenericPage<PhotoVo> getPhotoPagingList(CommentSearch pageCondition);
+	public GenericPage<PhotoVo> getPhotoPagingList(PhotoSearchParam pageCondition);
 
 }

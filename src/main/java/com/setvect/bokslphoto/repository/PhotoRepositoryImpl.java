@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import com.setvect.bokslphoto.service.CommentSearch;
+import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
@@ -18,7 +18,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	private EntityManager em;
 
 	@Override
-	public GenericPage<PhotoVo> getPhotoPagingList(CommentSearch pageCondition) {
+	public GenericPage<PhotoVo> getPhotoPagingList(PhotoSearchParam pageCondition) {
 		String q = "select count(*) from PhotoVo c" + getWhereClause(pageCondition);
 		Query query = em.createQuery(q);
 		int totalCount = ((Long) query.getSingleResult()).intValue();
@@ -37,7 +37,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		return resultPage;
 	}
 
-	private String getWhereClause(CommentSearch pageCondition) {
+	private String getWhereClause(PhotoSearchParam pageCondition) {
 		String where = " ";
 		return where;
 	}

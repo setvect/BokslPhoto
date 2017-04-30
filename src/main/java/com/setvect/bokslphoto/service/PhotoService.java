@@ -34,7 +34,9 @@ public class PhotoService {
 		}).collect(toList());
 
 		// path.stream().parallel().forEach(p -> {
-		path.stream().forEach(p -> {
+		path.stream().peek(action -> {
+			logger.info(action.toString());
+		}).forEach(p -> {
 			PhotoVo photo = new PhotoVo();
 			String photoId = ApplicationUtil.getMd5(p.toFile());
 			photo.setPhotoId(photoId);

@@ -5,7 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * 페이지 정보를 계산하기위해 사용
  */
-public class SearchListVo {
+public class SearchListParam {
 
 	/** 시작 커서 위치 */
 	private int startCursor;
@@ -18,7 +18,7 @@ public class SearchListVo {
 	 * @param returnCount
 	 *            가져올 항목 갯수
 	 */
-	public SearchListVo(int startCursor, int returnCount) {
+	public SearchListParam(int startCursor, int returnCount) {
 		this.startCursor = startCursor;
 		this.returnCount = returnCount;
 	}
