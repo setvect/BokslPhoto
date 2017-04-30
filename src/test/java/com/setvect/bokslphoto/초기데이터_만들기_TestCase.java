@@ -3,40 +3,31 @@ package com.setvect.bokslphoto;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.MainTestBase.TestConfiguration;
-import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
-import com.setvect.bokslphoto.service.PhotoService;
-import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
 @RunWith(SpringRunner.class)
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-@SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
+@ContextConfiguration(classes = { BokslPhotoApplication.class, TestConfiguration.class })
+@Transactional
+@Rollback(true)
 public class 초기데이터_만들기_TestCase {
-	@Autowired
-	private PhotoService photoService;
-
-	@Autowired
-	private FolderRepository folderRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -44,6 +35,7 @@ public class 초기데이터_만들기_TestCase {
 	private Logger logger = LoggerFactory.getLogger(초기데이터_만들기_TestCase.class);
 
 	@Test
+	@Commit
 	public void test() throws InterruptedException {
 		// photoService.retrievalPhoto();
 
@@ -54,8 +46,8 @@ public class 초기데이터_만들기_TestCase {
 		// folderRepository.save(folder);
 
 		UserVo user = new UserVo();
-		user.setUserId("admin");
-		user.setName("관리자");
+		user.setUserId("33332");
+		user.setName("관리자-testcase111111111111111");
 		user.setEmail("a@abcde.com");
 
 		user.setDeleteF(false);
@@ -77,6 +69,6 @@ public class 초기데이터_만들기_TestCase {
 
 		userRepository.save(user);
 
-		logger.info("================================= 끝.2222222222222222222222");
+		logger.info("================================= 끝.");
 	}
 }

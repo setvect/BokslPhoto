@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
@@ -36,7 +35,7 @@ public class ExampleNonTransactionalTests {
 	private Logger logger = LoggerFactory.getLogger(ExampleNonTransactionalTests.class);
 
 	@Test
-	// @Commit
+	@Commit
 	public void test() throws InterruptedException {
 		// photoService.retrievalPhoto();
 
