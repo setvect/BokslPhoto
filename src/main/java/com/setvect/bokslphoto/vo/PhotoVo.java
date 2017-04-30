@@ -6,11 +6,14 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,7 +24,7 @@ import org.hibernate.annotations.Type;
  * 사진 항목
  */
 @Entity
-@Table(name = "TBBA_PHOTO")
+@Table(name = "TBBA_PHOTO", indexes = { @Index(name = "INDEX_SHOT_DATE", columnList = "SHOT_DATE", unique = false) })
 public class PhotoVo {
 	/** MD5 값 */
 	@Id
@@ -31,11 +34,12 @@ public class PhotoVo {
 	@Column(name = "PATH", nullable = false, length = 500)
 	private String path;
 
-	@Column(name = "SHOT_DATE_META", nullable = true)
-	private Date shotDateMeta;
+	@Column(name = "SHOT_DATE", nullable = true)
+	private Date shotDate;
 
-	@Column(name = "SHOT_DATE_MENUAL", nullable = true)
-	private Date shotDataMenual;
+	@Column(name = "SHOT_DATE_TYPE", nullable = true)
+	@Enumerated(EnumType.STRING)
+	private ShotDateType shotDataType;
 
 	@Column(name = "MEMO", nullable = true, length = 500)
 	private String memo;
@@ -50,6 +54,16 @@ public class PhotoVo {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "TBBC_MAPPING", joinColumns = @JoinColumn(name = "PHOTO_ID"), inverseJoinColumns = @JoinColumn(name = "FOLDER_SEQ"))
 	private List<FolderVo> folders;
+
+	/**
+	 * 촬영일 입력 데이터 형식
+	 */
+	public enum ShotDateType {
+		/** 메타 정보 추출 */
+		META,
+		/** 사용자 입력 */
+		MANUAL
+	}
 
 	public String getPhotoId() {
 		return photoId;
@@ -67,20 +81,20 @@ public class PhotoVo {
 		this.path = path;
 	}
 
-	public Date getShotDateMeta() {
-		return shotDateMeta;
+	public Date getShotDate() {
+		return shotDate;
 	}
 
-	public void setShotDateMeta(Date shotDateMeta) {
-		this.shotDateMeta = shotDateMeta;
+	public void setShotDate(Date shotDate) {
+		this.shotDate = shotDate;
 	}
 
-	public Date getShotDataMenual() {
-		return shotDataMenual;
+	public ShotDateType getShotDataType() {
+		return shotDataType;
 	}
 
-	public void setShotDataMenual(Date shotDataMenual) {
-		this.shotDataMenual = shotDataMenual;
+	public void setShotDataType(ShotDateType shotDataType) {
+		this.shotDataType = shotDataType;
 	}
 
 	public String getMemo() {

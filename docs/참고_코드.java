@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.EnvirmentProperty;
 
-@Autowired
+	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired

@@ -19,12 +19,11 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 	@Override
 	public GenericPage<PhotoVo> getPhotoPagingList(PhotoSearchParam pageCondition) {
-		String q = "select count(*) from PhotoVo c" + getWhereClause(pageCondition);
+		String q = "select count(*) from PhotoVo p" + getWhereClause(pageCondition);
 		Query query = em.createQuery(q);
 		int totalCount = ((Long) query.getSingleResult()).intValue();
 
-		// TODO 쿼리 만들기
-		q = "select c from PhotoVo c " + getWhereClause(pageCondition) + " order by c.commentSeq desc";
+		q = "select p from PhotoVo p " + getWhereClause(pageCondition) + " order by p.shotDate desc";
 		query = em.createQuery(q);
 		query.setFirstResult(pageCondition.getStartCursor());
 		query.setMaxResults(pageCondition.getReturnCount());

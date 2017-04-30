@@ -16,6 +16,7 @@ import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.vo.PhotoVo;
+import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
 
 @Service
 public class PhotoService {
@@ -41,6 +42,7 @@ public class PhotoService {
 			String photoId = ApplicationUtil.getMd5(p.toFile());
 			photo.setPhotoId(photoId);
 			photo.setPath(p.toString());
+			photo.setShotDataType(ShotDateType.MANUAL);
 			photo.setRegData(new Date());
 			photoRepository.save(photo);
 		});
