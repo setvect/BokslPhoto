@@ -20,7 +20,14 @@ public class BokslPhotoConstant {
 		public static final Path BASE_DIR = Paths.get(EnvirmentProperty.getString("com.setvect.photo.base"));
 		/** 허용 이미지 */
 		public static final Set<String> ALLOW = new HashSet<>(Arrays.asList("jpg", "png", "gif"));
+	}
 
+	/**
+	 * 이미지 메타정보
+	 */
+	public static class ImageMeta {
+		/** 촬영일 */
+		public static final String DATE_TIME_ORIGINAL = "Date/Time Original";
 	}
 
 }

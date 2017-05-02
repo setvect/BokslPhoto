@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -40,4 +44,13 @@ public class ApplicationUtil {
 		}
 	}
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static Date getDate(LocalDateTime value) {
+		ZonedDateTime zdt = value.atZone(ZoneId.systemDefault());
+		Date d = Date.from(zdt.toInstant());
+		return d;
+	}
 }
