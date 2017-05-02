@@ -8,7 +8,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -19,8 +23,11 @@ import org.springframework.stereotype.Service;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.GpsDirectory;
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
+import com.setvect.bokslphoto.BokslPhotoConstant.ImageMeta;
+import com.setvect.bokslphoto.BokslPhotoConstant.RegexPattern;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
@@ -29,7 +36,7 @@ import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
 public class PhotoService {
 	@Autowired
 	private PhotoRepository photoRepository;
-	private Logger logger = LoggerFactory.getLogger(PhotoService.class);
+	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
 	/**
 	 * 이미지 탐색
@@ -47,10 +54,9 @@ public class PhotoService {
 		}).forEach(p -> {
 			PhotoVo photo = new PhotoVo();
 
-			Date shotDate = null;
 			File imageFile = p.toFile();
 
-			shotDate = getShotDate(imageFile);
+			Date shotDate = getShotDate(imageFile);
 
 			String photoId = ApplicationUtil.getMd5(imageFile);
 			photo.setPhotoId(photoId);
@@ -58,6 +64,12 @@ public class PhotoService {
 			photo.setShotDate(shotDate);
 			photo.setShotDataType(ShotDateType.MANUAL);
 			photo.setRegData(new Date());
+			GeoCoordinates geo = getGeo(imageFile);
+			if (geo != null) {
+				photo.setLatitude(geo.getLatitude());
+				photo.setLongitude(geo.getLongitude());
+			}
+
 			photoRepository.save(photo);
 		});
 	}
@@ -68,7 +80,7 @@ public class PhotoService {
 	 * @param imageFile
 	 * @return
 	 */
-	private Date getShotDate(File imageFile) {
+	private static Date getShotDate(File imageFile) {
 		Date date = null;
 		try {
 			Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
@@ -92,4 +104,55 @@ public class PhotoService {
 		}
 		return date;
 	}
+
+	/**
+	 * GEO 좌표
+	 *
+	 * @param file
+	 * @return
+	 */
+	public static GeoCoordinates getGeo(File file) {
+		try {
+			Metadata metadata = ImageMetadataReader.readMetadata(file);
+			GpsDirectory meta = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+
+			if (meta == null) {
+				System.out.println("null.");
+				return null;
+			}
+			Pattern regex = Pattern.compile(RegexPattern.GPS);
+
+			// 37° 28' 46.12"
+			Map<String, Double> geo = meta.getTags().stream()
+					.filter(tag -> tag.getTagName().equals(ImageMeta.GPS_LATITUDE)
+							|| tag.getTagName().equals(ImageMeta.GPS_LONGITUDE))
+					.collect(Collectors.toMap(p -> p.getTagName(), p -> {
+						String coordinates = p.getDescription();
+						Matcher matcher = regex.matcher(coordinates);
+						if (!matcher.find()) {
+							return null;
+						}
+
+						double degree = Double.parseDouble(matcher.group(1));
+						double minutes = Double.parseDouble(matcher.group(2));
+						double seconds = Double.parseDouble(matcher.group(3));
+						double value = degree + minutes / 60 + seconds / 3600;
+						return value;
+					}));
+			if (geo.size() == 2) {
+				Double latitude = geo.get(ImageMeta.GPS_LATITUDE);
+				Double longitude = geo.get(ImageMeta.GPS_LONGITUDE);
+
+				if (latitude == null || longitude == null) {
+					return null;
+				}
+				return new GeoCoordinates(latitude, longitude);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+		return null;
+	}
+
 }

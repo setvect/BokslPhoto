@@ -31,26 +31,41 @@ public class PhotoVo {
 	@Column(name = "PHOTO_ID", length = 32)
 	private String photoId;
 
+	/** 파일경로 */
 	@Column(name = "PATH", nullable = false, length = 500)
 	private String path;
 
+	/** 촬영일 */
 	@Column(name = "SHOT_DATE", nullable = true)
 	private Date shotDate;
 
-	@Column(name = "SHOT_DATE_TYPE", nullable = true)
+	/** 촬영일 데이터 형태 */
+	@Column(name = "SHOT_DATE_TYPE", nullable = true, length = 10)
 	@Enumerated(EnumType.STRING)
 	private ShotDateType shotDataType;
 
+	/** 메모 */
 	@Column(name = "MEMO", nullable = true, length = 500)
 	private String memo;
 
+	/** 위도 */
+	@Column(name = "LATITUDE", nullable = true)
+	private Double latitude;
+
+	/** 경도 */
+	@Column(name = "LONGITUDE", nullable = true)
+	private Double longitude;
+
+	/** 보호 이미지 */
 	@Column(name = "PROTECT_F", nullable = false, length = 1)
 	@Type(type = "yes_no")
 	private boolean protectF;
 
+	/** 등록일 */
 	@Column(name = "REG_DATE", nullable = false)
 	private Date regData;
 
+	/** */
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "TBBC_MAPPING", joinColumns = @JoinColumn(name = "PHOTO_ID"), inverseJoinColumns = @JoinColumn(name = "FOLDER_SEQ"))
 	private List<FolderVo> folders;
@@ -127,6 +142,22 @@ public class PhotoVo {
 
 	public void setFolders(List<FolderVo> folders) {
 		this.folders = folders;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
 
 	@Override

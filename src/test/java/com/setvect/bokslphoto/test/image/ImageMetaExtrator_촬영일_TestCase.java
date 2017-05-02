@@ -14,9 +14,9 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 
-public class ImageMetaExtratorTestCase2 {
+public class ImageMetaExtrator_촬영일_TestCase {
 	public static void main(String[] args) throws ImageProcessingException, IOException {
-		File file = new File("temp/IMG_0355.jpg");
+		File file = new File("temp/20160514_134430.jpg");
 
 		Metadata metadata = ImageMetadataReader.readMetadata(file);
 		ExifSubIFDDirectory meta = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
