@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -32,7 +33,7 @@ public class FolderVo {
 	private String name;
 
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders")
-	private List<PhotoVo> products;
+	private List<PhotoVo> photos;
 
 	public int getFolderSeq() {
 		return folderSeq;
@@ -56,6 +57,21 @@ public class FolderVo {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<PhotoVo> getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(List<PhotoVo> photos) {
+		this.photos = photos;
+	}
+
+	public int getPhotoCount() {
+		if (photos == null) {
+			return 0;
+		}
+		return photos.size();
 	}
 
 	@Override

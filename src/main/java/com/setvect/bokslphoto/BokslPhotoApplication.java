@@ -58,8 +58,7 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 		photoService.retrievalPhoto();
 
 		FolderVo folder = new FolderVo();
-		folder.setFolderSeq(0);
-		folder.setParentId(0);
+		folder.setParentId(1);
 		folder.setName("ROOT");
 		folderRepository.save(folder);
 

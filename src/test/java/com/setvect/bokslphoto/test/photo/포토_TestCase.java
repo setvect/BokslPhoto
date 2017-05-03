@@ -9,17 +9,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.test.MainTestBase;
 import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
+import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
 public class 포토_TestCase extends MainTestBase {
 
 	@Autowired
 	private PhotoRepository photoRepository;
+
+	@Autowired
+	private FolderRepository folderRepository;
 
 	private Logger logger = LoggerFactory.getLogger(포토_TestCase.class);
 
@@ -40,7 +45,7 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
-	@Test
+	// @Test
 	public void testGroupBy() {
 		List<ImmutablePair<Date, Integer>> result = photoRepository.getGroupShotDate();
 		result.stream().forEach(p -> {
@@ -48,9 +53,61 @@ public class 포토_TestCase extends MainTestBase {
 			System.out.println(p.right);
 		});
 
-		// logger.debug("TotalCount: {}", result.size());
+		logger.debug("TotalCount: {}", result.size());
 
 		System.out.println("끝. ====================");
 	}
 
+	@Test
+	public void testFolder() {
+		List<FolderVo> folderList = folderRepository.findAll();
+		folderList.stream().forEach(p -> System.out.println(p));
+
+		FolderVo folder = folderList.get(0);
+
+		FolderVo forderNew1 = new FolderVo();
+		forderNew1.setParentId(folder.getFolderSeq());
+		forderNew1.setName("사진_폴더1");
+		folderRepository.save(forderNew1);
+
+		FolderVo forderNew2 = new FolderVo();
+		forderNew2.setParentId(folder.getFolderSeq());
+		forderNew2.setName("사진_폴더2");
+		folderRepository.save(forderNew2);
+
+		System.out.println("-------------------------------");
+
+		folderList = folderRepository.findAll();
+		folderList.stream().forEach(p -> System.out.println(p));
+
+		System.out.println("------------------------------- 폴더 맵핑 전");
+		PhotoSearchParam pageCondition = new PhotoSearchParam(0, 10);
+		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
+		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
+
+		GenericPage<PhotoVo> result = photoRepository.getPhotoPagingList(pageCondition);
+		logger.debug("TotalCount: {}", result.getTotalCount());
+		result.getList().stream().forEach(p -> System.out.println(p));
+
+		result.getList().stream().forEach(p -> {
+			p.addFolder(forderNew1);
+			p.addFolder(forderNew2);
+			photoRepository.save(p);
+		});
+
+		System.out.println("------------------------------- 폴더 맵핑 후");
+		pageCondition = new PhotoSearchParam(0, 10);
+		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
+		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
+
+		result = photoRepository.getPhotoPagingList(pageCondition);
+		logger.debug("TotalCount: {}", result.getTotalCount());
+		result.getList().stream().forEach(p -> System.out.println(p));
+
+		System.out.println("------------------------------- 폴더 조회");
+		folderList = folderRepository.findAll();
+		folderList.stream().forEach(p -> System.out.println(p.getPhotos()));
+
+		System.out.println("끝. ====================");
+	}
 }

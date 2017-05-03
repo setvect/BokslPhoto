@@ -56,6 +56,8 @@ public class UserRoleVo {
 
 	@Override
 	public String toString() {
+		// 아랫 처럼 코딩 하면 @ManyToOne 레퍼런스 때문에 무한루프 빠짐
+		// ToStringBuilder.reflectionToString(this);
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

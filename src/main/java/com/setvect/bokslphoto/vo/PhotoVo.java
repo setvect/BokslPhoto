@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -142,6 +143,13 @@ public class PhotoVo {
 
 	public void setFolders(List<FolderVo> folders) {
 		this.folders = folders;
+	}
+
+	public void addFolder(FolderVo folder) {
+		if (folders == null) {
+			folders = new ArrayList<>();
+		}
+		folders.add(folder);
 	}
 
 	public Double getLatitude() {
