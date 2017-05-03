@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -67,8 +68,15 @@ public class FolderVo {
 		this.photos = photos;
 	}
 
-	public int getPhotoCount() {
+	public void addPhoto(PhotoVo photo) {
 		if (photos == null) {
+			photos = new ArrayList<>();
+		}
+		photos.add(photo);
+	}
+
+	public int getPhotoCount() {
+		if (getPhotos() == null) {
 			return 0;
 		}
 		return photos.size();

@@ -8,17 +8,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 
 @RunWith(SpringRunner.class)
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
+@Transactional()
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
-@Rollback(false)
+@Rollback(true)
 public class MainTestBase {
 
 	@PropertySource("classpath:application.properties")

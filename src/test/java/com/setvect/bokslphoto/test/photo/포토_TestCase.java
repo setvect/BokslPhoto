@@ -85,29 +85,35 @@ public class 포토_TestCase extends MainTestBase {
 		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
 		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
 
-		GenericPage<PhotoVo> result = photoRepository.getPhotoPagingList(pageCondition);
-		logger.debug("TotalCount: {}", result.getTotalCount());
-		result.getList().stream().forEach(p -> System.out.println(p));
+		GenericPage<PhotoVo> photoList = photoRepository.getPhotoPagingList(pageCondition);
+		logger.debug("TotalCount: {}", photoList.getTotalCount());
+		photoList.getList().stream().forEach(p -> System.out.println(p));
 
-		result.getList().stream().forEach(p -> {
+		photoList.getList().stream().forEach(p -> {
 			p.addFolder(forderNew1);
 			p.addFolder(forderNew2);
 			photoRepository.save(p);
 		});
 
 		System.out.println("------------------------------- 폴더 맵핑 후");
-		pageCondition = new PhotoSearchParam(0, 10);
-		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
-		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
+		photoList = photoRepository.getPhotoPagingList(pageCondition);
+		logger.debug("TotalCount: {}", photoList.getTotalCount());
+		photoList.getList().stream().forEach(p -> System.out.println(p));
 
-		result = photoRepository.getPhotoPagingList(pageCondition);
-		logger.debug("TotalCount: {}", result.getTotalCount());
-		result.getList().stream().forEach(p -> System.out.println(p));
+		GenericPage<PhotoVo> photoList2 = photoRepository.getPhotoPagingList(pageCondition);
+
+		folderList = folderRepository.findAll();
+		folderList.stream().forEach(p -> {
+			p.addPhoto(photoList2.getList().get(0));
+			folderRepository.save(p);
+		});
 
 		System.out.println("------------------------------- 폴더 조회");
 		folderList = folderRepository.findAll();
-		folderList.stream().forEach(p -> System.out.println(p.getPhotos()));
+		folderList.stream().forEach(p -> System.out.printf("%s: %s\n", p, p.getPhotoCount()));
 
+		FolderVo a = folderRepository.getOne(2);
+		System.out.printf("========= %s: %s\n", a, a.getPhotoCount());
 		System.out.println("끝. ====================");
 	}
 }

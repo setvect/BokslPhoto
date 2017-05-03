@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.setvect.bokslphoto.repository.FolderRepository;
@@ -32,6 +31,9 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 
 	@Autowired
 	private PhotoService photoService;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BokslPhotoApplication.class, args);
@@ -64,13 +66,12 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");
-		user.setName("1234");
+		user.setName("관리자");
 		user.setEmail("a@abcde.com");
 
 		user.setDeleteF(false);
 
-		PasswordEncoder encoder = new BCryptPasswordEncoder();
-		user.setPassword(encoder.encode("1234"));
+		user.setPassword(passwordEncoder.encode("1234"));
 		Set<UserRoleVo> userRole = new HashSet<>();
 		UserRoleVo role = new UserRoleVo();
 		role.setRole("ROLE_ADMIN");

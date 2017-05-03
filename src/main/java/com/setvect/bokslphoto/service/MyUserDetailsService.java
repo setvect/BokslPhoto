@@ -24,8 +24,11 @@ public class MyUserDetailsService implements UserDetailsService {
 	private UserRepository userDao;
 
 	@Override
-	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(final String username) {
 		UserVo user = userDao.findOne(username);
+		if (user == null) {
+			throw new UsernameNotFoundException(username);
+		}
 		List<GrantedAuthority> authorities = buildUserAuthority(user.getUserRole());
 
 		User userDetail = buildUserForAuthentication(user, authorities);
@@ -33,7 +36,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	}
 
 	private User buildUserForAuthentication(UserVo user, List<GrantedAuthority> authorities) {
-		return new User(user.getUserId(), user.getPassword(), user.isDeleteF(), true, true, true, authorities);
+		return new User(user.getUserId(), user.getPassword(), !user.isDeleteF(), true, true, true, authorities);
 	}
 
 	private List<GrantedAuthority> buildUserAuthority(Set<UserRoleVo> userRoles) {

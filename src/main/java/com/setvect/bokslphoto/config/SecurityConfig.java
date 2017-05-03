@@ -20,11 +20,13 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
 
+	@Override
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		PasswordEncoder passwordEncoder = passwordEncoder();
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 
 	@Override
