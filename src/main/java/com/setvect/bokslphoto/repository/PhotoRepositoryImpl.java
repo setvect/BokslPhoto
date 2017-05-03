@@ -1,13 +1,18 @@
 package com.setvect.bokslphoto.repository;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
+import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
@@ -24,7 +29,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		Query queryCount = makeQueryWithWhere(pageCondition, queryStatement);
 		int totalCount = ((Long) queryCount.getSingleResult()).intValue();
 
-		queryStatement = "select p from PhotoVo p " + BokslPhotoConstant.SQL_WHERE + " order by p.shotDate desc";
+		queryStatement = "SELECT p FROM PhotoVo p " + BokslPhotoConstant.SQL_WHERE + " ORDER BY p.shotDate DESC";
 
 		Query querySelect = makeQueryWithWhere(pageCondition, queryStatement);
 		querySelect.setFirstResult(pageCondition.getStartCursor());
@@ -38,10 +43,29 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		return resultPage;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ImmutablePair<Date, Integer>> getGroupShotDate() {
+		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) FROM TBBA_PHOTO p "
+				+ " GROUP BY DATE_STRING ORDER BY DATE_STRING";
+		Query querySelect = em.createNativeQuery(queryStatement);
+
+		List<Object[]> resultList = querySelect.getResultList();
+
+		List<ImmutablePair<Date, Integer>> result = resultList.stream().map(p -> {
+			Object[] v = p;
+			Date date = v[0] == null ? null : DateUtil.getDate((String) v[0], "YYYYMMDD");
+			@SuppressWarnings("rawtypes")
+			ImmutablePair<Date, Integer> pair = new ImmutablePair(date, v[1]);
+			return pair;
+		}).collect(Collectors.toList());
+		return result;
+	}
+
 	private Query makeQueryWithWhere(PhotoSearchParam pageCondition, String queryStatement) {
 		String where = "";
 		if (pageCondition.isDateBetween()) {
-			where = " where p.shotDate between :from and :to ";
+			where = " WHERE p.shotDate BETWEEN :from and :to ";
 		}
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);
 		Query query = em.createQuery(queryString);

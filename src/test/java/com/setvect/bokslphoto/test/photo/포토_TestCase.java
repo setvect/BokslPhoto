@@ -1,5 +1,9 @@
 package com.setvect.bokslphoto.test.photo;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +26,7 @@ public class 포토_TestCase extends MainTestBase {
 	/**
 	 * 목록 조회
 	 */
-	@Test
+	// @Test
 	public void test_list() {
 		PhotoSearchParam pageCondition = new PhotoSearchParam(0, 10);
 		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
@@ -35,4 +39,18 @@ public class 포토_TestCase extends MainTestBase {
 
 		System.out.println("끝. ====================");
 	}
+
+	@Test
+	public void testGroupBy() {
+		List<ImmutablePair<Date, Integer>> result = photoRepository.getGroupShotDate();
+		result.stream().forEach(p -> {
+			System.out.println(p.left);
+			System.out.println(p.right);
+		});
+
+		// logger.debug("TotalCount: {}", result.size());
+
+		System.out.println("끝. ====================");
+	}
+
 }
