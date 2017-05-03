@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.test.MainTestBase;
+import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
@@ -24,6 +25,9 @@ public class 포토_TestCase extends MainTestBase {
 	@Test
 	public void test_list() {
 		PhotoSearchParam pageCondition = new PhotoSearchParam(0, 10);
+		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
+		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
+
 		GenericPage<PhotoVo> result = photoRepository.getPhotoPagingList(pageCondition);
 		logger.debug("TotalCount: {}", result.getTotalCount());
 

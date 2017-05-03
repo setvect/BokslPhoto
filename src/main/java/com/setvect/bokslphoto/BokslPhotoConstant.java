@@ -45,4 +45,7 @@ public class BokslPhotoConstant {
 		public static final String GPS = "^(\\d*)\\W*(\\d*)\\W*((?:\\d|\\.)*)";
 	}
 
+	/** WHERE 절 replace를 하기 위함 */
+	public static final String SQL_WHERE = "{WHERE}";
+
 }

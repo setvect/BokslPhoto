@@ -48,6 +48,15 @@ public class PhotoSearchParam extends SearchListParam {
 		this.searchMemo = searchMemo;
 	}
 
+	/**
+	 * 날짜 범위 검색 여부
+	 *
+	 * @return
+	 */
+	public boolean isDateBetween() {
+		return searchFrom != null && searchTo != null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
