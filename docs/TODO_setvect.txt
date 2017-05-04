@@ -16,7 +16,6 @@
 	[GPS] GPS Longitude - 130° 55' 9.85"
 	
 [진행 해야된는 것]
-NEW_20170504: login시 return url
 NEW_20170504: logout 
 NEW_20170504: 사진 업로드
 NEW_20170504: 사진 다시 읽기 
@@ -24,6 +23,7 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170504: login시 return url -> 원래 부터 됬다.
 NEW_20170504: Remember me 기능 추가
 NEW_20170503: 사진 폴더 등록 관리 -  repository 
 NEW_20170503: 날짜 그룹핑 검색
