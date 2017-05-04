@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import com.setvect.bokslphoto.BokslPhotoConstant;
@@ -41,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.loginPage("/login").failureUrl("/login?error")//
 				.usernameParameter("username")//
 				.passwordParameter("password")//
+//				.successHandler(successHandler())//
 				.and().logout().logoutSuccessUrl("/login?logout")//
 				.and().csrf()//
 				.and().exceptionHandling().accessDeniedPage("/403");
@@ -50,6 +52,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.rememberMe().key(BokslPhotoConstant.Login.REMEMBER_ME_KEY)
 				.rememberMeServices(tokenBasedRememberMeServices());
 	}
+
+	// @Bean
+	// public AuthenticationSuccessHandler successHandler() {
+	// SimpleUrlAuthenticationSuccessHandler handler = new
+	// SimpleUrlAuthenticationSuccessHandler();
+	// handler.setUseReferer(true);
+	// return handler;
+	// }
 
 	@Bean
 	public TokenBasedRememberMeServices tokenBasedRememberMeServices() {
@@ -63,5 +73,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder;
+	}
+
+	@Bean
+	public AuthenticationSuccessHandler successHandler() {
+		return new CustomLoginSuccessHandler("/");
 	}
 }
