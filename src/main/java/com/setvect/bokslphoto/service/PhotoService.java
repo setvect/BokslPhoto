@@ -48,30 +48,38 @@ public class PhotoService {
 			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
 		}).collect(toList());
 
-		// path.stream().parallel().forEach(p -> {
 		path.stream().peek(action -> {
 			logger.info(action.toString());
 		}).forEach(p -> {
-			PhotoVo photo = new PhotoVo();
-
 			File imageFile = p.toFile();
-
-			Date shotDate = getShotDate(imageFile);
-
-			String photoId = ApplicationUtil.getMd5(imageFile);
-			photo.setPhotoId(photoId);
-			photo.setPath(p.toString());
-			photo.setShotDate(shotDate);
-			photo.setShotDataType(ShotDateType.MANUAL);
-			photo.setRegData(new Date());
-			GeoCoordinates geo = getGeo(imageFile);
-			if (geo != null) {
-				photo.setLatitude(geo.getLatitude());
-				photo.setLongitude(geo.getLongitude());
-			}
-
-			photoRepository.save(photo);
+			savePhoto(imageFile);
 		});
+	}
+
+	/**
+	 * 파일 저장
+	 *
+	 * @param imageFile
+	 */
+	public void savePhoto(File imageFile) {
+		File baseFile = BokslPhotoConstant.Photo.BASE_DIR.toFile();
+		String path = baseFile.toURI().relativize(imageFile.toURI()).getPath();
+
+		PhotoVo photo = new PhotoVo();
+		Date shotDate = getShotDate(imageFile);
+		String photoId = ApplicationUtil.getMd5(imageFile);
+		photo.setPhotoId(photoId);
+		photo.setPath(path);
+		photo.setShotDate(shotDate);
+		photo.setShotDataType(ShotDateType.MANUAL);
+		photo.setRegData(new Date());
+		GeoCoordinates geo = getGeo(imageFile);
+		if (geo != null) {
+			photo.setLatitude(geo.getLatitude());
+			photo.setLongitude(geo.getLongitude());
+		}
+
+		photoRepository.save(photo);
 	}
 
 	/**

@@ -4,14 +4,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class HomeController {
+public class PhotoController {
 
 	@RequestMapping(value = "/")
 	public String index() {
 		return "index";
 	}
 
-	@RequestMapping("/login")
+	@RequestMapping("/login.do")
 	public void login() {
 	}
 
@@ -20,9 +20,8 @@ public class HomeController {
 		return "errors/403";
 	}
 
-	@RequestMapping("/admin")
+	@RequestMapping("/photo")
 	public String admin() {
-		return "admin/index";
+		return "photo/index";
 	}
-
 }

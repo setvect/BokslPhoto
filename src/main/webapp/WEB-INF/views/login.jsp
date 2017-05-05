@@ -35,7 +35,7 @@
 		</div>
 		<div class="card">
 			<div class="body">
-				<c:url value="/login" var="loginUrl" />
+				<c:url value="/login.do" var="loginUrl" />
 				<form action="${loginUrl}" method="post">
 
 					<c:if test="${param.error != null}">

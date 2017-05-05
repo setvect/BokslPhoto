@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import com.setvect.bokslphoto.BokslPhotoConstant;
@@ -36,12 +38,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/admin/**")//
-				.access("hasRole('ROLE_ADMIN')").and().formLogin()//
-				.loginPage("/login").failureUrl("/login?error")//
-				.usernameParameter("username")//
-				.passwordParameter("password")//
-				.and().logout().logoutSuccessUrl("/login?logout")//
+		http.authorizeRequests()//
+				.antMatchers("/photo/**").access("hasRole('ROLE_ADMIN')")//
+				// 아래 코드 넣으면 로그인 시 에러 남. 그 이후에 에러 안남.
+				// .anyRequest().authenticated()//
+				.and().formLogin().loginPage("/login.do").permitAll().failureUrl("/login.do?error")//
+				.and().logout().logoutUrl("/logout.do").permitAll().logoutSuccessUrl("/login.do?logout")//
 				.and().csrf()//
 				.and().exceptionHandling().accessDeniedPage("/403");
 
