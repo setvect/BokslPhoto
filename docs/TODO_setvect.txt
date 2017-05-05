@@ -23,6 +23,7 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170506: 강제 로그인
 NEW_20170504: logout 
 NEW_20170504: login시 return url -> 원래 부터 됬다.
 NEW_20170504: Remember me 기능 추가

@@ -8,9 +8,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import com.setvect.bokslphoto.vo.UserRoleVo;
 
 /**
  * 어플리케이션 전반에 사용되는 공통 함수 제공
@@ -53,4 +60,11 @@ public class ApplicationUtil {
 		Date d = Date.from(zdt.toInstant());
 		return d;
 	}
+
+	public static List<GrantedAuthority> buildUserAuthority(Set<UserRoleVo> userRoles) {
+		List<GrantedAuthority> authList = userRoles.stream().map(x -> new SimpleGrantedAuthority(x.getRole()))
+				.collect(Collectors.toList());
+		return authList;
+	}
+
 }
