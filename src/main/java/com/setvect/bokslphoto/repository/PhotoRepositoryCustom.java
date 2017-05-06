@@ -20,6 +20,11 @@ public interface PhotoRepositoryCustom {
 	public GenericPage<PhotoVo> getPhotoPagingList(PhotoSearchParam pageCondition);
 
 	/**
+	 * 디렉토리 정보
+	 */
+	public List<ImmutablePair<String, Integer>> getPhotoDirectoryList();
+
+	/**
 	 * 날짜별 사진 건수
 	 *
 	 * @param pageCondition

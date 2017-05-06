@@ -44,6 +44,24 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		return resultPage;
 	}
 
+	@Override
+	public List<ImmutablePair<String, Integer>> getPhotoDirectoryList() {
+		String queryStatement = "SELECT p.directory, count(*) FROM PhotoVo p GROUP BY p.directory ORDER BY 1";
+		Query querySelect = em.createQuery(queryStatement);
+
+		@SuppressWarnings("unchecked")
+		List<Object[]> resultList = querySelect.getResultList();
+
+		List<ImmutablePair<String, Integer>> result = resultList.stream().map(p -> {
+			Object[] v = p;
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			ImmutablePair<String, Integer> pair = new ImmutablePair(v[0], v[1]);
+			return pair;
+		}).collect(Collectors.toList());
+
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ImmutablePair<Date, Integer>> getGroupShotDate() {

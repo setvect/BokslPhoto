@@ -31,7 +31,7 @@ public class 포토_TestCase extends MainTestBase {
 	/**
 	 * 목록 조회
 	 */
-	@Test
+	// @Test
 	public void test_list() {
 		PhotoSearchParam pageCondition = new PhotoSearchParam(0, 10);
 		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
@@ -43,6 +43,13 @@ public class 포토_TestCase extends MainTestBase {
 
 		result.getList().stream().forEach(p -> logger.info(p.getDirectory()));
 
+		System.out.println("끝. ====================");
+	}
+
+	@Test
+	public void test_dirtory() {
+		List<ImmutablePair<String, Integer>> list = photoRepository.getPhotoDirectoryList();
+		list.stream().forEach(p -> System.out.println(p));
 		System.out.println("끝. ====================");
 	}
 
