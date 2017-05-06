@@ -2,6 +2,10 @@ package com.setvect.bokslphoto.test.photo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
@@ -48,8 +52,19 @@ public class 포토_TestCase extends MainTestBase {
 
 	@Test
 	public void test_dirtory() {
-		List<ImmutablePair<String, Integer>> list = photoRepository.getPhotoDirectoryList();
-		list.stream().forEach(p -> System.out.println(p));
+		Map<String, Integer> list = photoRepository.getPhotoDirectoryList();
+
+		for (Entry<String, Integer> entry : list.entrySet()) {
+			System.out.println(entry.getKey() + "  " + entry.getValue());
+		}
+
+		Set<String> dirs = list.keySet();
+
+
+		for (String dir : dirs) {
+			System.out.println(dir);
+		}
+
 		System.out.println("끝. ====================");
 	}
 

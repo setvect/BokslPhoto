@@ -2,6 +2,7 @@ package com.setvect.bokslphoto.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -45,19 +46,20 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	}
 
 	@Override
-	public List<ImmutablePair<String, Integer>> getPhotoDirectoryList() {
+	public Map<String, Integer> getPhotoDirectoryList() {
 		String queryStatement = "SELECT p.directory, count(*) FROM PhotoVo p GROUP BY p.directory ORDER BY 1";
 		Query querySelect = em.createQuery(queryStatement);
 
 		@SuppressWarnings("unchecked")
 		List<Object[]> resultList = querySelect.getResultList();
 
-		List<ImmutablePair<String, Integer>> result = resultList.stream().map(p -> {
+		Map<String, Integer> result = resultList.stream().collect(Collectors.toMap(p -> {
 			Object[] v = p;
-			@SuppressWarnings({ "rawtypes", "unchecked" })
-			ImmutablePair<String, Integer> pair = new ImmutablePair(v[0], v[1]);
-			return pair;
-		}).collect(Collectors.toList());
+			return (String) v[0];
+		}, p -> {
+			Object[] v = p;
+			return ((Long) v[1]).intValue();
+		}));
 
 		return result;
 	}

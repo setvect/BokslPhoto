@@ -2,6 +2,7 @@ package com.setvect.bokslphoto.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -22,7 +23,7 @@ public interface PhotoRepositoryCustom {
 	/**
 	 * 디렉토리 정보
 	 */
-	public List<ImmutablePair<String, Integer>> getPhotoDirectoryList();
+	public Map<String, Integer> getPhotoDirectoryList();
 
 	/**
 	 * 날짜별 사진 건수
