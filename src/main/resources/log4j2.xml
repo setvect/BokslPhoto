@@ -4,7 +4,7 @@
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d %-5p [%t] %l%n                        > %m%n" />
 		</Console>
-		<File name="file" fileName="./logs/literatureboy.log" append="false">
+		<File name="file" fileName="./logs/bokslphoto.log" append="false">
 			<PatternLayout pattern="%d %-5p [%t] %l%n                        > %m%n" />
 		</File>
 	</Appenders>
@@ -20,7 +20,7 @@
 		</Logger>
 		
 		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
-			<AppenderRef ref="console" />
+<!-- 			<AppenderRef ref="console" /> -->
 			<AppenderRef ref="file" />
 		</Logger>
 		

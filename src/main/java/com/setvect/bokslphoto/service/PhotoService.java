@@ -63,13 +63,17 @@ public class PhotoService {
 	 */
 	public void savePhoto(File imageFile) {
 		File baseFile = BokslPhotoConstant.Photo.BASE_DIR.toFile();
-		String path = baseFile.toURI().relativize(imageFile.toURI()).getPath();
+
+		File dirFile = imageFile.getParentFile();
+		String dir = baseFile.toURI().relativize(dirFile.toURI()).getPath();
+		dir = "/" + dir;
 
 		PhotoVo photo = new PhotoVo();
 		Date shotDate = getShotDate(imageFile);
 		String photoId = ApplicationUtil.getMd5(imageFile);
 		photo.setPhotoId(photoId);
-		photo.setPath(path);
+		photo.setDirectory(dir);
+		photo.setName(imageFile.getName());
 		photo.setShotDate(shotDate);
 		photo.setShotDataType(ShotDateType.MANUAL);
 		photo.setRegData(new Date());
@@ -125,7 +129,6 @@ public class PhotoService {
 			GpsDirectory meta = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
 			if (meta == null) {
-				System.out.println("null.");
 				return null;
 			}
 			Pattern regex = Pattern.compile(RegexPattern.GPS);
@@ -134,7 +137,7 @@ public class PhotoService {
 			Map<String, Double> geo = meta.getTags().stream()
 					.filter(tag -> tag.getTagName().equals(ImageMeta.GPS_LATITUDE)
 							|| tag.getTagName().equals(ImageMeta.GPS_LONGITUDE))
-					.collect(Collectors.toMap(p -> p.getTagName(), p -> {
+					.filter(tag -> tag.getDescription() != null).collect(Collectors.toMap(p -> p.getTagName(), p -> {
 						String coordinates = p.getDescription();
 						Matcher matcher = regex.matcher(coordinates);
 						if (!matcher.find()) {
@@ -157,7 +160,7 @@ public class PhotoService {
 				return new GeoCoordinates(latitude, longitude);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			logger.error(e.getMessage() + ": " + file.getAbsolutePath(), e);
 			return null;
 		}
 		return null;

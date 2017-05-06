@@ -40,7 +40,7 @@ public class 포토_TestCase extends MainTestBase {
 		GenericPage<PhotoVo> result = photoRepository.getPhotoPagingList(pageCondition);
 		logger.debug("TotalCount: {}", result.getTotalCount());
 
-		result.getList().stream().forEach(p -> logger.info(p.getPath()));
+		result.getList().stream().forEach(p -> logger.info(p.getDirectory()));
 
 		System.out.println("끝. ====================");
 	}

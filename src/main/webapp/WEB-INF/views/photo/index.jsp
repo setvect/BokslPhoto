@@ -8,8 +8,30 @@
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <title>복슬포토</title>
 <jsp:include page="/include/common.inc.jsp"></jsp:include>
+<script type="text/javascript">
+	var photoApp = angular.module('photoApp', ['ngRoute']);
+	
+	photoApp.config(function($routeProvider) {
+		$routeProvider.when("/list", {
+			templateUrl : "${pageContext.request.contextPath}/photo/list.do",
+			controller : "photoListController"
+		}).when("/read/:noteSeq", {
+			templateUrl : "${pageContext.request.contextPath}/photo/upload.do",
+			controller : "photoReadController"
+		}).otherwise({
+			redirectTo : "/list"
+		});
+	});
+	
+	photoApp.controller('photoController', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
+		
+		console.log("################################111111111111111111111111");
+		
+	}]);
+	
+</script>
 </head>
-<body class="theme-cyan">
+<body class="theme-cyan" data-ng-app="photoApp" data-ng-controller="photoController">
 	<!-- Page Loader -->
 	<div class="page-loader-wrapper">
 		<div class="loader">
@@ -102,10 +124,8 @@
 	<section class="content">
 		<div class="container-fluid">
 
-
 			<script type="text/javascript">
 				$(function() {
-					
 					Dropzone.options.frmFileUpload = {
 						maxFilesize : 5,
 						addRemoveLinks : true,
@@ -138,11 +158,6 @@
 							});
 						}
 					};
-					
-					console.log(Dropzone.options.frmFileUpload);
-					
-					
-					
 				})
 			</script>
 

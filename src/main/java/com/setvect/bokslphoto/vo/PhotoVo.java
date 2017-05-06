@@ -33,8 +33,12 @@ public class PhotoVo {
 	private String photoId;
 
 	/** 파일경로 */
-	@Column(name = "PATH", nullable = false, length = 500)
-	private String path;
+	@Column(name = "DIRECTORY", nullable = false, length = 500)
+	private String directory;
+
+	/** 파일이름 */
+	@Column(name = "NAME", nullable = false, length = 500)
+	private String name;
 
 	/** 촬영일 */
 	@Column(name = "SHOT_DATE", nullable = true)
@@ -89,12 +93,20 @@ public class PhotoVo {
 		this.photoId = photoId;
 	}
 
-	public String getPath() {
-		return path;
+	public String getDirectory() {
+		return directory;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setDirectory(String path) {
+		this.directory = path;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getShotDate() {
