@@ -68,36 +68,27 @@
 				<ul class="list">
 					<li class="header">포토갤러리</li>
 					<li class="active">
-						<!-- TODO -->
-						<a href="/upload"> <i class="material-icons">file_upload</i> <span>사진 업로드</span></a>
+						<!-- TODO --> <a href="/upload"> <i class="material-icons">file_upload</i> <span>사진 업로드</span></a>
 					</li>
-					<li>
-						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_open</i> <span>디렉토리</span></a>
+					<li><a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_open</i> <span>디렉토리</span></a>
 						<ul class="ml-menu">
 							<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
 							<li><a href="javascript:void(0);"> <span>Menu Item - 2</span></a></li>
 							<li><a href="javascript:void(0);" class="menu-toggle"> <span>Level - 2</span></a>
 								<ul class="ml-menu">
 									<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류</span></a>
+								</ul></li>
+						</ul></li>
+					<li><a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류</span></a>
 						<ul class="ml-menu">
 							<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
 							<li><a href="javascript:void(0);"> <span>Menu Item - 2</span></a></li>
 							<li><a href="javascript:void(0);" class="menu-toggle"> <span>Level - 2</span></a>
 								<ul class="ml-menu">
 									<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:void(0);"> <i class="material-icons">settings</i> <span>환경 설정</span></a>
-					</li>
+								</ul></li>
+						</ul></li>
+					<li><a href="javascript:void(0);"> <i class="material-icons">settings</i> <span>환경 설정</span></a></li>
 				</ul>
 			</div>
 			<!-- #Menu -->
@@ -110,6 +101,102 @@
 
 	<section class="content">
 		<div class="container-fluid">
+
+
+			<script type="text/javascript">
+				$(function() {
+					
+					Dropzone.options.frmFileUpload = {
+						maxFilesize : 5,
+						addRemoveLinks : true,
+						dictResponseError : 'Server not Configured',
+						acceptedFiles : ".png,.jpg,.gif,.jpeg",
+						init : function() {
+							var self = this;
+							// config
+							self.options.addRemoveLinks = true;
+							self.options.dictRemoveFile = "Delete";
+							//New file added
+							self.on("addedfile", function(file) {
+							});
+							// Send file starts
+							self.on("sending", function(file) {
+								$('.meter').show();
+							});
+
+							// File upload Progress
+							self.on("totaluploadprogress", function(progress) {
+								$('.roller').width(progress + '%');
+							});
+
+							self.on("queuecomplete", function(progress) {
+								$('.meter').delay(999).slideUp(999);
+							});
+
+							// On removing file
+							self.on("removedfile", function(file) {
+							});
+						}
+					};
+					
+					console.log(Dropzone.options.frmFileUpload);
+					
+					
+					
+				})
+			</script>
+
+
+
+
+
+
+			<!-- File Upload | Drag & Drop OR With Click & Choose -->
+			<div class="row clearfix">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card">
+						<div class="header">
+							<h2>
+								이미지 업로드
+							</h2>
+						</div>
+						<div class="body">
+							<form action="/photo/upload.do" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Drop files here or click to upload.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" multiple />
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			<div class="block-header">
 				<h2>날짜 선택: TODO</h2>
 			</div>
@@ -119,9 +206,7 @@
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
 						<div class="header">
-							<h2>
-								2015년
-							</h2>
+							<h2>2015년</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"
 									role="button" aria-haspopup="true" aria-expanded="false"> <i class="material-icons">more_vert</i>
