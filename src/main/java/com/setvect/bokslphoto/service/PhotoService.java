@@ -6,10 +6,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -29,6 +32,8 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.BokslPhotoConstant.ImageMeta;
 import com.setvect.bokslphoto.BokslPhotoConstant.RegexPattern;
 import com.setvect.bokslphoto.repository.PhotoRepository;
+import com.setvect.bokslphoto.util.TreeNode;
+import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
 
@@ -84,6 +89,51 @@ public class PhotoService {
 		}
 
 		photoRepository.save(photo);
+	}
+
+	public TreeNode<PhotoDirectory> getDirectoryTree() {
+		Map<String, Integer> photoPathAndCount = photoRepository.getPhotoDirectoryList();
+		Set<String> dirs = photoPathAndCount.keySet();
+
+		Integer photoCount = getPhotoCount(photoPathAndCount, "/");
+		TreeNode<PhotoDirectory> rootNode = new TreeNode<PhotoDirectory>(new PhotoDirectory("/", photoCount));
+
+		for (String dir : dirs) {
+
+			List<String> pathAppend = new ArrayList<>();
+			File path = new File(dir);
+			do {
+				String p = path.getPath();
+				pathAppend.add(p);
+				path = path.getParentFile();
+			} while (path != null);
+
+			Collections.reverse(pathAppend);
+
+			TreeNode<PhotoDirectory> currentNode = rootNode;
+
+			for (String p : pathAppend) {
+				photoCount = getPhotoCount(photoPathAndCount, p);
+				PhotoDirectory photoDir = new PhotoDirectory(p, photoCount);
+				TreeNode<PhotoDirectory> node = rootNode.getTreeNode(photoDir);
+
+				if (node != null) {
+					currentNode = node;
+					continue;
+				}
+				currentNode = currentNode.addChild(photoDir);
+			}
+		}
+
+		return rootNode;
+	}
+
+	private int getPhotoCount(Map<String, Integer> photoPathAndCount, String path) {
+		Integer photoCount = photoPathAndCount.get(path);
+		if (photoCount == null) {
+			photoCount = 0;
+		}
+		return photoCount;
 	}
 
 	/**

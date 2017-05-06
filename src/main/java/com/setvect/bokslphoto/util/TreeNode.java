@@ -2,11 +2,9 @@ package com.setvect.bokslphoto.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -83,11 +81,6 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 		return this == parent;
 	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
-
 	/**
 	 * @param data
 	 * @return
@@ -109,6 +102,17 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 		return nodeList.iterator();
 	}
 
+	public String printData() {
+		StringBuffer result = new StringBuffer();
+		Iterator<TreeNode<T>> iter = iterator();
+		while (iter.hasNext()) {
+			TreeNode<T> next = iter.next();
+			String depthPadding = String.join("", Collections.nCopies(next.getLevel(), "--"));
+			result.append(depthPadding + next.getData() + "\n");
+		}
+		return result.toString();
+	}
+
 	/**
 	 * 트리 전체를 탐색
 	 *
@@ -123,8 +127,11 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 
 	private void addNode(TreeNode<T> node, List<TreeNode<T>> nodeList) {
 		nodeList.add(node);
-		for (TreeNode<T> childNode : node.children) {
-			addNode(childNode, nodeList);
-		}
+		node.children.stream().forEach(p -> addNode(p, nodeList));
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

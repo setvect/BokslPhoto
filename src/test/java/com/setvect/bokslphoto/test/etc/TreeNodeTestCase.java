@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto.test.etc;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -34,15 +35,12 @@ public class TreeNodeTestCase {
 
 		Assert.assertNull(findNode);
 
-		Iterator<TreeNode<String>> iter = root.iterator();
+		System.out.println(root.printData());
 
-		while (iter.hasNext()) {
-			TreeNode<String> next = iter.next();
+		File a = new File("/a");
+		System.out.println(a.getPath());
+		System.out.println(a.getParentFile().getPath());
 
-			String depthPadding = String.join("", Collections.nCopies(next.getLevel(), "--"));
-
-			System.out.println(depthPadding + next.getData());
-		}
 		System.out.println("끝.");
 	}
 }

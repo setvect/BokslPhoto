@@ -1,12 +1,15 @@
 package com.setvect.bokslphoto.test.photo;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,10 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
+import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.test.MainTestBase;
 import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
+import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.FolderVo;
+import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
 public class 포토_TestCase extends MainTestBase {
@@ -29,6 +35,9 @@ public class 포토_TestCase extends MainTestBase {
 
 	@Autowired
 	private FolderRepository folderRepository;
+
+	@Autowired
+	private PhotoService photoService;
 
 	private Logger logger = LoggerFactory.getLogger(포토_TestCase.class);
 
@@ -52,18 +61,8 @@ public class 포토_TestCase extends MainTestBase {
 
 	@Test
 	public void test_dirtory() {
-		Map<String, Integer> list = photoRepository.getPhotoDirectoryList();
-
-		for (Entry<String, Integer> entry : list.entrySet()) {
-			System.out.println(entry.getKey() + "  " + entry.getValue());
-		}
-
-		Set<String> dirs = list.keySet();
-
-
-		for (String dir : dirs) {
-			System.out.println(dir);
-		}
+		TreeNode<PhotoDirectory> rootNode = photoService.getDirectoryTree();
+		System.out.println(rootNode.printData());
 
 		System.out.println("끝. ====================");
 	}
