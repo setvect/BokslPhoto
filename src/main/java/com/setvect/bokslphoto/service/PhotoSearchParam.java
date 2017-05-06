@@ -20,6 +20,9 @@ public class PhotoSearchParam extends SearchListParam {
 	/** 메모 조건 */
 	private String searchMemo;
 
+	/** 디레토리 조건 */
+	private String searchDirectory;
+
 	public PhotoSearchParam(int startCursor, int returnCount) {
 		super(startCursor, returnCount);
 	}
@@ -46,6 +49,14 @@ public class PhotoSearchParam extends SearchListParam {
 
 	public void setSearchMemo(String searchMemo) {
 		this.searchMemo = searchMemo;
+	}
+
+	public String getSearchDirectory() {
+		return searchDirectory;
+	}
+
+	public void setSearchDirectory(String searchDirectory) {
+		this.searchDirectory = searchDirectory;
 	}
 
 	/**

@@ -31,11 +31,12 @@ public class 포토_TestCase extends MainTestBase {
 	/**
 	 * 목록 조회
 	 */
-	// @Test
+	@Test
 	public void test_list() {
 		PhotoSearchParam pageCondition = new PhotoSearchParam(0, 10);
 		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
 		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
+		pageCondition.setSearchDirectory("/20150425_핸드폰/");
 
 		GenericPage<PhotoVo> result = photoRepository.getPhotoPagingList(pageCondition);
 		logger.debug("TotalCount: {}", result.getTotalCount());
@@ -58,7 +59,7 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
-	@Test
+	// @Test
 	public void testFolder() {
 		List<FolderVo> folderList = folderRepository.findAll();
 		folderList.stream().forEach(p -> System.out.println(p));

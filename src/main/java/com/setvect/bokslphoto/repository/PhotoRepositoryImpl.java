@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.setvect.bokslphoto.BokslPhotoConstant;
@@ -63,16 +64,30 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	}
 
 	private Query makeQueryWithWhere(PhotoSearchParam pageCondition, String queryStatement) {
-		String where = "";
+		String where = " WHERE 1=1 ";
 		if (pageCondition.isDateBetween()) {
-			where = " WHERE p.shotDate BETWEEN :from and :to ";
+			where += " AND p.shotDate BETWEEN :from and :to ";
 		}
+		if (StringUtils.isNotEmpty(pageCondition.getSearchDirectory())) {
+			where += " AND p.directory = :directory";
+		}
+		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
+			where += " AND p.memo like :memo";
+		}
+
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);
 		Query query = em.createQuery(queryString);
 		if (pageCondition.isDateBetween()) {
 			query.setParameter("from", pageCondition.getSearchFrom());
 			query.setParameter("to", pageCondition.getSearchTo());
 		}
+		if (StringUtils.isNotEmpty(pageCondition.getSearchDirectory())) {
+			query.setParameter("directory", pageCondition.getSearchDirectory());
+		}
+		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
+			query.setParameter("memo", "%" + pageCondition.getSearchMemo() + "%");
+		}
+
 		return query;
 	}
 

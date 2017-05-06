@@ -24,9 +24,7 @@
 	});
 	
 	photoApp.controller('photoController', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
-		
 		console.log("################################111111111111111111111111");
-		
 	}]);
 	
 </script>
