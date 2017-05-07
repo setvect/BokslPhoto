@@ -62,6 +62,17 @@ public class 포토_TestCase extends MainTestBase {
 	@Test
 	public void test_dirtory() {
 		TreeNode<PhotoDirectory> rootNode = photoService.getDirectoryTree();
+
+		List<TreeNode<PhotoDirectory>> nodeList = rootNode.exploreTree();
+		nodeList.stream().forEach(t -> {
+
+			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
+
+			System.out.println(depthPadding + t.getData().getFullPath() + "  " + t.getData().getPhotoCount());
+		});
+
+		System.out.println("----------------------------");
+
 		System.out.println(rootNode.printData());
 
 		System.out.println("끝. ====================");

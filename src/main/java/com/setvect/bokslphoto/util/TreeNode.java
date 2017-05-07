@@ -118,7 +118,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	 *
 	 * @return
 	 */
-	private List<TreeNode<T>> exploreTree() {
+	public List<TreeNode<T>> exploreTree() {
 		TreeNode<T> currentNode = TreeNode.this;
 		List<TreeNode<T>> nodeList = new ArrayList<>();
 		addNode(currentNode, nodeList);

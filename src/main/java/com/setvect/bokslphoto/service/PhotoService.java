@@ -91,6 +91,13 @@ public class PhotoService {
 		photoRepository.save(photo);
 	}
 
+	/**
+	 * 이미지가 저장된 물리적인 경로를 폴더 구조로 반환. <br>
+	 * 물리적인 경로는 com.setvect.photo.base를 기준으로 시작함
+	 *
+	 * @see BokslPhotoConstant.Photo#BASE_DIR
+	 * @return
+	 */
 	public TreeNode<PhotoDirectory> getDirectoryTree() {
 		Map<String, Integer> photoPathAndCount = photoRepository.getPhotoDirectoryList();
 		Set<String> dirs = photoPathAndCount.keySet();
@@ -99,29 +106,31 @@ public class PhotoService {
 		TreeNode<PhotoDirectory> rootNode = new TreeNode<PhotoDirectory>(new PhotoDirectory("/", photoCount));
 
 		for (String dir : dirs) {
-
 			List<String> pathAppend = new ArrayList<>();
 			File path = new File(dir);
-			do {
-				String p = path.getPath();
-				pathAppend.add(p);
+			while (true) {
+				String pathString = path.getPath().replace("\\", "/") + "/";
 				path = path.getParentFile();
-			} while (path != null);
+				if (path == null) {
+					break;
+				}
+				pathAppend.add(pathString);
+			}
 
 			Collections.reverse(pathAppend);
 
 			TreeNode<PhotoDirectory> currentNode = rootNode;
 
-			for (String p : pathAppend) {
-				photoCount = getPhotoCount(photoPathAndCount, p);
-				PhotoDirectory photoDir = new PhotoDirectory(p, photoCount);
+			for (String pathString : pathAppend) {
+				photoCount = getPhotoCount(photoPathAndCount, pathString);
+				PhotoDirectory photoDir = new PhotoDirectory(pathString, photoCount);
 				TreeNode<PhotoDirectory> node = rootNode.getTreeNode(photoDir);
 
-				if (node != null) {
+				if (node == null) {
+					currentNode = currentNode.addChild(photoDir);
+				} else {
 					currentNode = node;
-					continue;
 				}
-				currentNode = currentNode.addChild(photoDir);
 			}
 		}
 
