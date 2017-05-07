@@ -70,7 +70,7 @@ public class PhotoController {
 	public void login() {
 	}
 
-	@RequestMapping("/photo/upload.do")
+	@RequestMapping("/photo/uploadProc.do")
 	@ResponseBody
 	public ResponseEntity<String> uploadPhoto(MultipartHttpServletRequest request) {
 		Iterator<String> itr = request.getFileNames();
@@ -82,11 +82,24 @@ public class PhotoController {
 		return new ResponseEntity<>("{}", HttpStatus.OK);
 	}
 
+	/**
+	 * 사진 목록 보기 페이지
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("/photo/list.do")
-	@ResponseBody
 	public String list(HttpServletRequest request) {
-		// TODO
-		return "Hello";
+		return "photo/photo_list";
+	}
+
+	/**
+	 * 사진 업로드 페이지
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/photo/upload.do")
+	public String upload(HttpServletRequest request) {
+		return "photo/photo_upload";
 	}
 
 	@RequestMapping("/photo/directory.json")
