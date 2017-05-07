@@ -8,11 +8,14 @@ import java.util.Optional;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Tree 자료구조
  */
 public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	private T data;
+	@JsonIgnore
 	private TreeNode<T> parent;
 	private List<TreeNode<T>> children;
 
@@ -24,7 +27,6 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	public TreeNode(T data) {
 		this.data = data;
 		this.children = new ArrayList<TreeNode<T>>();
-		this.parent = this;
 	}
 
 	public TreeNode<T> addChild(T child) {
@@ -51,6 +53,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	 *
 	 * @return
 	 */
+	@JsonIgnore
 	public int getLevel() {
 		return getPath().size() - 1;
 	}
@@ -61,6 +64,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	 * @return 카테고리 경로<br>
 	 *         root > depth1 > depth2 ...
 	 */
+	@JsonIgnore
 	public List<T> getPath() {
 		List<T> result = new ArrayList<>();
 
@@ -77,8 +81,9 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	/**
 	 * @return 최상단 자료이면 true, 아니면 false
 	 */
+	@JsonIgnore
 	public boolean isRoot() {
-		return this == parent;
+		return parent == null;
 	}
 
 	/**

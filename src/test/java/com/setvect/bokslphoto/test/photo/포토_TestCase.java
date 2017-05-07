@@ -1,15 +1,9 @@
 package com.setvect.bokslphoto.test.photo;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -65,16 +59,11 @@ public class 포토_TestCase extends MainTestBase {
 
 		List<TreeNode<PhotoDirectory>> nodeList = rootNode.exploreTree();
 		nodeList.stream().forEach(t -> {
-
 			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
-
 			System.out.println(depthPadding + t.getData().getFullPath() + "  " + t.getData().getPhotoCount());
 		});
 
-		System.out.println("----------------------------");
-
-		System.out.println(rootNode.printData());
-
+		// System.out.println(rootNode.printData());
 		System.out.println("끝. ====================");
 	}
 

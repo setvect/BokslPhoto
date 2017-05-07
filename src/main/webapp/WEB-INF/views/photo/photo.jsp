@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8"%>
+\<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html>
@@ -10,6 +10,21 @@
 <jsp:include page="/include/common.inc.jsp"></jsp:include>
 <script type="text/javascript">
 	var photoApp = angular.module('photoApp', ['ngRoute']);
+	
+	photoApp.directive('photoDirDirective', function() {
+		return function(scope, element, attrs) {
+			// 마지막 바인드가 되면 이벤드 발생 
+			if (scope.$last) {
+				console.log("diretory loop last event.");
+				
+				// TODO 의존성 제거
+				Waves.attach('.menu .list a', ['waves-block']);
+				Waves.init();
+			}
+		};
+	});
+
+	
 	
 	photoApp.config(function($routeProvider) {
 		$routeProvider.when("/list", {
@@ -23,13 +38,26 @@
 		});
 	});
 	
-	photoApp.controller('photoController', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
-		console.log("################################111111111111111111111111");
-	}]);
 	
+	photoApp.controller('photoDirectoryController', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
+		$scope.photoDiretory;
+		
+		$http.get("${pageContext.request.contextPath}/photo/directory.json").then(function (success){
+			$scope.photoDiretory = success.data;
+		});
+		
+	}]);
 </script>
+
+<script type="text/ng-template" id="field_renderer.html">
+	<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span></a>
+	<ul class="ml-menu">
+		<li ng-repeat="dir in dir.children" ng-include="'field_renderer.html'" photo-dir-directive></li>
+	</ul>
+</script>
+
 </head>
-<body class="theme-cyan" data-ng-app="photoApp" data-ng-controller="photoController">
+<body class="theme-cyan" data-ng-app="photoApp">
 	<!-- Page Loader -->
 	<div class="page-loader-wrapper">
 		<div class="loader">
@@ -90,24 +118,28 @@
 					<li class="active">
 						<!-- TODO --> <a href="/upload"> <i class="material-icons">file_upload</i> <span>사진 업로드</span></a>
 					</li>
-					<li><a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_open</i> <span>디렉토리</span></a>
+					
+					<li data-ng-controller="photoDirectoryController">
+						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_open</i> <span>디렉토리</span></a>
+						<ul class="ml-menu">
+							<li data-ng-repeat="dir in photoDiretory.children" data-ng-include="'field_renderer.html'" photo-dir-directive>
+								<a href="javascript:void(0);"> <span>{{dir.data.name}}</span></a>
+							</li>
+						</ul>
+					</li>
+					
+					<li>
+						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류</span></a>
 						<ul class="ml-menu">
 							<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
 							<li><a href="javascript:void(0);"> <span>Menu Item - 2</span></a></li>
 							<li><a href="javascript:void(0);" class="menu-toggle"> <span>Level - 2</span></a>
 								<ul class="ml-menu">
 									<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-								</ul></li>
-						</ul></li>
-					<li><a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류</span></a>
-						<ul class="ml-menu">
-							<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-							<li><a href="javascript:void(0);"> <span>Menu Item - 2</span></a></li>
-							<li><a href="javascript:void(0);" class="menu-toggle"> <span>Level - 2</span></a>
-								<ul class="ml-menu">
-									<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-								</ul></li>
-						</ul></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
 					<li><a href="javascript:void(0);"> <i class="material-icons">settings</i> <span>환경 설정</span></a></li>
 				</ul>
 			</div>

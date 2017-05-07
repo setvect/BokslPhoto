@@ -25,12 +25,19 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.repository.UserRepository;
+import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.util.TreeNode;
+import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.UserVo;
 
 @Controller
 public class PhotoController {
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PhotoService photoService;
+
 	private static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
 	@RequestMapping(value = "/")
@@ -82,6 +89,13 @@ public class PhotoController {
 		return "Hello";
 	}
 
+	@RequestMapping("/photo/directory.json")
+	@ResponseBody
+	public ResponseEntity<TreeNode<PhotoDirectory>> aa() {
+		TreeNode<PhotoDirectory> dir = photoService.getDirectoryTree();
+		return new ResponseEntity<>(dir, HttpStatus.OK);
+	}
+
 	@RequestMapping("/403")
 	public String accessDenied() {
 		return "errors/403";
@@ -89,6 +103,6 @@ public class PhotoController {
 
 	@RequestMapping("/photo")
 	public String admin() {
-		return "photo/index";
+		return "photo/photo";
 	}
 }
