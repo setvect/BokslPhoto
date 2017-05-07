@@ -3,6 +3,7 @@ package com.setvect.bokslphoto.repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -59,7 +60,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		}, p -> {
 			Object[] v = p;
 			return ((Long) v[1]).intValue();
-		}));
+		}, (v1, v2) -> v1, TreeMap::new));
 
 		return result;
 	}

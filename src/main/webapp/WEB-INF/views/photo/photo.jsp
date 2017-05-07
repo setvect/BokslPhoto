@@ -50,7 +50,7 @@
 </script>
 
 <script type="text/ng-template" id="field_renderer.html">
-	<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span></a>
+	<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span>({{dir.data.photoCount}})</span></a>
 	<ul class="ml-menu">
 		<li ng-repeat="dir in dir.children" ng-include="'field_renderer.html'" photo-dir-directive></li>
 	</ul>
