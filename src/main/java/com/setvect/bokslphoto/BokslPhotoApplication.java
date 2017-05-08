@@ -36,6 +36,9 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
+		// spring boot에서 클래스가 및 properties 변경되었을 때 restart 안됨.
+		// 즉 reload 효과
+		System.setProperty("spring.devtools.restart.enabled", "false");
 		SpringApplication.run(BokslPhotoApplication.class, args);
 	}
 
