@@ -72,12 +72,12 @@ public class PhotoController {
 
 	@RequestMapping("/photo/uploadProc.do")
 	@ResponseBody
-	public ResponseEntity<String> uploadPhoto(MultipartHttpServletRequest request) {
+	public ResponseEntity<String> uploadPhotoProc(MultipartHttpServletRequest request) {
 		Iterator<String> itr = request.getFileNames();
 		while (itr.hasNext()) {
 			String uploadedFile = itr.next();
 			MultipartFile file = request.getFile(uploadedFile);
-			logger.info("{}", file);
+			logger.info("{}", file.getOriginalFilename());
 		}
 		return new ResponseEntity<>("{}", HttpStatus.OK);
 	}

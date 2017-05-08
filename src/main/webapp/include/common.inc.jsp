@@ -27,6 +27,9 @@
 <!-- Dropzone Css -->
 <link href="${pageContext.request.contextPath}/static/plugins/dropzone/dropzone.css" rel="stylesheet">
 
+<!-- Custom Css -->
+<link href="${pageContext.request.contextPath}/static/css/bokslphoto.css" rel="stylesheet">
+
 <!-- Jquery Core Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/jquery/jquery.min.js"></script>
 
@@ -50,3 +53,4 @@
 
 <!-- Dropzone Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/dropzone/dropzone.js"></script>
+<script src="${pageContext.request.contextPath}/static/plugins/dropzone/ng-dropzone.js"></script>

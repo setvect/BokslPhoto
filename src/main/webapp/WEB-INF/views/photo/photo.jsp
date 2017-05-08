@@ -8,7 +8,7 @@
 <title>복슬포토</title>
 <jsp:include page="/include/common.inc.jsp"></jsp:include>
 <script type="text/javascript">
-	var photoApp = angular.module('photoApp', ['ngRoute']);
+	var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
 	
 	photoApp.directive('photoDirDirective', function() {
 		return function(scope, element, attrs) {
@@ -46,7 +46,42 @@
 	// 사진 목록
 	photoApp.controller('photoListController', ['$scope', '$http', function($scope, $http, $sce) {
 		console.log("photoListController init.");
+	}]);
+	
+	// 사진 업로드
+	photoApp.controller('photoUploadController', ['$scope', '$http', function($scope, $http, $sce) {
+		console.log("photoUploadController init.");
+		$scope.showBtns = false;
 		
+		$scope.dzOptions = {
+			url : '/photo/uploadProc.do',
+			dictDefaultMessage : 'Add files to show dropzone methods (few)',
+			acceptedFiles : 'image/jpeg, images/jpg, image/png',
+			parallelUploads : 5,
+			addRemoveLinks : true,
+			autoProcessQueue : false,
+			maxFilesize: 5,  //MB 
+		};
+		
+		$scope.dzMethods = {};
+		
+		$scope.dzCallbacks = {
+			'addedfile' : function(file){
+				$scope.showBtns = true;
+			},
+			'complete' : function(file){
+				if($scope.dzMethods.getDropzone().getQueuedFiles().length != 0){
+					$scope.dzMethods.processQueue();
+				}
+				else{
+					console.log("upload complete.");
+				}
+			},
+			'error' : function(file, xhr){
+				console.warn('File failed to upload from dropzone.', file, xhr);
+			}
+		};
+	
 	}]);
 
 	
@@ -54,7 +89,7 @@
 </head>
 <body class="theme-cyan" data-ng-app="photoApp">
 	<script type="text/ng-template" id="field_renderer.html">
-		<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span>({{dir.data.photoCount}})</span></a>
+		<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span class="label label-info">({{dir.data.photoCount}})</span></a>
 		<ul class="ml-menu">
 			<li ng-repeat="dir in dir.children" ng-include="'field_renderer.html'" photo-dir-directive></li>
 		</ul>
