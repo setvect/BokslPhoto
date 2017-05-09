@@ -10,11 +10,14 @@
 <script type="text/javascript">
 	var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
 	
+	photoApp.run(function($rootScope) {
+		$rootScope.menu = 'timeList';
+	});
+	
 	photoApp.directive('photoDirDirective', function() {
 		return function(scope, element, attrs) {
 			// 마지막 바인드가 되면 이벤드 발생 
 			if (scope.$last) {
-				console.log("diretory loop last event.");
 				// TODO 의존성 제거
 				Waves.attach('.menu .list a', ['waves-block']);
 				Waves.init();
@@ -44,12 +47,14 @@
 	}]);
 	
 	// 사진 목록
-	photoApp.controller('photoListController', ['$scope', '$http', function($scope, $http, $sce) {
+	photoApp.controller('photoListController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
+		$rootScope.menu = 'timeList';
 		console.log("photoListController init.");
 	}]);
 	
 	// 사진 업로드
-	photoApp.controller('photoUploadController', ['$scope', '$http', function($scope, $http, $sce) {
+	photoApp.controller('photoUploadController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
+		$rootScope.menu = 'upload';
 		console.log("photoUploadController init.");
 		$scope.showBtns = false;
 		
@@ -152,7 +157,7 @@
 			<div class="menu">
 				<ul class="list">
 					<li class="header">포토갤러리</li>
-					<li class="active">
+					<li class="{{menu == 'timeList' ? 'active' : ''}}"> 
 						<a href="#!/list"> <i class="material-icons">date_range</i> <span>시간 흐름 순</span></a>
 					</li>
 					<li>
@@ -175,7 +180,7 @@
 							</li>
 						</ul>
 					</li>
-					<li>
+					<li class="{{menu == 'upload' ? 'active' : ''}}">
 						<!-- TODO --> <a href="#!/upload"> <i class="material-icons">file_upload</i> <span>사진 업로드</span></a>
 					</li>
 					<li><a href="javascript:void(0);"> <i class="material-icons">settings</i> <span>환경 설정</span></a></li>
