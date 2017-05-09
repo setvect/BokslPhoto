@@ -2,8 +2,6 @@ package com.setvect.bokslphoto;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -39,10 +37,10 @@ public class ApplicationUtil {
 		return md5;
 	}
 
-	public static Stream<Path> listFiles(Path path) {
-		if (Files.isDirectory(path)) {
+	public static Stream<File> listFiles(File path) {
+		if (path.isDirectory()) {
 			try {
-				return Files.list(path).flatMap(ApplicationUtil::listFiles);
+				return Stream.of(path.listFiles()).flatMap(ApplicationUtil::listFiles);
 			} catch (Exception e) {
 				return Stream.empty();
 			}

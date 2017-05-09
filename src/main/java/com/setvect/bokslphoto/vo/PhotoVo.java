@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto.vo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
+
+import com.setvect.bokslphoto.BokslPhotoConstant;
 
 /**
  * 사진 항목
@@ -178,6 +181,15 @@ public class PhotoVo {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	/**
+	 *
+	 * @return 사진 경로. OS 기준 경로임.
+	 */
+	public File getFullPath() {
+		File path = new File(BokslPhotoConstant.Photo.BASE_DIR, this.directory);
+		return new File(path, this.name);
 	}
 
 	@Override

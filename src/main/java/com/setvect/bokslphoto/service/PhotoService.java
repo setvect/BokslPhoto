@@ -47,8 +47,8 @@ public class PhotoService {
 	 * 이미지 탐색
 	 */
 	public void retrievalPhoto() {
-		List<Path> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
-			String name = p.getFileName().toString();
+		List<File> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
+			String name = p.getName();
 			String ext = FilenameUtils.getExtension(name);
 			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
 		}).collect(toList());
@@ -56,18 +56,29 @@ public class PhotoService {
 		path.stream().peek(action -> {
 			logger.info(action.toString());
 		}).forEach(p -> {
-			File imageFile = p.toFile();
-			savePhoto(imageFile);
+			savePhoto(p);
 		});
 	}
 
 	/**
-	 * 파일 저장
+	 * 사진 파일 저장
 	 *
 	 * @param imageFile
 	 */
 	public void savePhoto(File imageFile) {
-		File baseFile = BokslPhotoConstant.Photo.BASE_DIR.toFile();
+		savePhoto(imageFile, true);
+	}
+
+	/**
+	 * 사진 파일 저장
+	 *
+	 * @param imageFile
+	 * @param overwrite
+	 *            true 동일한 md5를 같는 파일이 있으면 현재 업로드 파일로 기준으로 교체. 기존 파일은 지우지 않음<br>
+	 *            false 동일한 md5를 같는 파일이 있으면 현재 업로드 취소. 업로드 파일은 삭제함.
+	 */
+	public boolean savePhoto(File imageFile, boolean overwrite) {
+		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
 
 		File dirFile = imageFile.getParentFile();
 		String dir = baseFile.toURI().relativize(dirFile.toURI()).getPath();
@@ -76,6 +87,15 @@ public class PhotoService {
 		PhotoVo photo = new PhotoVo();
 		Date shotDate = getShotDate(imageFile);
 		String photoId = ApplicationUtil.getMd5(imageFile);
+		if (!overwrite) {
+			PhotoVo before = photoRepository.findOne(photoId);
+			if (before != null) {
+				logger.info("Already have the same file.({})", before.getFullPath().getAbsolutePath());
+				imageFile.delete();
+				return false;
+			}
+		}
+
 		photo.setPhotoId(photoId);
 		photo.setDirectory(dir);
 		photo.setName(imageFile.getName());
@@ -87,8 +107,8 @@ public class PhotoService {
 			photo.setLatitude(geo.getLatitude());
 			photo.setLongitude(geo.getLongitude());
 		}
-
 		photoRepository.save(photo);
+		return true;
 	}
 
 	/**

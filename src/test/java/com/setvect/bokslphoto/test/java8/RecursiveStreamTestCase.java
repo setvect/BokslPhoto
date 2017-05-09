@@ -1,6 +1,6 @@
 package com.setvect.bokslphoto.test.java8;
 
-import java.nio.file.Paths;
+import java.io.File;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
@@ -13,8 +13,8 @@ public class RecursiveStreamTestCase extends MainTestBase {
 
 	@Test
 	public void test() {
-		ApplicationUtil.listFiles(Paths.get(".")).filter(p -> {
-			String name = p.getFileName().toString();
+		ApplicationUtil.listFiles(new File(".")).filter(p -> {
+			String name = p.getName();
 			String ext = FilenameUtils.getExtension(name);
 			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
 		}).forEach(x -> {

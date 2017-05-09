@@ -1,7 +1,6 @@
 package com.setvect.bokslphoto;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +16,16 @@ public class BokslPhotoConstant {
 
 	public static class Photo {
 		/** 이미지 저장 기본 경로 */
-		public static final Path BASE_DIR = Paths.get(EnvirmentProperty.getString("com.setvect.photo.base"));
+		public static final File BASE_DIR = new File(EnvirmentProperty.getString("com.setvect.photo.base"));
+
+		/**
+		 * 웹으로 업로드한 이미지 저장 경로<br>
+		 * BASE_DIR 하위 디렉토리로 함.<br>
+		 *
+		 * @see Photo#BASE_DIR
+		 */
+		public static final File SAVE_DIR = new File(BASE_DIR, "web_upload");
+
 		/** 허용 이미지 */
 		public static final Set<String> ALLOW = new HashSet<>(Arrays.asList("jpg", "png", "gif"));
 	}

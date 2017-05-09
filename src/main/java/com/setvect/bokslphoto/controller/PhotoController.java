@@ -1,11 +1,14 @@
 package com.setvect.bokslphoto.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.setvect.bokslphoto.ApplicationUtil;
+import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.util.TreeNode;
@@ -72,18 +76,36 @@ public class PhotoController {
 
 	@RequestMapping("/photo/uploadProc.do")
 	@ResponseBody
-	public ResponseEntity<String> uploadPhotoProc(MultipartHttpServletRequest request) {
+	public ResponseEntity<Boolean> uploadPhotoProc(MultipartHttpServletRequest request) throws IOException {
 		Iterator<String> itr = request.getFileNames();
 		while (itr.hasNext()) {
 			String uploadedFile = itr.next();
-			MultipartFile file = request.getFile(uploadedFile);
-			logger.info("{}", file.getOriginalFilename());
+			MultipartFile uploadFile = request.getFile(uploadedFile);
+
+			String name = uploadFile.getOriginalFilename();
+			String ext = FilenameUtils.getExtension(name);
+			// prefix가 최소 3자 이상 되어야 함.
+			String nameWithOutExt = FilenameUtils.getBaseName(name) + "__";
+
+			if (!BokslPhotoConstant.Photo.SAVE_DIR.exists()) {
+				BokslPhotoConstant.Photo.SAVE_DIR.mkdir();
+			}
+
+			File saveFile = File.createTempFile(nameWithOutExt, "." + ext, BokslPhotoConstant.Photo.SAVE_DIR);
+			uploadFile.transferTo(saveFile);
+			boolean result = photoService.savePhoto(saveFile, false);
+			if (result) {
+				logger.info("upload {} -> {}", uploadFile.getOriginalFilename(), saveFile.getAbsolutePath());
+			} else {
+				logger.info("upload fail. ({})", uploadFile.getOriginalFilename());
+			}
 		}
-		return new ResponseEntity<>("{}", HttpStatus.OK);
+		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
 	/**
 	 * 사진 목록 보기 페이지
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -94,6 +116,7 @@ public class PhotoController {
 
 	/**
 	 * 사진 업로드 페이지
+	 *
 	 * @param request
 	 * @return
 	 */
