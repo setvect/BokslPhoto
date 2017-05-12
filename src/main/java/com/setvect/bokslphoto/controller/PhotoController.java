@@ -133,6 +133,7 @@ public class PhotoController {
 	 * @see BokslPhotoConstant.Photo#BASE_DIR
 	 */
 	@RequestMapping("/photo/deleteDuplicate.json")
+	@ResponseBody
 	public ResponseEntity<List<String>> deleteDuplicate() {
 		List<File> deleteFiles = photoService.deleteDuplicate();
 
@@ -143,9 +144,14 @@ public class PhotoController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	/**
+	 * 모든 저장 경로를 폴더 구조로 반환.
+	 *
+	 * @return
+	 */
 	@RequestMapping("/photo/directory.json")
 	@ResponseBody
-	public ResponseEntity<TreeNode<PhotoDirectory>> aa() {
+	public ResponseEntity<TreeNode<PhotoDirectory>> getDiretory() {
 		TreeNode<PhotoDirectory> dir = photoService.getDirectoryTree();
 		return new ResponseEntity<>(dir, HttpStatus.OK);
 	}
