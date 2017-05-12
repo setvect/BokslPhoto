@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -123,6 +124,23 @@ public class PhotoController {
 	@RequestMapping("/photo/upload.do")
 	public String upload(HttpServletRequest request) {
 		return "photo/photo_upload";
+	}
+
+	/**
+	 * 중복 파일 제거
+	 *
+	 * @return 제거한 파일 경로. 파일 기준으로 BokslPhotoConstant.Photo#BASE_DIR 부터 시작
+	 * @see BokslPhotoConstant.Photo#BASE_DIR
+	 */
+	@RequestMapping("/photo/deleteDuplicate.json")
+	public ResponseEntity<List<String>> deleteDuplicate() {
+		List<File> deleteFiles = photoService.deleteDuplicate();
+
+		List<String> result = deleteFiles.stream()
+				.map(file -> ApplicationUtil.getRelativePath(BokslPhotoConstant.Photo.BASE_DIR, file))
+				.collect(Collectors.toList());
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@RequestMapping("/photo/directory.json")

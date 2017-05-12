@@ -141,16 +141,40 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	// @Test
+	public void testRetrievalPhotoAndSave() {
+		photoService.retrievalPhotoAndSave();
+		List<PhotoVo> photos = photoRepository.findAll();
+		photos.stream().map(PhotoVo::getFullPath).forEach(System.out::println);
+		System.out.println("중간  ====================");
+
+		photos.stream().forEach(photo -> {
+			PhotoVo s = photoRepository.findOne(photo.getPhotoId());
+			System.out.println(s);
+		});
+		System.out.println("끝. ====================");
+	}
+
 	@Test
+	public void testDeleteDuplicate() {
+		List<File> deleteFiles = photoService.deleteDuplicate();
+		System.out.println("삭제 파일들");
+
+		deleteFiles.stream().forEach(file -> {
+			System.out.printf("%s(%s)\n", file, file.exists());
+		});
+		System.out.println("끝. ====================");
+	}
+
+	// @Test
 	public void testFindDuplicate() {
 		Map<String, List<File>> result = photoService.findDuplicate();
 		result.entrySet().stream().forEach(p -> {
 			System.out.println(p.getKey());
-
 			p.getValue().stream().map(file -> "\t" + file.getAbsolutePath()).forEach(System.out::println);
 
 		});
-
 		System.out.println("끝 ===============");
 	}
+
 }

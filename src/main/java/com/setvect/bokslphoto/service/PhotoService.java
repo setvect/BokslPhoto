@@ -3,21 +3,17 @@ package com.setvect.bokslphoto.service;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -47,9 +43,9 @@ public class PhotoService {
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
 	/**
-	 * 이미지 탐색
+	 * 이미지 탐색 후 저장
 	 */
-	public void retrievalPhoto() {
+	public void retrievalPhotoAndSave() {
 		List<File> imageFiles = findImageFiles();
 
 		imageFiles.stream().peek(action -> {
@@ -60,22 +56,48 @@ public class PhotoService {
 	}
 
 	/**
-	 * 중복 파일 찾기<br>
+	 * 서로 다른 경로에 저장된 파일 내용이 2건 이상 같은 경우를 찾음
 	 *
 	 * @return Key: 파일에 대한 MD5 값,
 	 */
 	public Map<String, List<File>> findDuplicate() {
-
 		List<File> imageFiles = findImageFiles();
 		// 전 파일을 스캔하여 Key에 해당하는 파일 넣기
 		Map<String, List<File>> keyAndFiles = imageFiles.stream()
 				.collect(Collectors.groupingBy(ApplicationUtil::getMd5));
 
 		// 하나의 key(MD5)에 두개 이상의 파일이 있는 경우 찾기
-		Map<String, List<File>> result = keyAndFiles.entrySet().stream().filter(p -> p.getValue().size() > 1)
-				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+		Map<String, List<File>> result = keyAndFiles.entrySet().stream().filter(entry -> entry.getValue().size() > 1)
+				.collect(Collectors.toMap(entry -> entry.getKey(), p -> p.getValue()));
 
 		return result;
+	}
+
+	/**
+	 * 서로다른 경로에 중복된 파일을 삭제함.<br>
+	 * DB에 저장된 파일만 남기고 나머지는 삭제함
+	 */
+	public List<File> deleteDuplicate() {
+		Map<String, List<File>> duplicateFile = findDuplicate();
+		List<File> deleteFile = new ArrayList<>();
+
+		duplicateFile.entrySet().stream().forEach(photoEntry -> {
+			String key = photoEntry.getKey();
+			PhotoVo photoDbSave = photoRepository.findOne(key);
+			if (photoDbSave == null) {
+				logger.info("Not Saved to DB. Key: {}", key);
+				return;
+			}
+
+			photoEntry.getValue().stream().filter(photoFile -> !photoFile.equals(photoDbSave.getFullPath()))
+					.forEach(photoFile -> {
+						deleteFile.add(photoFile);
+						photoFile.delete();
+						logger.info("Delete Photo File: {}", photoFile);
+					});
+		});
+
+		return deleteFile;
 	}
 
 	/**
@@ -113,7 +135,7 @@ public class PhotoService {
 		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
 
 		File dirFile = imageFile.getParentFile();
-		String dir = baseFile.toURI().relativize(dirFile.toURI()).getPath();
+		String dir = ApplicationUtil.getRelativePath(baseFile, dirFile);
 		dir = "/" + dir;
 
 		PhotoVo photo = new PhotoVo();

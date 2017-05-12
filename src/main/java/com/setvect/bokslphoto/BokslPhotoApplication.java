@@ -60,7 +60,7 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	 * 초기 값 등록
 	 */
 	private void insertInitValue() {
-		photoService.retrievalPhoto();
+		photoService.retrievalPhotoAndSave();
 
 		FolderVo folder = new FolderVo();
 		folder.setParentId(1);

@@ -39,6 +39,7 @@ public class ApplicationUtil {
 
 	/**
 	 * 하위 디레토리를 재귀적으로 탐색해 파일 목록을 제공
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -68,6 +69,24 @@ public class ApplicationUtil {
 		List<GrantedAuthority> authList = userRoles.stream().map(x -> new SimpleGrantedAuthority(x.getRole()))
 				.collect(Collectors.toList());
 		return authList;
+	}
+
+	/**
+	 * filePath에서 basePath 경로를 제외.<br>
+	 * 예)<br>
+	 * basePath = /home/user/<br>
+	 * filePath = /home/user/temp/readme.txt<br>
+	 * 리턴값: temp/read.txt
+	 *
+	 * @param basePath
+	 *            기준 경로(OS Full Path)
+	 * @param filePath
+	 *            파일 경로(OS Full Path)
+	 * @return
+	 */
+	public static String getRelativePath(File basePath, File filePath) {
+		String dir = basePath.toURI().relativize(filePath.toURI()).getPath();
+		return dir;
 	}
 
 }
