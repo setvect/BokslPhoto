@@ -7,14 +7,17 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -47,17 +50,46 @@ public class PhotoService {
 	 * 이미지 탐색
 	 */
 	public void retrievalPhoto() {
+		List<File> imageFiles = findImageFiles();
+
+		imageFiles.stream().peek(action -> {
+			logger.info(action.toString());
+		}).forEach(p -> {
+			savePhoto(p);
+		});
+	}
+
+	/**
+	 * 중복 파일 찾기<br>
+	 *
+	 * @return Key: 파일에 대한 MD5 값,
+	 */
+	public Map<String, List<File>> findDuplicate() {
+
+		List<File> imageFiles = findImageFiles();
+		// 전 파일을 스캔하여 Key에 해당하는 파일 넣기
+		Map<String, List<File>> keyAndFiles = imageFiles.stream()
+				.collect(Collectors.groupingBy(ApplicationUtil::getMd5));
+
+		// 하나의 key(MD5)에 두개 이상의 파일이 있는 경우 찾기
+		Map<String, List<File>> result = keyAndFiles.entrySet().stream().filter(p -> p.getValue().size() > 1)
+				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+
+		return result;
+	}
+
+	/**
+	 * 이미지 파일을 찾음.
+	 *
+	 * @return
+	 */
+	private List<File> findImageFiles() {
 		List<File> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
 			String name = p.getName();
 			String ext = FilenameUtils.getExtension(name).toLowerCase();
 			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
 		}).collect(toList());
-
-		path.stream().peek(action -> {
-			logger.info(action.toString());
-		}).forEach(p -> {
-			savePhoto(p);
-		});
+		return path;
 	}
 
 	/**

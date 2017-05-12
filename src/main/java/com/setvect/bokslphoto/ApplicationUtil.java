@@ -37,6 +37,11 @@ public class ApplicationUtil {
 		return md5;
 	}
 
+	/**
+	 * 하위 디레토리를 재귀적으로 탐색해 파일 목록을 제공
+	 * @param path
+	 * @return
+	 */
 	public static Stream<File> listFiles(File path) {
 		if (path.isDirectory()) {
 			try {

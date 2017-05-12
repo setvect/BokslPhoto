@@ -1,8 +1,10 @@
 package com.setvect.bokslphoto.test.photo;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
@@ -53,7 +55,7 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
-	@Test
+	// @Test
 	public void test_dirtory() {
 		TreeNode<PhotoDirectory> rootNode = photoService.getDirectoryTree();
 
@@ -137,5 +139,18 @@ public class 포토_TestCase extends MainTestBase {
 		FolderVo a = folderRepository.getOne(2);
 		System.out.printf("========= %s: %s\n", a, a.getPhotoCount());
 		System.out.println("끝. ====================");
+	}
+
+	@Test
+	public void testFindDuplicate() {
+		Map<String, List<File>> result = photoService.findDuplicate();
+		result.entrySet().stream().forEach(p -> {
+			System.out.println(p.getKey());
+
+			p.getValue().stream().map(file -> "\t" + file.getAbsolutePath()).forEach(System.out::println);
+
+		});
+
+		System.out.println("끝 ===============");
 	}
 }
