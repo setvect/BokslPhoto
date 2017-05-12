@@ -49,7 +49,7 @@ public class PhotoService {
 	public void retrievalPhoto() {
 		List<File> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
 			String name = p.getName();
-			String ext = FilenameUtils.getExtension(name);
+			String ext = FilenameUtils.getExtension(name).toLowerCase();
 			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
 		}).collect(toList());
 
