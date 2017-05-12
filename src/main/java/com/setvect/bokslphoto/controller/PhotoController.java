@@ -23,22 +23,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
+import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
+import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
 @Controller
 public class PhotoController {
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PhotoRepository photoRepository;
 
 	@Autowired
 	private PhotoService photoService;
@@ -101,6 +107,28 @@ public class PhotoController {
 				logger.info("upload fail. ({})", uploadFile.getOriginalFilename());
 			}
 		}
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	/**
+	 * 메모 정보 업데이트
+	 *
+	 * @param photoId
+	 * @param memo
+	 * @return
+	 */
+	@RequestMapping("/photo/updateMemo.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> updateMemo(@RequestParam("photoId") String photoId,
+			@RequestParam("memo") String memo) {
+
+		PhotoVo p = photoRepository.findOne(photoId);
+		if (p == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		p.setMemo(memo);
+		photoRepository.save(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
