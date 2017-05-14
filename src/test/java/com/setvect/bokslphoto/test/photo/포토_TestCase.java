@@ -82,7 +82,7 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
-	// @Test
+	@Test
 	public void testFolder() {
 		List<FolderVo> folderList = folderRepository.findAll();
 		folderList.stream().forEach(p -> System.out.println(p));
@@ -155,7 +155,7 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
-	@Test
+	// @Test
 	public void testDeleteDuplicate() {
 		List<File> deleteFiles = photoService.deleteDuplicate();
 		System.out.println("삭제 파일들");

@@ -3,7 +3,9 @@ package com.setvect.bokslphoto.vo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -76,7 +78,7 @@ public class PhotoVo {
 	/** */
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "TBBC_MAPPING", joinColumns = @JoinColumn(name = "PHOTO_ID"), inverseJoinColumns = @JoinColumn(name = "FOLDER_SEQ"))
-	private List<FolderVo> folders;
+	private Set<FolderVo> folders;
 
 	/**
 	 * 촬영일 입력 데이터 형식
@@ -152,19 +154,26 @@ public class PhotoVo {
 		this.regData = regData;
 	}
 
-	public List<FolderVo> getFolders() {
+	public Set<FolderVo> getFolders() {
 		return folders;
 	}
 
-	public void setFolders(List<FolderVo> folders) {
+	public void setFolders(Set<FolderVo> folders) {
 		this.folders = folders;
 	}
 
 	public void addFolder(FolderVo folder) {
 		if (folders == null) {
-			folders = new ArrayList<>();
+			folders = new HashSet<>();
 		}
 		folders.add(folder);
+	}
+
+	public void removeFolder(FolderVo f) {
+		if (folders == null) {
+			return;
+		}
+		folders.remove(f);
 	}
 
 	public Double getLatitude() {

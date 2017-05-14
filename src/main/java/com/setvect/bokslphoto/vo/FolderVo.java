@@ -82,6 +82,28 @@ public class FolderVo {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + folderSeq;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FolderVo other = (FolderVo) obj;
+		if (folderSeq != other.folderSeq)
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "FolderVo [folderSeq=" + folderSeq + ", parentId=" + parentId + ", name=" + name + "]";
 	}

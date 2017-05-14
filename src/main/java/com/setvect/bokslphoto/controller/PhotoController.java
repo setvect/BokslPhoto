@@ -30,10 +30,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
+import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.util.TreeNode;
+import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserVo;
@@ -45,6 +47,9 @@ public class PhotoController {
 
 	@Autowired
 	private PhotoRepository photoRepository;
+
+	@Autowired
+	private FolderRepository folderRepository;
 
 	@Autowired
 	private PhotoService photoService;
@@ -128,6 +133,54 @@ public class PhotoController {
 		}
 
 		p.setMemo(memo);
+		photoRepository.save(p);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	/**
+	 * 사진 관련 폴더 추가
+	 *
+	 * @param photoId
+	 * @param memo
+	 * @return
+	 */
+	@RequestMapping("/photo/addRelationFolder.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> addRelationFolder(@RequestParam("photoId") String photoId,
+			@RequestParam("folderSeq") int folderSeq) {
+
+		PhotoVo p = photoRepository.findOne(photoId);
+		FolderVo f = folderRepository.findOne(folderSeq);
+
+		if (p == null || f == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		p.addFolder(f);
+		photoRepository.save(p);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	/**
+	 * 사진 관련 폴더 삭제
+	 *
+	 * @param photoId
+	 * @param memo
+	 * @return
+	 */
+	@RequestMapping("/photo/deleteRelationFolder.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> deleteRelationFolder(@RequestParam("photoId") String photoId,
+			@RequestParam("folderSeq") int folderSeq) {
+
+		PhotoVo p = photoRepository.findOne(photoId);
+		FolderVo f = folderRepository.findOne(folderSeq);
+
+		if (p == null || f == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		p.removeFolder(f);
 		photoRepository.save(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
