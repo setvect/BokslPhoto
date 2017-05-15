@@ -68,19 +68,15 @@ public class PhotoService {
 	 */
 	public Map<DateRange, Integer> groupByDate(DateGroup groupType) {
 		List<ImmutablePair<Date, Integer>> countByDate = photoRepository.getGroupShotDate();
-		Map<DateRange, Integer> result = new TreeMap<>();
-		for (ImmutablePair<Date, Integer> pair : countByDate) {
-			Date date = pair.getKey();
-			DateRange range = makeDateRange(date, groupType);
-			Integer c = result.get(range);
-			if (c == null) {
-				c = 0;
-			}
-			c += pair.getValue();
-			result.put(range, c);
-		}
 
-		// countByDate.stream().map(mapper)
+		Map<DateRange, Integer> result = countByDate.stream()
+				.collect(Collectors.groupingBy((ImmutablePair<Date, Integer> pair) -> {
+					Date date = pair.getKey();
+					DateRange range = makeDateRange(date, groupType);
+					return range;
+				}, () -> new TreeMap<>(), Collectors.summingInt((ImmutablePair<Date, Integer> pair) -> {
+					return pair.getValue();
+				})));
 
 		return result;
 	}
