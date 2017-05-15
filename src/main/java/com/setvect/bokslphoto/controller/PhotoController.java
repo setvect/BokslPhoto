@@ -59,12 +59,50 @@ public class PhotoController {
 
 	private static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
+	// 뷰 페이지 오픈
+
 	@RequestMapping(value = "/")
 	public String index(HttpServletRequest request) {
 		// TODO 강제 로그인. 추후 변경
 		constraintLogin(request);
 
 		return "redirect:/photo";
+	}
+
+	@RequestMapping("/login.do")
+	public void login() {
+	}
+
+	@RequestMapping("/403")
+	public String accessDenied() {
+		return "errors/403";
+	}
+
+	@RequestMapping("/photo")
+	public String admin() {
+		return "photo/photo";
+	}
+
+	/**
+	 * 사진 목록 보기 페이지
+	 *
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/photo/list.do")
+	public String list(HttpServletRequest request) {
+		return "photo/photo_list";
+	}
+
+	/**
+	 * 사진 업로드 페이지
+	 *
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/photo/upload.do")
+	public String upload(HttpServletRequest request) {
+		return "photo/photo_upload";
 	}
 
 	/**
@@ -87,9 +125,7 @@ public class PhotoController {
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 	}
 
-	@RequestMapping("/login.do")
-	public void login() {
-	}
+	// 데이터 조회
 
 	/**
 	 * 날짜별 건수
@@ -113,6 +149,27 @@ public class PhotoController {
 		return reseult;
 	}
 
+	/**
+	 * 모든 저장 경로를 폴더 구조로 반환.
+	 *
+	 * @return
+	 */
+	@RequestMapping("/photo/directory.json")
+	@ResponseBody
+	public ResponseEntity<TreeNode<PhotoDirectory>> getDiretory() {
+		TreeNode<PhotoDirectory> dir = photoService.getDirectoryTree();
+		return new ResponseEntity<>(dir, HttpStatus.OK);
+	}
+
+	// 데이터 등록
+
+	/**
+	 * 사진 업로드
+	 *
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping("/photo/uploadProc.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> uploadPhotoProc(MultipartHttpServletRequest request) throws IOException {
@@ -143,28 +200,6 @@ public class PhotoController {
 	}
 
 	/**
-	 * 메모 정보 업데이트
-	 *
-	 * @param photoId
-	 * @param memo
-	 * @return
-	 */
-	@RequestMapping("/photo/updateMemo.do")
-	@ResponseBody
-	public ResponseEntity<Boolean> updateMemo(@RequestParam("photoId") String photoId,
-			@RequestParam("memo") String memo) {
-
-		PhotoVo p = photoRepository.findOne(photoId);
-		if (p == null) {
-			return new ResponseEntity<>(false, HttpStatus.OK);
-		}
-
-		p.setMemo(memo);
-		photoRepository.save(p);
-		return new ResponseEntity<>(true, HttpStatus.OK);
-	}
-
-	/**
 	 * 사진 관련 폴더 추가
 	 *
 	 * @param photoId
@@ -187,6 +222,32 @@ public class PhotoController {
 		photoRepository.saveAndFlush(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
+
+	// 데이터 수정
+
+	/**
+	 * 메모 정보 업데이트
+	 *
+	 * @param photoId
+	 * @param memo
+	 * @return
+	 */
+	@RequestMapping("/photo/updateMemo.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> updateMemo(@RequestParam("photoId") String photoId,
+			@RequestParam("memo") String memo) {
+
+		PhotoVo p = photoRepository.findOne(photoId);
+		if (p == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		p.setMemo(memo);
+		photoRepository.save(p);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	// 데이터 삭제
 
 	/**
 	 * 사진 관련 폴더 삭제
@@ -213,28 +274,6 @@ public class PhotoController {
 	}
 
 	/**
-	 * 사진 목록 보기 페이지
-	 *
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping("/photo/list.do")
-	public String list(HttpServletRequest request) {
-		return "photo/photo_list";
-	}
-
-	/**
-	 * 사진 업로드 페이지
-	 *
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping("/photo/upload.do")
-	public String upload(HttpServletRequest request) {
-		return "photo/photo_upload";
-	}
-
-	/**
 	 * 중복 파일 제거
 	 *
 	 * @return 제거한 파일 경로. 파일 기준으로 BokslPhotoConstant.Photo#BASE_DIR 부터 시작
@@ -252,25 +291,4 @@ public class PhotoController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	/**
-	 * 모든 저장 경로를 폴더 구조로 반환.
-	 *
-	 * @return
-	 */
-	@RequestMapping("/photo/directory.json")
-	@ResponseBody
-	public ResponseEntity<TreeNode<PhotoDirectory>> getDiretory() {
-		TreeNode<PhotoDirectory> dir = photoService.getDirectoryTree();
-		return new ResponseEntity<>(dir, HttpStatus.OK);
-	}
-
-	@RequestMapping("/403")
-	public String accessDenied() {
-		return "errors/403";
-	}
-
-	@RequestMapping("/photo")
-	public String admin() {
-		return "photo/photo";
-	}
 }

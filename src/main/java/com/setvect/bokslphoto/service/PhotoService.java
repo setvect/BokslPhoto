@@ -46,17 +46,20 @@ public class PhotoService {
 	private PhotoRepository photoRepository;
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
-	/**
-	 * 이미지 탐색 후 저장
-	 */
-	public void retrievalPhotoAndSave() {
-		List<File> imageFiles = findImageFiles();
+	// 조회 관련
 
-		imageFiles.stream().peek(action -> {
-			logger.info(action.toString());
-		}).forEach(p -> {
-			savePhoto(p);
-		});
+	/**
+	 * 이미지 파일을 찾음.
+	 *
+	 * @return
+	 */
+	private List<File> findImageFiles() {
+		List<File> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
+			String name = p.getName();
+			String ext = FilenameUtils.getExtension(name).toLowerCase();
+			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
+		}).collect(toList());
+		return path;
 	}
 
 	/**
@@ -138,98 +141,6 @@ public class PhotoService {
 				.collect(Collectors.toMap(entry -> entry.getKey(), p -> p.getValue()));
 
 		return result;
-	}
-
-	/**
-	 * 서로다른 경로에 중복된 파일을 삭제함.<br>
-	 * DB에 저장된 파일만 남기고 나머지는 삭제함
-	 */
-	public List<File> deleteDuplicate() {
-		Map<String, List<File>> duplicateFile = findDuplicate();
-		List<File> deleteFile = new ArrayList<>();
-
-		duplicateFile.entrySet().stream().forEach(photoEntry -> {
-			String key = photoEntry.getKey();
-			PhotoVo photoDbSave = photoRepository.findOne(key);
-			if (photoDbSave == null) {
-				logger.info("Not Saved to DB. Key: {}", key);
-				return;
-			}
-
-			photoEntry.getValue().stream().filter(photoFile -> !photoFile.equals(photoDbSave.getFullPath()))
-					.forEach(photoFile -> {
-						deleteFile.add(photoFile);
-						photoFile.delete();
-						logger.info("Delete Photo File: {}", photoFile);
-					});
-		});
-
-		return deleteFile;
-	}
-
-	/**
-	 * 이미지 파일을 찾음.
-	 *
-	 * @return
-	 */
-	private List<File> findImageFiles() {
-		List<File> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
-			String name = p.getName();
-			String ext = FilenameUtils.getExtension(name).toLowerCase();
-			return BokslPhotoConstant.Photo.ALLOW.contains(ext);
-		}).collect(toList());
-		return path;
-	}
-
-	/**
-	 * 사진 파일 저장
-	 *
-	 * @param imageFile
-	 */
-	public void savePhoto(File imageFile) {
-		savePhoto(imageFile, true);
-	}
-
-	/**
-	 * 사진 파일 저장
-	 *
-	 * @param imageFile
-	 * @param overwrite
-	 *            true 동일한 md5를 같는 파일이 있으면 현재 업로드 파일로 기준으로 교체. 기존 파일은 지우지 않음<br>
-	 *            false 동일한 md5를 같는 파일이 있으면 현재 업로드 취소. 업로드 파일은 삭제함.
-	 */
-	public boolean savePhoto(File imageFile, boolean overwrite) {
-		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
-
-		File dirFile = imageFile.getParentFile();
-		String dir = ApplicationUtil.getRelativePath(baseFile, dirFile);
-		dir = "/" + dir;
-
-		PhotoVo photo = new PhotoVo();
-		Date shotDate = getShotDate(imageFile);
-		String photoId = ApplicationUtil.getMd5(imageFile);
-		if (!overwrite) {
-			PhotoVo before = photoRepository.findOne(photoId);
-			if (before != null) {
-				logger.info("Already have the same file.({})", before.getFullPath().getAbsolutePath());
-				imageFile.delete();
-				return false;
-			}
-		}
-
-		photo.setPhotoId(photoId);
-		photo.setDirectory(dir);
-		photo.setName(imageFile.getName());
-		photo.setShotDate(shotDate);
-		photo.setShotDataType(ShotDateType.MANUAL);
-		photo.setRegData(new Date());
-		GeoCoordinates geo = getGeo(imageFile);
-		if (geo != null) {
-			photo.setLatitude(geo.getLatitude());
-			photo.setLongitude(geo.getLongitude());
-		}
-		photoRepository.save(photo);
-		return true;
 	}
 
 	/**
@@ -364,6 +275,103 @@ public class PhotoService {
 			return null;
 		}
 		return null;
+	}
+
+	// 데이터 저장 관련
+
+	/**
+	 * 이미지 탐색 후 저장
+	 */
+	public void retrievalPhotoAndSave() {
+		List<File> imageFiles = findImageFiles();
+
+		imageFiles.stream().peek(action -> {
+			logger.info(action.toString());
+		}).forEach(p -> {
+			savePhoto(p);
+		});
+	}
+
+	/**
+	 * 사진 파일 저장
+	 *
+	 * @param imageFile
+	 */
+	public void savePhoto(File imageFile) {
+		savePhoto(imageFile, true);
+	}
+
+	/**
+	 * 사진 파일 저장
+	 *
+	 * @param imageFile
+	 * @param overwrite
+	 *            true 동일한 md5를 같는 파일이 있으면 현재 업로드 파일로 기준으로 교체. 기존 파일은 지우지 않음<br>
+	 *            false 동일한 md5를 같는 파일이 있으면 현재 업로드 취소. 업로드 파일은 삭제함.
+	 */
+	public boolean savePhoto(File imageFile, boolean overwrite) {
+		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
+
+		File dirFile = imageFile.getParentFile();
+		String dir = ApplicationUtil.getRelativePath(baseFile, dirFile);
+		dir = "/" + dir;
+
+		PhotoVo photo = new PhotoVo();
+		Date shotDate = getShotDate(imageFile);
+		String photoId = ApplicationUtil.getMd5(imageFile);
+		if (!overwrite) {
+			PhotoVo before = photoRepository.findOne(photoId);
+			if (before != null) {
+				logger.info("Already have the same file.({})", before.getFullPath().getAbsolutePath());
+				imageFile.delete();
+				return false;
+			}
+		}
+
+		photo.setPhotoId(photoId);
+		photo.setDirectory(dir);
+		photo.setName(imageFile.getName());
+		photo.setShotDate(shotDate);
+		photo.setShotDataType(ShotDateType.MANUAL);
+		photo.setRegData(new Date());
+		GeoCoordinates geo = getGeo(imageFile);
+		if (geo != null) {
+			photo.setLatitude(geo.getLatitude());
+			photo.setLongitude(geo.getLongitude());
+		}
+		photoRepository.save(photo);
+		return true;
+	}
+
+	// 데이터 수정 관련
+
+	// 데이터 삭제 관련
+
+	/**
+	 * 서로다른 경로에 중복된 파일을 삭제함.<br>
+	 * DB에 저장된 파일만 남기고 나머지는 삭제함
+	 */
+	public List<File> deleteDuplicate() {
+		Map<String, List<File>> duplicateFile = findDuplicate();
+		List<File> deleteFile = new ArrayList<>();
+
+		duplicateFile.entrySet().stream().forEach(photoEntry -> {
+			String key = photoEntry.getKey();
+			PhotoVo photoDbSave = photoRepository.findOne(key);
+			if (photoDbSave == null) {
+				logger.info("Not Saved to DB. Key: {}", key);
+				return;
+			}
+
+			photoEntry.getValue().stream().filter(photoFile -> !photoFile.equals(photoDbSave.getFullPath()))
+					.forEach(photoFile -> {
+						deleteFile.add(photoFile);
+						photoFile.delete();
+						logger.info("Delete Photo File: {}", photoFile);
+					});
+		});
+
+		return deleteFile;
 	}
 
 }
