@@ -6,17 +6,20 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.BokslPhotoConstant.ImageMeta;
 import com.setvect.bokslphoto.BokslPhotoConstant.RegexPattern;
 import com.setvect.bokslphoto.repository.PhotoRepository;
+import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
@@ -53,6 +57,73 @@ public class PhotoService {
 		}).forEach(p -> {
 			savePhoto(p);
 		});
+	}
+
+	/**
+	 * 날짜별 이미지 건수
+	 *
+	 * @param groupType
+	 *            그룹핑 유형
+	 * @return
+	 */
+	public Map<DateRange, Integer> groupByDate(DateGroup groupType) {
+		List<ImmutablePair<Date, Integer>> countByDate = photoRepository.getGroupShotDate();
+		Map<DateRange, Integer> result = new TreeMap<>();
+		for (ImmutablePair<Date, Integer> pair : countByDate) {
+			Date date = pair.getKey();
+			DateRange range = makeDateRange(date, groupType);
+			Integer c = result.get(range);
+			if (c == null) {
+				c = 0;
+			}
+			c += pair.getValue();
+			result.put(range, c);
+		}
+
+		// countByDate.stream().map(mapper)
+
+		return result;
+	}
+
+	/**
+	 * 날짜 그룹핑 영역의 시작과 종료 범위를 구함
+	 *
+	 * @param base
+	 *            기준 날짜
+	 * @param groupType
+	 * @return
+	 */
+	private DateRange makeDateRange(Date base, DateGroup groupType) {
+		if (base == null) {
+			return new DateRange(new Date(0), new Date(0));
+		}
+
+		Calendar s = Calendar.getInstance();
+		s.setTime(base);
+		s.set(Calendar.HOUR, 0);
+		s.set(Calendar.MINUTE, 0);
+		s.set(Calendar.SECOND, 0);
+		s.set(Calendar.MILLISECOND, 0);
+
+		if (groupType == DateGroup.MONTH) {
+			s.set(Calendar.DATE, 1);
+		} else if (groupType == DateGroup.YEAR) {
+			s.set(Calendar.DATE, 1);
+			s.set(Calendar.MONTH, 0);
+		}
+
+		Calendar e = (Calendar) s.clone();
+		if (groupType == DateGroup.DATE) {
+			e.add(Calendar.DATE, 1);
+		} else if (groupType == DateGroup.MONTH) {
+			e.add(Calendar.MONTH, 1);
+		} else if (groupType == DateGroup.YEAR) {
+			e.add(Calendar.YEAR, 1);
+		}
+		e.add(Calendar.SECOND, -1);
+
+		DateRange range = new DateRange(s.getTime(), e.getTime());
+		return range;
 	}
 
 	/**

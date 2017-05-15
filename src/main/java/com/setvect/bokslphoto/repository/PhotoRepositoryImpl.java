@@ -68,6 +68,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ImmutablePair<Date, Integer>> getGroupShotDate() {
+		// H2 Database 의존 쿼리
 		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) FROM TBBA_PHOTO p "
 				+ " GROUP BY DATE_STRING ORDER BY DATE_STRING";
 		Query querySelect = em.createNativeQuery(queryStatement);
@@ -76,9 +77,10 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 		List<ImmutablePair<Date, Integer>> result = resultList.stream().map(p -> {
 			Object[] v = p;
-			Date date = v[0] == null ? null : DateUtil.getDate((String) v[0], "YYYYMMDD");
+			Date date = v[0] == null ? null : DateUtil.getDate((String) v[0], "yyyyMMdd");
+			Number right = (Number) v[1];
 			@SuppressWarnings("rawtypes")
-			ImmutablePair<Date, Integer> pair = new ImmutablePair(date, v[1]);
+			ImmutablePair<Date, Integer> pair = new ImmutablePair(date, right.intValue());
 			return pair;
 		}).collect(Collectors.toList());
 		return result;

@@ -6,7 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.CoreMatchers;
@@ -15,16 +17,22 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.setvect.bokslphoto.controller.GroupByDate;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
-import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.service.DateGroup;
 import com.setvect.bokslphoto.test.MainTestBase;
+import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
@@ -38,10 +46,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 	@Autowired
 	private FolderRepository folderRepository;
 
-	@Autowired
-	private PhotoService photoService;
-
-	@Test
+	// @Test
 	public void testUploadPhoto() throws Exception {
 		File image = new File("./temp/a.jpg");
 		InputStream input = new FileInputStream(image);
@@ -62,7 +67,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 	 *
 	 * @throws Exception
 	 */
-	@Test
+	// @Test
 	public void testRelationFolder() throws Exception {
 		List<PhotoVo> photoList = photoRepository.findAll();
 		System.out.println("PhotoCount: " + photoList.size());
@@ -71,7 +76,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		System.out.println("folderCount: " + folderList.size());
 
 		// 1. 연관 폴더 등록
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();//
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolder.do");
 		String photoId = photoList.get(0).getPhotoId();
 		callRequest.param("photoId", photoId);
@@ -115,11 +120,31 @@ public class PhotoControllerTestCase extends MainTestBase {
 		folder = folderRepository.findOne(folderSeq);
 		s = folder.getPhotos();
 		System.out.println(s);
-		// TODO PBM_20170514: M:N 관계에서 폴더를 findOne을 했을 경우 사진 목록이 나오지 않는 상황
-		// Assert.assertThat(folder.getPhotos().get(0).getPhotoId(),
-		// CoreMatchers.is(photoId));
+		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
 
 		System.out.println("끝.");
 	}
 
+	@Test
+	public void testGroupByDate() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/groupByDate.json");
+		callRequest.param("searchDateGroup", DateGroup.MONTH.name());
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(200));
+		MvcResult mvcResult = resultActions.andReturn();
+		String content = mvcResult.getResponse().getContentAsString();
+		System.out.println(content);
+
+		Type type = new TypeToken<List<GroupByDate>>() {
+			/** */
+			private static final long serialVersionUID = 8349948434510094988L;
+		}.getType();
+
+		Gson gson = new GsonBuilder().create();
+		List<GroupByDate> r = gson.fromJson(content, type);
+		r.stream().forEach(System.out::println);
+
+		System.out.println("끝.");
+	}
 }

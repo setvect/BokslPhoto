@@ -23,6 +23,16 @@ public class PhotoSearchParam extends SearchListParam {
 	/** 디레토리 조건 */
 	private String searchDirectory;
 
+	/** 분류 조건 */
+	private int searchFolderSeq;
+
+	/** 그룹 분류 */
+	private DateGroup searchDateGroup;
+
+	public PhotoSearchParam() {
+		super(0, 10);
+	}
+
 	public PhotoSearchParam(int startCursor, int returnCount) {
 		super(startCursor, returnCount);
 	}
@@ -66,6 +76,22 @@ public class PhotoSearchParam extends SearchListParam {
 	 */
 	public boolean isDateBetween() {
 		return searchFrom != null && searchTo != null;
+	}
+
+	public int getSearchFolderSeq() {
+		return searchFolderSeq;
+	}
+
+	public void setSearchFolderSeq(int searchFolderSeq) {
+		this.searchFolderSeq = searchFolderSeq;
+	}
+
+	public DateGroup getSearchDateGroup() {
+		return searchDateGroup;
+	}
+
+	public void setSearchDateGroup(DateGroup searchDateGroup) {
+		this.searchDateGroup = searchDateGroup;
 	}
 
 	/*

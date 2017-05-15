@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
+import com.setvect.bokslphoto.service.DateGroup;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.test.MainTestBase;
+import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.util.TreeNode;
@@ -55,6 +57,9 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	/**
+	 * 디렉토리 구조 조회
+	 */
 	// @Test
 	public void test_dirtory() {
 		TreeNode<PhotoDirectory> rootNode = photoService.getDirectoryTree();
@@ -69,12 +74,14 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	/**
+	 * 날짜별 사진 건수
+	 */
 	// @Test
 	public void testGroupBy() {
 		List<ImmutablePair<Date, Integer>> result = photoRepository.getGroupShotDate();
 		result.stream().forEach(p -> {
-			System.out.println(p.left);
-			System.out.println(p.right);
+			System.out.printf("%tF: %,d\n", p.getLeft(), p.getRight());
 		});
 
 		logger.debug("TotalCount: {}", result.size());
@@ -82,7 +89,11 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
-	@Test
+	/**
+	 * 폴더 추가<br>
+	 * 폴더 매핑<br>
+	 */
+	// @Test
 	public void testFolder() {
 		List<FolderVo> folderList = folderRepository.findAll();
 		folderList.stream().forEach(p -> System.out.println(p));
@@ -141,9 +152,14 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	/**
+	 * 이미지 탐색 후 저장. <br>
+	 * 저장될 결과 조회
+	 */
 	// @Test
 	public void testRetrievalPhotoAndSave() {
 		photoService.retrievalPhotoAndSave();
+
 		List<PhotoVo> photos = photoRepository.findAll();
 		photos.stream().map(PhotoVo::getFullPath).forEach(System.out::println);
 		System.out.println("중간  ====================");
@@ -155,6 +171,9 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	/**
+	 * 중복된 파일 삭제
+	 */
 	// @Test
 	public void testDeleteDuplicate() {
 		List<File> deleteFiles = photoService.deleteDuplicate();
@@ -166,6 +185,9 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	/**
+	 * 중복된 파일 찾기
+	 */
 	// @Test
 	public void testFindDuplicate() {
 		Map<String, List<File>> result = photoService.findDuplicate();
@@ -177,4 +199,16 @@ public class 포토_TestCase extends MainTestBase {
 		System.out.println("끝 ===============");
 	}
 
+	/**
+	 * 날짜 그룹핑 Test
+	 */
+	@Test
+	public void testGroupByDate() {
+		for (DateGroup t : DateGroup.values()) {
+			System.out.println("-------------- " + t);
+			Map<DateRange, Integer> r = photoService.groupByDate(t);
+			r.entrySet().stream().forEach(System.out::println);
+		}
+		System.out.println("끝 ===============");
+	}
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,9 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
+import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
@@ -58,7 +61,9 @@ public class PhotoController {
 
 	@RequestMapping(value = "/")
 	public String index(HttpServletRequest request) {
+		// TODO 강제 로그인. 추후 변경
 		constraintLogin(request);
+
 		return "redirect:/photo";
 	}
 
@@ -84,6 +89,28 @@ public class PhotoController {
 
 	@RequestMapping("/login.do")
 	public void login() {
+	}
+
+	/**
+	 * 날짜별 건수
+	 *
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/photo/groupByDate.json")
+	@ResponseBody
+	public List<GroupByDate> groupByDate(PhotoSearchParam searchParam) {
+		Map<DateRange, Integer> dateCountMap = photoService.groupByDate(searchParam.getSearchDateGroup());
+
+		List<GroupByDate> reseult = dateCountMap.entrySet().stream().map(entry -> {
+			GroupByDate g = new GroupByDate();
+			g.setFrom(entry.getKey().getStartString("yyyyMMdd"));
+			g.setTo(entry.getKey().getEndString("yyyyMMdd"));
+			g.setCount(entry.getValue());
+			return g;
+		}).collect(Collectors.toList());
+
+		return reseult;
 	}
 
 	@RequestMapping("/photo/uploadProc.do")
@@ -157,7 +184,7 @@ public class PhotoController {
 		}
 
 		p.addFolder(f);
-		photoRepository.save(p);
+		photoRepository.saveAndFlush(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
@@ -181,7 +208,7 @@ public class PhotoController {
 		}
 
 		p.removeFolder(f);
-		photoRepository.save(p);
+		photoRepository.saveAndFlush(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
