@@ -247,6 +247,28 @@ public class PhotoController {
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
+	/**
+	 * 보호 이미지 지정
+	 *
+	 * @param photoId
+	 * @param protect
+	 *            보호 여부
+	 * @return
+	 */
+	@RequestMapping("/photo/updateProtect.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> updateProtect(@RequestParam("photoId") String photoId,
+			@RequestParam("protect") Boolean protect) {
+
+		PhotoVo p = photoRepository.findOne(photoId);
+		if (p == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+		p.setProtectF(protect);
+		photoRepository.save(p);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
 	// 데이터 삭제
 
 	/**

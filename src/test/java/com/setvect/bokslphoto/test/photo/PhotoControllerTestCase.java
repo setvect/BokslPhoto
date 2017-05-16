@@ -123,7 +123,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		System.out.println("끝.");
 	}
 
-	@Test
+	// @Test
 	public void testGroupByDate() throws Exception {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/groupByDate.json");
@@ -142,6 +142,39 @@ public class PhotoControllerTestCase extends MainTestBase {
 		Gson gson = new GsonBuilder().create();
 		List<GroupByDate> r = gson.fromJson(content, type);
 		r.stream().forEach(System.out::println);
+
+		System.out.println("끝.");
+	}
+
+	@Test
+	public void testProtect() throws Exception {
+		List<PhotoVo> photoList = photoRepository.findAll();
+
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("protect", "true");
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(200));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+
+		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
+
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
+		photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("protect", "false");
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(200));
+		resultActions.andExpect(content().string("true"));
+
+		photo = photoRepository.findOne(photoId);
+
+		Assert.assertFalse("보호 이미지 여부", photo.isProtectF());
 
 		System.out.println("끝.");
 	}
