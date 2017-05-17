@@ -270,6 +270,25 @@ public class PhotoController {
 	}
 
 	// 데이터 삭제
+	/**
+	 * 이미지 삭제<br>
+	 * 물리적인 파일도 삭제함
+	 *
+	 * @param photoId
+	 * @return
+	 */
+	@RequestMapping("/photo/deletePhoto.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> deleteProtect(@RequestParam("photoId") String photoId) {
+		PhotoVo p = photoRepository.findOne(photoId);
+		if (p == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+		boolean delete = p.getFullPath().delete();
+		photoRepository.delete(p);
+		logger.info("Photo Delete: {} ({})", p.getFullPath(), delete);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
 
 	/**
 	 * 사진 관련 폴더 삭제

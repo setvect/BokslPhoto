@@ -146,7 +146,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		System.out.println("끝.");
 	}
 
-	@Test
+	// @Test
 	public void testProtect() throws Exception {
 		List<PhotoVo> photoList = photoRepository.findAll();
 
@@ -175,6 +175,28 @@ public class PhotoControllerTestCase extends MainTestBase {
 		photo = photoRepository.findOne(photoId);
 
 		Assert.assertFalse("보호 이미지 여부", photo.isProtectF());
+
+		System.out.println("끝.");
+	}
+
+	/**
+	 * 포토 삭제
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeletePhoto() throws Exception {
+		List<PhotoVo> photoList = photoRepository.findAll();
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/deletePhoto.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(200));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+		Assert.assertNull(photo);
 
 		System.out.println("끝.");
 	}
