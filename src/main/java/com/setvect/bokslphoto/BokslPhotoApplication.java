@@ -20,22 +20,37 @@ import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
+/**
+ * Spring boot application 시작점.
+ */
 @SpringBootApplication
 public class BokslPhotoApplication extends SpringBootServletInitializer {
+	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
+
+	/** 사용자. */
 	@Autowired
 	private UserRepository userRepository;
 
+	/** 폴더. */
 	@Autowired
 	private FolderRepository folderRepository;
 
+	/** 포토 서비스. */
 	@Autowired
 	private PhotoService photoService;
 
+	/** 암호화 인코더. */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public static void main(String[] args) {
+	/**
+	 * Application 시작점.
+	 *
+	 * @param args
+	 *            사용 안함
+	 */
+	public static void main(final String[] args) {
 		// spring boot에서 클래스가 및 properties 변경되었을 때 restart 안됨.
 		// 즉 reload 효과
 		System.setProperty("spring.devtools.restart.enabled", "false");
@@ -43,10 +58,15 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	}
 
 	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+	protected final SpringApplicationBuilder configure(final SpringApplicationBuilder application) {
 		return application.sources(BokslPhotoApplication.class);
 	}
 
+	/**
+	 * 서비스 시작점 초기화.
+	 *
+	 * @return Spring boot 시작 bean
+	 */
 	@Bean
 	InitializingBean init() {
 		return () -> {
@@ -57,8 +77,9 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	}
 
 	/**
-	 * 초기 값 등록
+	 * 초기 값 등록.
 	 */
+	@SuppressWarnings("unused")
 	private void insertInitValue() {
 		photoService.retrievalPhotoAndSave();
 

@@ -12,18 +12,23 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
 /**
- * 프로젝트 설정 정보 제공
- *
- * @version $Id$
+ * 프로젝트 설정 정보 제공.
  */
-public class EnvirmentProperty {
+public final class EnvirmentProperty {
+	/** */
 	private static PropertiesConfiguration config;
+
+	/**
+	 */
+	private EnvirmentProperty() {
+
+	}
 
 	/**
 	 * @param propertise
 	 *            propertise 파일
 	 */
-	public static void init(File propertise) {
+	public static void init(final File propertise) {
 		try {
 			PropertiesConfiguration conf = new PropertiesConfiguration(propertise);
 			// 파일 수정 자동 감지
@@ -38,7 +43,7 @@ public class EnvirmentProperty {
 	 * @param propertise
 	 *            propertise 파일
 	 */
-	public static void init(URL propertise) {
+	public static void init(final URL propertise) {
 		try {
 			PropertiesConfiguration conf = new PropertiesConfiguration(propertise);
 			// 파일 수정 자동 감지
@@ -50,115 +55,272 @@ public class EnvirmentProperty {
 	}
 
 	// Delegate
-	public static boolean containsKey(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static boolean containsKey(final String paramString) {
 		return config.containsKey(paramString);
 	}
 
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
 	@SuppressWarnings("rawtypes")
-	public static Iterator getKeys(String paramString) {
+	public static Iterator getKeys(final String paramString) {
 		return config.getKeys(paramString);
 	}
 
+	/**
+	 * @return property keys
+	 */
 	@SuppressWarnings("rawtypes")
 	public static Iterator getKeys() {
 		return config.getKeys();
 	}
 
-	public static boolean getBoolean(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static boolean getBoolean(final String paramString) {
 		return config.getBoolean(paramString);
 	}
 
-	public static boolean getBoolean(String paramString, boolean paramBoolean) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramBoolean
+	 *            기본 값
+	 * @return property value
+	 */
+	public static boolean getBoolean(final String paramString, final boolean paramBoolean) {
 		return config.getBoolean(paramString, paramBoolean);
 	}
 
-	public static byte getByte(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static byte getByte(final String paramString) {
 		return config.getByte(paramString);
 	}
 
-	public static byte getByte(String paramString, byte paramByte) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramByte
+	 *            기본 값
+	 * @return property value
+	 */
+	public static byte getByte(final String paramString, final byte paramByte) {
 		return config.getByte(paramString, paramByte);
 	}
 
-	public static double getDouble(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static double getDouble(final String paramString) {
 		return config.getDouble(paramString);
 	}
 
-	public static double getDouble(String paramString, double paramDouble) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramDouble
+	 *            기본 값
+	 * @return property value
+	 */
+	public static double getDouble(final String paramString, final double paramDouble) {
 		return config.getDouble(paramString, paramDouble);
 	}
 
-	public static float getFloat(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static float getFloat(final String paramString) {
 		return config.getFloat(paramString);
 	}
 
-	public static float getFloat(String paramString, float paramFloat) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramFloat
+	 *            기본 값
+	 * @return property value
+	 */
+	public static float getFloat(final String paramString, final float paramFloat) {
 		return config.getFloat(paramString, paramFloat);
 	}
 
-	public static Float getFloat(String paramString, Float paramFloat) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramFloat
+	 *            기본 값
+	 * @return property value
+	 */
+	public static Float getFloat(final String paramString, final Float paramFloat) {
 		return config.getFloat(paramString, paramFloat);
 	}
 
-	public static int getInt(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static int getInt(final String paramString) {
 		return config.getInt(paramString);
 	}
 
-	public static int getInt(String paramString, int paramInt) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramInt
+	 *            기본 값
+	 * @return property value
+	 */
+	public static int getInt(final String paramString, final int paramInt) {
 		return config.getInt(paramString, paramInt);
 	}
 
-	public static long getLong(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static long getLong(final String paramString) {
 		return config.getLong(paramString);
 	}
 
-	public static long getLong(String paramString, long paramLong) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramLong
+	 *            기본 값
+	 * @return property value
+	 */
+	public static long getLong(final String paramString, final long paramLong) {
 		return config.getLong(paramString, paramLong);
 	}
 
-	public static short getShort(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static short getShort(final String paramString) {
 		return config.getShort(paramString);
 	}
 
-	public static short getShort(String paramString, short paramShort) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramShort
+	 *            기본 값
+	 * @return property value
+	 */
+	public static short getShort(final String paramString, final short paramShort) {
 		return config.getShort(paramString, paramShort);
 	}
 
-	public static BigDecimal getBigDecimal(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static BigDecimal getBigDecimal(final String paramString) {
 		return config.getBigDecimal(paramString);
 	}
 
-	public static BigDecimal getBigDecimal(String paramString, BigDecimal paramBigDecimal) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramBigDecimal
+	 *            기본 값
+	 * @return property value
+	 */
+	public static BigDecimal getBigDecimal(final String paramString, final BigDecimal paramBigDecimal) {
 		return config.getBigDecimal(paramString, paramBigDecimal);
 	}
 
-	public static BigInteger getBigInteger(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static BigInteger getBigInteger(final String paramString) {
 		return config.getBigInteger(paramString);
 	}
 
-	public static BigInteger getBigInteger(String paramString, BigInteger paramBigInteger) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramBigInteger
+	 *            기본 값
+	 * @return property value
+	 */
+	public static BigInteger getBigInteger(final String paramString, final BigInteger paramBigInteger) {
 		return config.getBigInteger(paramString, paramBigInteger);
 	}
 
-	public static String getString(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static String getString(final String paramString) {
 		return config.getString(paramString);
 	}
 
-	public static String getString(String paramString1, String paramString2) {
-		return config.getString(paramString1, paramString2);
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramDefault
+	 *            기본 값
+	 * @return property value
+	 */
+	public static String getString(final String paramString, final String paramDefault) {
+		return config.getString(paramString, paramDefault);
 	}
 
-	public static String[] getStringArray(String paramString) {
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
+	public static String[] getStringArray(final String paramString) {
 		return config.getStringArray(paramString);
 	}
 
+	/**
+	 * @param paramString
+	 *            property key
+	 * @return property value
+	 */
 	@SuppressWarnings("rawtypes")
-	public static List getList(String paramString) {
+	public static List getList(final String paramString) {
 		return config.getList(paramString);
 	}
 
+	/**
+	 * @param paramString
+	 *            property key
+	 * @param paramList
+	 *            기본값
+	 * @return property value
+	 */
 	@SuppressWarnings("rawtypes")
-	public static List getList(String paramString, List paramList) {
+	public static List getList(final String paramString, final List paramList) {
 		return config.getList(paramString, paramList);
 	}
 
