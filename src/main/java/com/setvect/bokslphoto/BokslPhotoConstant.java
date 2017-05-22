@@ -16,6 +16,14 @@ public final class BokslPhotoConstant {
 	}
 
 	/**
+	 * 웹 관련 상수
+	 */
+	public static class WEB {
+		/** 한페이지에 불러오 항목 수 */
+		public static final int DEFAULT_PAGE_SIZE = 10;
+	}
+
+	/**
 	 * 로그인 관련 상수.
 	 */
 	public static class Login {

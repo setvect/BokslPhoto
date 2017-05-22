@@ -43,65 +43,82 @@ import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
+/**
+ * 사진 관리 컨트롤. 대부분의 UI 요청 처리.
+ */
 @Controller
 public class PhotoController {
+	/** 사용자 DB */
 	@Autowired
 	private UserRepository userRepository;
 
+	/** 포토 DB */
 	@Autowired
 	private PhotoRepository photoRepository;
 
+	/** 폴더 DB */
 	@Autowired
 	private FolderRepository folderRepository;
 
+	/** 포토 서비스 처리. 로직 부분 */
 	@Autowired
 	private PhotoService photoService;
 
-	private static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
+	/** 로깅 */
+	private static Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
 	// 뷰 페이지 오픈
 
+	/**
+	 * @param request
+	 *            servlet
+	 * @return view 페이지
+	 */
 	@RequestMapping(value = "/")
-	public String index(HttpServletRequest request) {
+	public String index(final HttpServletRequest request) {
 		// TODO 강제 로그인. 추후 변경
 		constraintLogin(request);
 
 		return "redirect:/photo";
 	}
 
+	/**
+	 * 로그인 화면. SecurityConfig 설정과 연계
+	 */
 	@RequestMapping("/login.do")
 	public void login() {
 	}
 
+	/**
+	 * @return 403 에러 페이지
+	 */
 	@RequestMapping("/403")
 	public String accessDenied() {
 		return "errors/403";
 	}
 
+	/**
+	 * @return 사진관리 메인 view 페이지 오픈
+	 */
 	@RequestMapping("/photo")
 	public String admin() {
 		return "photo/photo";
 	}
 
 	/**
-	 * 사진 목록 보기 페이지
-	 *
 	 * @param request
-	 * @return
+	 * @return 사진 목록 보기 페이지
 	 */
 	@RequestMapping("/photo/list.do")
-	public String list(HttpServletRequest request) {
+	public String list() {
 		return "photo/photo_list";
 	}
 
 	/**
-	 * 사진 업로드 페이지
-	 *
-	 * @param request
-	 * @return
+	 * @return 사진 업로드 페이지
 	 */
 	@RequestMapping("/photo/upload.do")
-	public String upload(HttpServletRequest request) {
+	public String upload() {
 		return "photo/photo_upload";
 	}
 
@@ -110,8 +127,9 @@ public class PhotoController {
 	 * 개발 과정을 편리하게 하기 위함.
 	 *
 	 * @param request
+	 *            servletRequest
 	 */
-	private void constraintLogin(HttpServletRequest request) {
+	private void constraintLogin(final HttpServletRequest request) {
 		UserVo userinfo = userRepository.findOne("admin");
 		List<GrantedAuthority> roles = ApplicationUtil.buildUserAuthority(userinfo.getUserRole());
 
@@ -130,12 +148,13 @@ public class PhotoController {
 	/**
 	 * 날짜별 건수
 	 *
-	 * @param request
-	 * @return
+	 * @param searchParam
+	 *            조회 조건
+	 * @return 날짜별 사진 건수
 	 */
 	@RequestMapping("/photo/groupByDate.json")
 	@ResponseBody
-	public List<GroupByDate> groupByDate(PhotoSearchParam searchParam) {
+	public List<GroupByDate> groupByDate(final PhotoSearchParam searchParam) {
 		Map<DateRange, Integer> dateCountMap = photoService.groupByDate(searchParam.getSearchDateGroup());
 
 		List<GroupByDate> reseult = dateCountMap.entrySet().stream().map(entry -> {
@@ -150,9 +169,7 @@ public class PhotoController {
 	}
 
 	/**
-	 * 모든 저장 경로를 폴더 구조로 반환.
-	 *
-	 * @return
+	 * @return 모든 저장 경로를 폴더 구조로 반환.
 	 */
 	@RequestMapping("/photo/directory.json")
 	@ResponseBody
@@ -167,12 +184,14 @@ public class PhotoController {
 	 * 사진 업로드
 	 *
 	 * @param request
-	 * @return
+	 *            파일 업로드 위한 multipart
+	 * @return 처리 결과
 	 * @throws IOException
+	 *             첨부파일 처리 오류 시
 	 */
 	@RequestMapping("/photo/uploadProc.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> uploadPhotoProc(MultipartHttpServletRequest request) throws IOException {
+	public ResponseEntity<Boolean> uploadPhotoProc(final MultipartHttpServletRequest request) throws IOException {
 		Iterator<String> itr = request.getFileNames();
 		while (itr.hasNext()) {
 			String uploadedFile = itr.next();
@@ -203,13 +222,15 @@ public class PhotoController {
 	 * 사진 관련 폴더 추가
 	 *
 	 * @param photoId
-	 * @param memo
-	 * @return
+	 *            사진 파일 아이디
+	 * @param folderSeq
+	 *            폴더 일련 번호
+	 * @return 처리 결과
 	 */
 	@RequestMapping("/photo/addRelationFolder.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> addRelationFolder(@RequestParam("photoId") String photoId,
-			@RequestParam("folderSeq") int folderSeq) {
+	public ResponseEntity<Boolean> addRelationFolder(@RequestParam("photoId") final String photoId,
+			@RequestParam("folderSeq") final int folderSeq) {
 
 		PhotoVo p = photoRepository.findOne(photoId);
 		FolderVo f = folderRepository.findOne(folderSeq);
@@ -229,13 +250,15 @@ public class PhotoController {
 	 * 메모 정보 업데이트
 	 *
 	 * @param photoId
+	 *            사진 파일 아이디
 	 * @param memo
-	 * @return
+	 *            사진에 추가할 메모
+	 * @return 처리 결과
 	 */
 	@RequestMapping("/photo/updateMemo.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> updateMemo(@RequestParam("photoId") String photoId,
-			@RequestParam("memo") String memo) {
+	public ResponseEntity<Boolean> updateMemo(@RequestParam("photoId") final String photoId,
+			@RequestParam("memo") final String memo) {
 
 		PhotoVo p = photoRepository.findOne(photoId);
 		if (p == null) {
@@ -251,14 +274,15 @@ public class PhotoController {
 	 * 보호 이미지 지정
 	 *
 	 * @param photoId
+	 *            사진 파일 아이디
 	 * @param protect
 	 *            보호 여부
-	 * @return
+	 * @return 처리 결과
 	 */
 	@RequestMapping("/photo/updateProtect.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> updateProtect(@RequestParam("photoId") String photoId,
-			@RequestParam("protect") Boolean protect) {
+	public ResponseEntity<Boolean> updateProtect(@RequestParam("photoId") final String photoId,
+			@RequestParam("protect") final Boolean protect) {
 
 		PhotoVo p = photoRepository.findOne(photoId);
 		if (p == null) {
@@ -275,11 +299,12 @@ public class PhotoController {
 	 * 물리적인 파일도 삭제함
 	 *
 	 * @param photoId
-	 * @return
+	 *            사진 파일 아이디
+	 * @return 처리 결과
 	 */
 	@RequestMapping("/photo/deletePhoto.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> deleteProtect(@RequestParam("photoId") String photoId) {
+	public ResponseEntity<Boolean> deleteProtect(@RequestParam("photoId") final String photoId) {
 		PhotoVo p = photoRepository.findOne(photoId);
 		if (p == null) {
 			return new ResponseEntity<>(false, HttpStatus.OK);
@@ -294,13 +319,15 @@ public class PhotoController {
 	 * 사진 관련 폴더 삭제
 	 *
 	 * @param photoId
-	 * @param memo
-	 * @return
+	 *            사진 파일 아이디
+	 * @param folderSeq
+	 *            폴더 일련번호
+	 * @return 처리 결과
 	 */
 	@RequestMapping("/photo/deleteRelationFolder.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> deleteRelationFolder(@RequestParam("photoId") String photoId,
-			@RequestParam("folderSeq") int folderSeq) {
+	public ResponseEntity<Boolean> deleteRelationFolder(@RequestParam("photoId") final String photoId,
+			@RequestParam("folderSeq") final int folderSeq) {
 
 		PhotoVo p = photoRepository.findOne(photoId);
 		FolderVo f = folderRepository.findOne(folderSeq);

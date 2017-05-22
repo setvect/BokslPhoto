@@ -33,8 +33,9 @@ public class DateRange implements Comparable<DateRange> {
 	 * 오늘 날짜를 기준으로 해서 차이 값을 생성 한다.
 	 *
 	 * @param diff
+	 *            날짜 단위 차이
 	 */
-	public DateRange(int diff) {
+	public DateRange(final int diff) {
 		String st;
 		String ed;
 
@@ -46,9 +47,8 @@ public class DateRange implements Comparable<DateRange> {
 			st = DateUtil.getFormatString(cal);
 			cal.add(Calendar.DAY_OF_YEAR, diff);
 			ed = DateUtil.getFormatString(cal);
-		}
-		// 음수
-		else {
+		} else {
+			// 음수
 			cal = Calendar.getInstance();
 			ed = DateUtil.getFormatString(cal);
 			cal.add(Calendar.DAY_OF_YEAR, diff);
@@ -65,10 +65,10 @@ public class DateRange implements Comparable<DateRange> {
 	 *
 	 * @param year
 	 *            년도
-	 * @param ed
+	 * @param month
 	 *            달 0: 1월달, 1: 2월달, ..., 11: 12월달
 	 */
-	public DateRange(int year, int month) {
+	public DateRange(final int year, final int month) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR, year);
 		cal.set(Calendar.MONTH, month);

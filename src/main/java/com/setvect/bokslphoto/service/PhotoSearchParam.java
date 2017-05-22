@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.util.SearchListParam;
 
 /**
@@ -29,68 +30,116 @@ public class PhotoSearchParam extends SearchListParam {
 	/** 그룹 분류 */
 	private DateGroup searchDateGroup;
 
+	/**
+	 *
+	 */
 	public PhotoSearchParam() {
-		super(0, 10);
+		super(0, BokslPhotoConstant.WEB.DEFAULT_PAGE_SIZE);
 	}
 
-	public PhotoSearchParam(int startCursor, int returnCount) {
+	/**
+	 * @param startCursor
+	 *            시작 지점 (0부터 시작)
+	 * @param returnCount
+	 *            가져올 항목 갯수
+	 */
+	public PhotoSearchParam(final int startCursor, final int returnCount) {
 		super(startCursor, returnCount);
 	}
 
+	/**
+	 * @return 시작일
+	 */
 	public Date getSearchFrom() {
 		return searchFrom;
 	}
 
-	public void setSearchFrom(Date searchFrom) {
+	/**
+	 * @param searchFrom
+	 *            시작일
+	 */
+	public void setSearchFrom(final Date searchFrom) {
 		this.searchFrom = searchFrom;
 	}
 
+	/**
+	 * @return 종료일
+	 */
 	public Date getSearchTo() {
 		return searchTo;
 	}
 
-	public void setSearchTo(Date searchTo) {
+	/**
+	 * @param searchTo
+	 *            종료일
+	 */
+	public void setSearchTo(final Date searchTo) {
 		this.searchTo = searchTo;
 	}
 
+	/**
+	 * @return 메모 검색 조건
+	 */
 	public String getSearchMemo() {
 		return searchMemo;
 	}
 
-	public void setSearchMemo(String searchMemo) {
+	/**
+	 * @param searchMemo
+	 *            메모 검새 조건
+	 */
+	public void setSearchMemo(final String searchMemo) {
 		this.searchMemo = searchMemo;
 	}
 
+	/**
+	 * @return 디렉토리 검색 조건
+	 */
 	public String getSearchDirectory() {
 		return searchDirectory;
 	}
 
-	public void setSearchDirectory(String searchDirectory) {
+	/**
+	 * @param searchDirectory
+	 *            디렉토리 검색 조건
+	 */
+	public void setSearchDirectory(final String searchDirectory) {
 		this.searchDirectory = searchDirectory;
 	}
 
 	/**
-	 * 날짜 범위 검색 여부
-	 *
-	 * @return
+	 * @return 날짜 범위 검색 여부
 	 */
 	public boolean isDateBetween() {
 		return searchFrom != null && searchTo != null;
 	}
 
+	/**
+	 * @return 검색 폴더 일련번호
+	 */
 	public int getSearchFolderSeq() {
 		return searchFolderSeq;
 	}
 
-	public void setSearchFolderSeq(int searchFolderSeq) {
+	/**
+	 * @param searchFolderSeq
+	 *            검색 폴더 일련번호
+	 */
+	public void setSearchFolderSeq(final int searchFolderSeq) {
 		this.searchFolderSeq = searchFolderSeq;
 	}
 
+	/**
+	 * @return 데이터 그룹핑 조건
+	 */
 	public DateGroup getSearchDateGroup() {
 		return searchDateGroup;
 	}
 
-	public void setSearchDateGroup(DateGroup searchDateGroup) {
+	/**
+	 * @param searchDateGroup 데이터 그룹핑 조건
+	 */
+	public void setSearchDateGroup(final DateGroup searchDateGroup) {
 		this.searchDateGroup = searchDateGroup;
 	}
 

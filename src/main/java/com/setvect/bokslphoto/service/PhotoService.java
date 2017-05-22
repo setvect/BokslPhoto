@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,18 +41,24 @@ import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
 
+/**
+ * 포토 로직
+ */
 @Service
 public class PhotoService {
+	/** 포토 관련 DB */
 	@Autowired
 	private PhotoRepository photoRepository;
+
+	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
 	// 조회 관련
 
 	/**
-	 * 이미지 파일을 찾음.
+	 * 포토 기본 경로에서 사진 파일을 찾음.
 	 *
-	 * @return
+	 * @return 이미지 파일
 	 */
 	private List<File> findImageFiles() {
 		List<File> path = ApplicationUtil.listFiles(BokslPhotoConstant.Photo.BASE_DIR).filter(p -> {
@@ -67,9 +74,9 @@ public class PhotoService {
 	 *
 	 * @param groupType
 	 *            그룹핑 유형
-	 * @return
+	 * @return key: 날짜 범위, value: 건수
 	 */
-	public Map<DateRange, Integer> groupByDate(DateGroup groupType) {
+	public Map<DateRange, Integer> groupByDate(final DateGroup groupType) {
 		List<ImmutablePair<Date, Integer>> countByDate = photoRepository.getGroupShotDate();
 
 		Map<DateRange, Integer> result = countByDate.stream()
@@ -90,9 +97,10 @@ public class PhotoService {
 	 * @param base
 	 *            기준 날짜
 	 * @param groupType
-	 * @return
+	 *            그루핑 유형
+	 * @return 날짜 그룹핑 영역의 시작과 종료 범위
 	 */
-	private DateRange makeDateRange(Date base, DateGroup groupType) {
+	private DateRange makeDateRange(final Date base, final DateGroup groupType) {
 		if (base == null) {
 			return new DateRange(new Date(0), new Date(0));
 		}
@@ -148,7 +156,7 @@ public class PhotoService {
 	 * 물리적인 경로는 com.setvect.photo.base를 기준으로 시작함
 	 *
 	 * @see BokslPhotoConstant.Photo#BASE_DIR
-	 * @return
+	 * @return 이미지 경로를 재귀적(부모/자식)으로 저장
 	 */
 	public TreeNode<PhotoDirectory> getDirectoryTree() {
 		Map<String, Integer> photoPathAndCount = photoRepository.getPhotoDirectoryList();
@@ -189,7 +197,14 @@ public class PhotoService {
 		return rootNode;
 	}
 
-	private int getPhotoCount(Map<String, Integer> photoPathAndCount, String path) {
+	/**
+	 * @param photoPathAndCount
+	 *            key: 경로, Value: 건수
+	 * @param path
+	 *            이미지 경로
+	 * @return 해당 폴더내 이미지 건수
+	 */
+	private int getPhotoCount(final Map<String, Integer> photoPathAndCount, final String path) {
 		Integer photoCount = photoPathAndCount.get(path);
 		if (photoCount == null) {
 			photoCount = 0;
@@ -201,9 +216,10 @@ public class PhotoService {
 	 * 사진 촬영일
 	 *
 	 * @param imageFile
-	 * @return
+	 *            이미지 파일
+	 * @return 촬영일
 	 */
-	private static Date getShotDate(File imageFile) {
+	private static Date getShotDate(final File imageFile) {
 		Date date = null;
 		try {
 			Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
@@ -231,12 +247,13 @@ public class PhotoService {
 	/**
 	 * GEO 좌표
 	 *
-	 * @param file
-	 * @return
+	 * @param imageFile
+	 *            이미지 파일
+	 * @return GEO 좌표
 	 */
-	public static GeoCoordinates getGeo(File file) {
+	public static GeoCoordinates getGeo(final File imageFile) {
 		try {
-			Metadata metadata = ImageMetadataReader.readMetadata(file);
+			Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
 			GpsDirectory meta = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
 			if (meta == null) {
@@ -271,7 +288,7 @@ public class PhotoService {
 				return new GeoCoordinates(latitude, longitude);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage() + ": " + file.getAbsolutePath(), e);
+			logger.error(e.getMessage() + ": " + imageFile.getAbsolutePath(), e);
 			return null;
 		}
 		return null;
@@ -296,8 +313,9 @@ public class PhotoService {
 	 * 사진 파일 저장
 	 *
 	 * @param imageFile
+	 *            이미지 파일
 	 */
-	public void savePhoto(File imageFile) {
+	public void savePhoto(final File imageFile) {
 		savePhoto(imageFile, true);
 	}
 
@@ -305,9 +323,11 @@ public class PhotoService {
 	 * 사진 파일 저장
 	 *
 	 * @param imageFile
+	 *            이미지 파일
 	 * @param overwrite
 	 *            true 동일한 md5를 같는 파일이 있으면 현재 업로드 파일로 기준으로 교체. 기존 파일은 지우지 않음<br>
 	 *            false 동일한 md5를 같는 파일이 있으면 현재 업로드 취소. 업로드 파일은 삭제함.
+	 * @return 저장 성공여부
 	 */
 	public boolean savePhoto(File imageFile, boolean overwrite) {
 		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
@@ -350,6 +370,8 @@ public class PhotoService {
 	/**
 	 * 서로다른 경로에 중복된 파일을 삭제함.<br>
 	 * DB에 저장된 파일만 남기고 나머지는 삭제함
+	 *
+	 * @return 삭제한 파일
 	 */
 	public List<File> deleteDuplicate() {
 		Map<String, List<File>> duplicateFile = findDuplicate();

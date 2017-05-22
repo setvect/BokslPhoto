@@ -3,39 +3,60 @@ package com.setvect.bokslphoto.controller;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * 날짜 그룹핑 건수
+ * 날짜 그룹핑 건수.
  */
 public class GroupByDate {
 	/** 시작 날짜: yyyyMMdd */
-	public String from;
+	private String from;
 
 	/** 시작 날짜: yyyyMMdd */
-	public String to;
+	private String to;
 
 	/** 건수 */
-	public int count;
+	private int count;
 
+	/**
+	 * @return 시작일
+	 */
 	public String getFrom() {
 		return from;
 	}
 
-	public void setFrom(String from) {
+	/**
+	 * @param from
+	 *            시작일
+	 */
+	public void setFrom(final String from) {
 		this.from = from;
 	}
 
+	/**
+	 * @return 종요일
+	 */
 	public String getTo() {
 		return to;
 	}
 
-	public void setTo(String to) {
+	/**
+	 * @param to
+	 *            종요일
+	 */
+	public void setTo(final String to) {
 		this.to = to;
 	}
 
+	/**
+	 * @return 건수
+	 */
 	public int getCount() {
 		return count;
 	}
 
-	public void setCount(int count) {
+	/**
+	 * @param count
+	 *            건수
+	 */
+	public void setCount(final int count) {
 		this.count = count;
 	}
 

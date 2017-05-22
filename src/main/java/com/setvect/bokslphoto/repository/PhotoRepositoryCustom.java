@@ -16,20 +16,19 @@ import com.setvect.bokslphoto.vo.PhotoVo;
 public interface PhotoRepositoryCustom {
 
 	/**
-	 * 사진 목록
+	 * @param pageCondition
+	 *            조회 조건
+	 * @return 사진 목록
 	 */
 	public GenericPage<PhotoVo> getPhotoPagingList(PhotoSearchParam pageCondition);
 
 	/**
-	 * 디렉토리 정보
+	 * @return 디렉토리 정보
 	 */
 	public Map<String, Integer> getPhotoDirectoryList();
 
 	/**
-	 * 날짜별 사진 건수
-	 *
-	 * @param pageCondition
-	 * @return
+	 * @return 날짜별 사진 건수
 	 */
 	public List<ImmutablePair<Date, Integer>> getGroupShotDate();
 

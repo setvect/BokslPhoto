@@ -14,9 +14,13 @@ import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.vo.UserVo;
 
+/**
+ * Spring security에 사용할 사용자 데이터를 조회 하는 ㄴ서비스
+ */
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
+	/** 사용자 데이터 조회용 */
 	@Autowired
 	private UserRepository userDao;
 
@@ -32,7 +36,14 @@ public class MyUserDetailsService implements UserDetailsService {
 		return userDetail;
 	}
 
-	private static User buildUserForAuthentication(UserVo user, List<GrantedAuthority> authorities) {
+	/**
+	 * @param user
+	 *            로그인 사용자
+	 * @param authorities
+	 *            권한 정보
+	 * @return spring security에 적용할 사용자 인스턴스
+	 */
+	private static User buildUserForAuthentication(final UserVo user, final List<GrantedAuthority> authorities) {
 		return new User(user.getUserId(), user.getPassword(), !user.isDeleteF(), true, true, true, authorities);
 	}
 }

@@ -23,11 +23,12 @@ import com.setvect.bokslphoto.vo.PhotoVo;
  * 사진 검색 조건
  */
 public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
+	/** JPA DB 세션 */
 	@PersistenceContext
 	private EntityManager em;
 
 	@Override
-	public GenericPage<PhotoVo> getPhotoPagingList(PhotoSearchParam pageCondition) {
+	public GenericPage<PhotoVo> getPhotoPagingList(final PhotoSearchParam pageCondition) {
 		String queryStatement = "select count(*) from PhotoVo p " + BokslPhotoConstant.SQL_WHERE;
 		Query queryCount = makeQueryWithWhere(pageCondition, queryStatement);
 		int totalCount = ((Long) queryCount.getSingleResult()).intValue();
@@ -77,7 +78,10 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 		List<ImmutablePair<Date, Integer>> result = resultList.stream().map(p -> {
 			Object[] v = p;
-			Date date = v[0] == null ? null : DateUtil.getDate((String) v[0], "yyyyMMdd");
+			Date date = null;
+			if (v[0] != null) {
+				date = DateUtil.getDate((String) v[0], "yyyyMMdd");
+			}
 			Number right = (Number) v[1];
 			@SuppressWarnings("rawtypes")
 			ImmutablePair<Date, Integer> pair = new ImmutablePair(date, right.intValue());
@@ -86,7 +90,14 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		return result;
 	}
 
-	private Query makeQueryWithWhere(PhotoSearchParam pageCondition, String queryStatement) {
+	/**
+	 * @param pageCondition
+	 *            검색 조건
+	 * @param queryStatement
+	 *            기본 쿼리
+	 * @return Where조건이 포함된 질의
+	 */
+	private Query makeQueryWithWhere(final PhotoSearchParam pageCondition, final String queryStatement) {
 		String where = " WHERE 1=1 ";
 		if (pageCondition.isDateBetween()) {
 			where += " AND p.shotDate BETWEEN :from and :to ";

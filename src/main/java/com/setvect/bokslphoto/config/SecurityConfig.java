@@ -15,27 +15,31 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 
 import com.setvect.bokslphoto.BokslPhotoConstant;
 
+/**
+ * 보안 관련(spring security) 설정.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	/** 사용자 정보 관리. */
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Override
 	@Autowired
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+	public void configure(final AuthenticationManagerBuilder auth) throws Exception {
 		PasswordEncoder passwordEncoder = passwordEncoder();
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 
 	@Override
-	public void configure(WebSecurity web) throws Exception {
+	public void configure(final WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/static/**");
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	protected void configure(final HttpSecurity http) throws Exception {
 		http.authorizeRequests()//
 				.antMatchers("/photo/**").access("hasRole('ROLE_ADMIN')")//
 				// 아래 코드 넣으면 로그인 시 에러 남. 그 이후에 에러 안남.
@@ -51,6 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.rememberMeServices(tokenBasedRememberMeServices());
 	}
 
+	/**
+	 * @return rememberMe 토근 생성 방식
+	 */
 	@Bean
 	public TokenBasedRememberMeServices tokenBasedRememberMeServices() {
 		TokenBasedRememberMeServices tokenBasedRememberMeServices = new TokenBasedRememberMeServices(
@@ -59,6 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return tokenBasedRememberMeServices;
 	}
 
+	/**
+	 * @return 패스워드 암호화
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
