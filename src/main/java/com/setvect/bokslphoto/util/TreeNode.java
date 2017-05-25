@@ -12,38 +12,61 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Tree 자료구조
+ *
+ * @param <T>
+ *            Tree 항목
  */
 public class TreeNode<T> implements Iterable<TreeNode<T>> {
+	/** 항목 */
 	private T data;
+	/** 부모 항목 */
 	@JsonIgnore
 	private TreeNode<T> parent;
+	/** 자식 항목 */
 	private List<TreeNode<T>> children;
 
 	/**
 	 * 최초 루트 만들 때
 	 *
 	 * @param data
+	 *            최상의 루트 항목
 	 */
-	public TreeNode(T data) {
+	public TreeNode(final T data) {
 		this.data = data;
 		this.children = new ArrayList<TreeNode<T>>();
 	}
 
-	public TreeNode<T> addChild(T child) {
+	/**
+	 * 자식 항목 추가
+	 *
+	 * @param child
+	 *            자식 항목
+	 * @return 자식 노드
+	 */
+	public TreeNode<T> addChild(final T child) {
 		TreeNode<T> childNode = new TreeNode<T>(child);
 		childNode.parent = this;
 		this.children.add(childNode);
 		return childNode;
 	}
 
+	/**
+	 * @return 자식 노드
+	 */
 	public List<TreeNode<T>> getChildren() {
 		return Collections.unmodifiableList(children);
 	}
 
+	/**
+	 * @return 부모 노드
+	 */
 	public TreeNode<T> getParent() {
 		return parent;
 	}
 
+	/**
+	 * @return 노드 값
+	 */
 	public T getData() {
 		return data;
 	}
@@ -51,7 +74,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	/**
 	 * 트리 레벨. 0부터 시작
 	 *
-	 * @return
+	 * @return 트리 레벨. 0부터 시작
 	 */
 	@JsonIgnore
 	public int getLevel() {
@@ -87,10 +110,13 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	}
 
 	/**
+	 * 해당 값의 서브 로드를 반환
+	 *
 	 * @param data
-	 * @return
+	 *            찾기 위한 값
+	 * @return 노드 값에 서브 노드
 	 */
-	public TreeNode<T> getTreeNode(T data) {
+	public TreeNode<T> getTreeNode(final T data) {
 		List<TreeNode<T>> list = exploreTree();
 		Optional<TreeNode<T>> result = list.stream().filter(p -> p.data.equals(data)).findAny();
 		return result.orElse(null);
@@ -107,6 +133,9 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 		return nodeList.iterator();
 	}
 
+	/**
+	 * @return 폴더 트리 형태로 구성된 문자열
+	 */
 	public String printData() {
 		StringBuffer result = new StringBuffer();
 		Iterator<TreeNode<T>> iter = iterator();
@@ -121,7 +150,7 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 	/**
 	 * 트리 전체를 탐색
 	 *
-	 * @return
+	 * @return 트리 전체를 탐색
 	 */
 	public List<TreeNode<T>> exploreTree() {
 		TreeNode<T> currentNode = TreeNode.this;
@@ -130,7 +159,13 @@ public class TreeNode<T> implements Iterable<TreeNode<T>> {
 		return nodeList;
 	}
 
-	private void addNode(TreeNode<T> node, List<TreeNode<T>> nodeList) {
+	/**
+	 * @param node
+	 *            추가할 노드
+	 * @param nodeList
+	 *            추가 대상 노드 목록
+	 */
+	private void addNode(final TreeNode<T> node, final List<TreeNode<T>> nodeList) {
 		nodeList.add(node);
 		node.children.stream().forEach(p -> addNode(p, nodeList));
 	}

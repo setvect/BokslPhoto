@@ -1,10 +1,8 @@
 package com.setvect.bokslphoto.vo;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,10 +12,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -75,7 +73,7 @@ public class PhotoVo {
 	@Column(name = "REG_DATE", nullable = false)
 	private Date regData;
 
-	/** */
+	/** 해당 사진이 속한 폴더 */
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "TBBC_MAPPING", joinColumns = @JoinColumn(name = "PHOTO_ID"), inverseJoinColumns = @JoinColumn(name = "FOLDER_SEQ"))
 	private Set<FolderVo> folders;
@@ -90,105 +88,190 @@ public class PhotoVo {
 		MANUAL
 	}
 
+	/**
+	 * @return MD5 값
+	 */
 	public String getPhotoId() {
 		return photoId;
 	}
 
-	public void setPhotoId(String photoId) {
+	/**
+	 * @param photoId
+	 *            MD5 값
+	 */
+	public void setPhotoId(final String photoId) {
 		this.photoId = photoId;
 	}
 
+	/**
+	 * @return 파일경로
+	 */
 	public String getDirectory() {
 		return directory;
 	}
 
-	public void setDirectory(String path) {
+	/**
+	 * @param path
+	 *            파일경로
+	 */
+	public void setDirectory(final String path) {
 		this.directory = path;
 	}
 
+	/**
+	 * @return 파일이름
+	 */
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	/**
+	 * @param name
+	 *            파일이름
+	 */
+	public void setName(final String name) {
 		this.name = name;
 	}
 
+	/**
+	 * @return 촬영일
+	 */
 	public Date getShotDate() {
 		return shotDate;
 	}
 
-	public void setShotDate(Date shotDate) {
+	/**
+	 * @param shotDate
+	 *            촬영일
+	 */
+	public void setShotDate(final Date shotDate) {
 		this.shotDate = shotDate;
 	}
 
+	/**
+	 * @return 촬영일 데이터 형태
+	 */
 	public ShotDateType getShotDataType() {
 		return shotDataType;
 	}
 
-	public void setShotDataType(ShotDateType shotDataType) {
+	/**
+	 * @param shotDataType
+	 *            촬영일 데이터 형태
+	 */
+	public void setShotDataType(final ShotDateType shotDataType) {
 		this.shotDataType = shotDataType;
 	}
 
+	/**
+	 * @return 메모
+	 */
 	public String getMemo() {
 		return memo;
 	}
 
-	public void setMemo(String memo) {
+	/**
+	 * @param memo
+	 *            메모
+	 */
+	public void setMemo(final String memo) {
 		this.memo = memo;
 	}
 
+	/**
+	 * @return 보호 이미지
+	 */
 	public boolean isProtectF() {
 		return protectF;
 	}
 
-	public void setProtectF(boolean protectF) {
+	/**
+	 * @param protectF
+	 *            보호 이미지
+	 */
+	public void setProtectF(final boolean protectF) {
 		this.protectF = protectF;
 	}
 
+	/**
+	 * @return 등록일
+	 */
 	public Date getRegData() {
 		return regData;
 	}
 
-	public void setRegData(Date regData) {
+	/**
+	 * @param regData
+	 *            등록일
+	 */
+	public void setRegData(final Date regData) {
 		this.regData = regData;
 	}
 
+	/**
+	 * @return 해당 사진이 속한 폴더
+	 */
 	public Set<FolderVo> getFolders() {
 		return folders;
 	}
 
-	public void setFolders(Set<FolderVo> folders) {
+	/**
+	 * @param folders
+	 *            해당 사진이 속한 폴더
+	 */
+	public void setFolders(final Set<FolderVo> folders) {
 		this.folders = folders;
 	}
 
-	public void addFolder(FolderVo folder) {
+	/**
+	 * @param folder
+	 *            폴더 등록
+	 */
+	public void addFolder(final FolderVo folder) {
 		if (folders == null) {
 			folders = new HashSet<>();
 		}
 		folders.add(folder);
 	}
 
-	public void removeFolder(FolderVo f) {
+	/**
+	 * @param f
+	 *            삭제 할 폴더
+	 */
+	public void removeFolder(final FolderVo f) {
 		if (folders == null) {
 			return;
 		}
 		folders.remove(f);
 	}
 
+	/**
+	 * @return 위도
+	 */
 	public Double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(Double latitude) {
+	/**
+	 * @param latitude
+	 *            위도
+	 */
+	public void setLatitude(final Double latitude) {
 		this.latitude = latitude;
 	}
 
+	/**
+	 * @return 경도
+	 */
 	public Double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(Double longitude) {
+	/**
+	 * @param longitude
+	 *            경도
+	 */
+	public void setLongitude(final Double longitude) {
 		this.longitude = longitude;
 	}
 

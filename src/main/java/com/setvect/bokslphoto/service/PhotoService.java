@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -329,7 +328,7 @@ public class PhotoService {
 	 *            false 동일한 md5를 같는 파일이 있으면 현재 업로드 취소. 업로드 파일은 삭제함.
 	 * @return 저장 성공여부
 	 */
-	public boolean savePhoto(File imageFile, boolean overwrite) {
+	public boolean savePhoto(final File imageFile, final boolean overwrite) {
 		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
 
 		File dirFile = imageFile.getParentFile();

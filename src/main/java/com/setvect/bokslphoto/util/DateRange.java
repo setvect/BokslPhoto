@@ -77,10 +77,10 @@ public class DateRange implements Comparable<DateRange> {
 		cal.set(Calendar.DATE, 1);
 		cal.add(Calendar.MONTH, 1);
 		cal.add(Calendar.DATE, -1);
-		end = DateUtil.getDate(cal);
+		end = cal.getTime();
 
 		cal.set(Calendar.DATE, 1);
-		start = DateUtil.getDate(cal);
+		start = cal.getTime();
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class DateRange implements Comparable<DateRange> {
 	 * @param ed
 	 *            종료날짜
 	 */
-	public DateRange(String st, String ed) {
+	public DateRange(final String st, final String ed) {
 		this(st, ed, "yyyy-MM-dd");
 	}
 
@@ -105,7 +105,7 @@ public class DateRange implements Comparable<DateRange> {
 	 * @param format
 	 *            날짜 패턴 "yyyy, MM, dd, HH, mm, ss and more"
 	 */
-	public DateRange(String st, String ed, String format) {
+	public DateRange(final String st, final String ed, final String format) {
 		start = DateUtil.getDate(st, format);
 		end = DateUtil.getDate(ed, format);
 	}
@@ -118,7 +118,7 @@ public class DateRange implements Comparable<DateRange> {
 	 * @param ed
 	 *            종료일
 	 */
-	public DateRange(Date st, Date ed) {
+	public DateRange(final Date st, final Date ed) {
 		start = st;
 		end = ed;
 	}
@@ -156,7 +156,7 @@ public class DateRange implements Comparable<DateRange> {
 	 *            날짜 패턴 "yyyy, MM, dd, HH, mm, ss and more"
 	 * @return 종료날짜를 포맷 형태로 리턴합니다.
 	 */
-	public String getEndString(String format) {
+	public String getEndString(final String format) {
 		return DateUtil.getFormatString(end, format);
 	}
 
@@ -165,7 +165,7 @@ public class DateRange implements Comparable<DateRange> {
 	 *            날짜 패턴 "yyyy, MM, dd, HH, mm, ss and more"
 	 * @return 종료날짜를 포맷 형태로 리턴합니다.
 	 */
-	public String getStartString(String format) {
+	public String getStartString(final String format) {
 		return DateUtil.getFormatString(start, format);
 	}
 
@@ -179,7 +179,7 @@ public class DateRange implements Comparable<DateRange> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -214,7 +214,7 @@ public class DateRange implements Comparable<DateRange> {
 	}
 
 	@Override
-	public int compareTo(DateRange o) {
+	public int compareTo(final DateRange o) {
 		int c = this.start.compareTo(o.start);
 		if (c != 0) {
 			return c;

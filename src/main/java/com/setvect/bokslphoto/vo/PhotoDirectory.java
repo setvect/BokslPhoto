@@ -17,21 +17,36 @@ public class PhotoDirectory {
 	/** 이미지 갯수 */
 	private final int photoCount;
 
-	public PhotoDirectory(String fullPath, int photoCount) {
+	/**
+	 * @param fullPath
+	 *            기준 경로로 부터 전체 패스
+	 * @param photoCount
+	 *            경로에 속한 사진 갯수
+	 */
+	public PhotoDirectory(final String fullPath, final int photoCount) {
 		this.fullPath = fullPath;
 		File f = new File(fullPath);
 		this.name = f.getName();
 		this.photoCount = photoCount;
 	}
 
+	/**
+	 * @return 기준 경로로 부터 전체 패스
+	 */
 	public String getFullPath() {
 		return fullPath;
 	}
 
+	/**
+	 * @return 마지막 경로 이름
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @return 해당 경로에 속한 사진 갯수
+	 */
 	public int getPhotoCount() {
 		return photoCount;
 	}
@@ -45,19 +60,24 @@ public class PhotoDirectory {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		PhotoDirectory other = (PhotoDirectory) obj;
 		if (fullPath == null) {
-			if (other.fullPath != null)
+			if (other.fullPath != null) {
 				return false;
-		} else if (!fullPath.equals(other.fullPath))
+			}
+		} else if (!fullPath.equals(other.fullPath)) {
 			return false;
+		}
 		return true;
 	}
 

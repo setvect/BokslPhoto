@@ -20,60 +20,99 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "TBBB_FOLDER")
 public class FolderVo {
+	/** 일련번호 */
 	@Id
 	@Column(name = "FOLDER_SEQ", nullable = false)
 	@GenericGenerator(name = "hibernate-increment", strategy = "increment")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate-increment")
 	private int folderSeq;
 
+	/** 부모 일련번호 */
 	@Column(name = "PARENT_ID", nullable = false)
 	private int parentId;
 
+	/** 폴더 이름 */
 	@Column(name = "NAME", nullable = false, length = 50)
 	private String name;
 
+	/** 현재 분류에 소속된 사진 */
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders")
 	private List<PhotoVo> photos;
 
+	/**
+	 * @return 일련번호
+	 */
 	public int getFolderSeq() {
 		return folderSeq;
 	}
 
-	public void setFolderSeq(int folderSeq) {
+	/**
+	 * @param folderSeq
+	 *            일련번호
+	 */
+	public void setFolderSeq(final int folderSeq) {
 		this.folderSeq = folderSeq;
 	}
 
+	/**
+	 * @return 부모 일련번호
+	 */
 	public int getParentId() {
 		return parentId;
 	}
 
-	public void setParentId(int parentId) {
+	/**
+	 * @param parentId
+	 *            부모 일련번호
+	 */
+	public void setParentId(final int parentId) {
 		this.parentId = parentId;
 	}
 
+	/**
+	 * @return 폴더 이름
+	 */
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	/**
+	 * @param name
+	 *            폴더 이름
+	 */
+	public void setName(final String name) {
 		this.name = name;
 	}
 
+	/**
+	 * @return 현재 분류에 소속된 사진
+	 */
 	public List<PhotoVo> getPhotos() {
 		return photos;
 	}
 
-	public void setPhotos(List<PhotoVo> photos) {
+	/**
+	 * @param photos
+	 *            현재 분류에 소속된 사진
+	 */
+	public void setPhotos(final List<PhotoVo> photos) {
 		this.photos = photos;
 	}
 
-	public void addPhoto(PhotoVo photo) {
+	/**
+	 * @param photo
+	 *            현재 분류에 소속된 사진
+	 */
+	public void addPhoto(final PhotoVo photo) {
 		if (photos == null) {
 			photos = new ArrayList<>();
 		}
 		photos.add(photo);
 	}
 
+	/**
+	 * @return 현재 폴더에 속한 사진 갯수
+	 */
 	public int getPhotoCount() {
 		if (getPhotos() == null) {
 			return 0;
@@ -90,16 +129,20 @@ public class FolderVo {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		FolderVo other = (FolderVo) obj;
-		if (folderSeq != other.folderSeq)
+		if (folderSeq != other.folderSeq) {
 			return false;
+		}
 		return true;
 	}
 

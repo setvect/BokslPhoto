@@ -18,7 +18,7 @@ public class SearchListParam {
 	 * @param returnCount
 	 *            가져올 항목 갯수
 	 */
-	public SearchListParam(int startCursor, int returnCount) {
+	public SearchListParam(final int startCursor, final int returnCount) {
 		this.startCursor = startCursor;
 		this.returnCount = returnCount;
 	}
@@ -34,7 +34,7 @@ public class SearchListParam {
 	 * @param startCursor
 	 *            시작 커서 위치. (0부터 시작)
 	 */
-	public void setStartCursor(int startCursor) {
+	public void setStartCursor(final int startCursor) {
 		this.startCursor = startCursor;
 	}
 
@@ -49,7 +49,7 @@ public class SearchListParam {
 	 * @param endCursor
 	 *            the endCursor to set
 	 */
-	public void setReturnCount(int endCursor) {
+	public void setReturnCount(final int endCursor) {
 		this.returnCount = endCursor;
 	}
 

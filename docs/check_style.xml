@@ -7,7 +7,7 @@
 <!--
     Checkstyle-Configuration: setvect (Copy of Sun Checks)
     Description: 
-- 들여쓰기 tab 사용 허가   - 한 줄당 코드 라인 80 -> 140으로 변경   - package javadoc 제외 -CheckFirstSentence 제외 - NewlineAtEndOfFile 제외 - Design For Extension 제외 - HiddenField 조정(ingnorConstructorParameter, IgnoreSetter) - Redundant 조정(메소드 제외)
+- 들여쓰기 tab 사용 허가   - 한 줄당 코드 라인 80 -> 160으로 변경   - package javadoc 제외 -CheckFirstSentence 제외 - NewlineAtEndOfFile 제외 - Design For Extension 제외 - HiddenField 조정(ingnorConstructorParameter, IgnoreSetter) - Redundant 조정(메소드 제외) - Avoid inline conditionals 제외 - hidden field 조정 - magic number 조정
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -59,16 +59,23 @@
     <module name="LeftCurly"/>
     <module name="NeedBraces"/>
     <module name="RightCurly"/>
-    <module name="AvoidInlineConditionals"/>
+    <module name="AvoidInlineConditionals">
+      <property name="severity" value="ignore"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
     <module name="HiddenField">
+      <property name="tokens" value="VARIABLE_DEF"/>
       <property name="ignoreConstructorParameter" value="true"/>
       <property name="ignoreSetter" value="true"/>
     </module>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
-    <module name="MagicNumber"/>
+    <module name="MagicNumber">
+      <property name="tokens" value="NUM_DOUBLE,NUM_FLOAT,NUM_LONG"/>
+      <property name="constantWaiverParentToken" value="TYPECAST,METHOD_CALL,EXPR,ARRAY_INIT,UNARY_MINUS,UNARY_PLUS,ELIST,STAR,ASSIGN,PLUS,MINUS,DIV,LITERAL_NEW"/>
+    </module>
     <module name="MissingSwitchDefault"/>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
@@ -85,7 +92,7 @@
     <module name="TodoComment"/>
     <module name="UpperEll"/>
     <module name="LineLength">
-      <property name="max" value="140"/>
+      <property name="max" value="160"/>
     </module>
   </module>
   <module name="JavadocPackage">

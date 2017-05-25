@@ -14,43 +14,70 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 
+/**
+ * 권한
+ */
 @Entity
 @Table(name = "TBAB_ROLE")
 public class UserRoleVo {
+	/** 일련번호 */
 	@Id
 	@Column(name = "ROLE_SEQ")
 	@GenericGenerator(name = "hibernate-increment", strategy = "increment")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate-increment")
 	private int roleSeq;
 
+	/** 사용자 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "username", nullable = false)
 	private UserVo user;
 
+	/** 권한 이름 */
 	@Column(name = "ROLE", nullable = false, length = 20)
 	private String role;
 
+	/**
+	 * @return 일련번호
+	 */
 	public int getRoleSeq() {
 		return roleSeq;
 	}
 
-	public void setRoleSeq(int userRoleId) {
+	/**
+	 * @param userRoleId
+	 *            일련번호
+	 */
+	public void setRoleSeq(final int userRoleId) {
 		this.roleSeq = userRoleId;
 	}
 
+	/**
+	 * @return 사용자
+	 */
 	public UserVo getUser() {
 		return user;
 	}
 
-	public void setUser(UserVo user) {
+	/**
+	 * @param user
+	 *            사용자
+	 */
+	public void setUser(final UserVo user) {
 		this.user = user;
 	}
 
+	/**
+	 * @return 권한 이름
+	 */
 	public String getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	/**
+	 * @param role
+	 *            권한 이름
+	 */
+	public void setRole(final String role) {
 		this.role = role;
 	}
 
