@@ -19,6 +19,8 @@
 NEW_20170520: test coverage 100%, 동적 테스트
 	- 이미지 복사해서 DB로 로딩. - OK
 	- 이미지 샘플 데이터로 테스트 데이터로 구성. - OK
+	- 아래코드 동작 되게
+		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
 NEW_20170516: 지정된 아이피에서만 보호 이미지 보이게 함
 NEW_20170516: 지정된 아이피에서만 보호 이미지 해제 할 수 있음
 NEW_20170515: 사진 UI

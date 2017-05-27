@@ -79,10 +79,17 @@ public class MainTestBase {
 
 		photoService.retrievalPhotoAndSave();
 
-		FolderVo folder = new FolderVo();
-		folder.setParentId(1);
-		folder.setName("ROOT");
-		folderRepository.save(folder);
+		FolderVo folderRoot = new FolderVo();
+		folderRoot.setParentId(1);
+		folderRoot.setName("ROOT");
+		folderRepository.save(folderRoot);
+
+		FolderVo folderSub = new FolderVo();
+		folderSub.setParentId(folderRoot.getFolderSeq());
+		folderSub.setName("SUB");
+		folderRepository.save(folderSub);
+
+
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");

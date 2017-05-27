@@ -151,7 +151,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		System.out.println("-------------------------------");
 
 		folderList = folderRepository.findAll();
-		Assert.assertThat(folderList.size(), CoreMatchers.is(3));
+		Assert.assertThat(folderList.size(), CoreMatchers.is(4));
 
 		folderList.stream().forEach(p -> System.out.println(p));
 
