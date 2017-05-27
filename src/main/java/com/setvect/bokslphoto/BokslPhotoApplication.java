@@ -28,21 +28,6 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
 
-	/** 사용자. */
-	@Autowired
-	private UserRepository userRepository;
-
-	/** 폴더. */
-	@Autowired
-	private FolderRepository folderRepository;
-
-	/** 포토 서비스. */
-	@Autowired
-	private PhotoService photoService;
-
-	/** 암호화 인코더. */
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
 	/**
 	 * Application 시작점.
@@ -76,39 +61,4 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 		};
 	}
 
-	/**
-	 * 초기 값 등록.
-	 */
-	@SuppressWarnings("unused")
-	private void insertInitValue() {
-		photoService.retrievalPhotoAndSave();
-
-		FolderVo folder = new FolderVo();
-		folder.setParentId(1);
-		folder.setName("ROOT");
-		folderRepository.save(folder);
-
-		UserVo user = new UserVo();
-		user.setUserId("admin");
-		user.setName("관리자");
-		user.setEmail("a@abcde.com");
-
-		user.setDeleteF(false);
-
-		user.setPassword(passwordEncoder.encode("1234"));
-		Set<UserRoleVo> userRole = new HashSet<>();
-		UserRoleVo role = new UserRoleVo();
-		role.setRole("ROLE_ADMIN");
-		role.setUser(user);
-		userRole.add(role);
-		user.setUserRole(userRole);
-
-		role = new UserRoleVo();
-		role.setRole("ROLE_USER");
-		role.setUser(user);
-		userRole.add(role);
-		user.setUserRole(userRole);
-
-		userRepository.save(user);
-	}
 }

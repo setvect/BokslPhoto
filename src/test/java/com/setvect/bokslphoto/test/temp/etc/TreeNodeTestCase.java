@@ -1,4 +1,4 @@
-package com.setvect.bokslphoto.test.etc;
+package com.setvect.bokslphoto.test.temp.etc;
 
 import java.io.File;
 import java.util.Collections;

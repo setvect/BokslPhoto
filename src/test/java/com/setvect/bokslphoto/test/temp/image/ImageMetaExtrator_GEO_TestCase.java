@@ -1,4 +1,4 @@
-package com.setvect.bokslphoto.test.image;
+package com.setvect.bokslphoto.test.temp.image;
 
 import java.io.File;
 import java.io.IOException;

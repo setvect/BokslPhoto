@@ -13,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 
+/**
+ * spring 테스트를 위한 설정<br>
+ * spring과 연관된 테스트는 해당 클래스를 상속 한다.
+ */
 @RunWith(SpringRunner.class)
 @Transactional()
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -20,6 +24,8 @@ import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 @Rollback(true)
 public class MainTestBase {
 
+	/**
+	 */
 	@PropertySource("classpath:application.properties")
 	@Configuration
 	public static class TestConfiguration {

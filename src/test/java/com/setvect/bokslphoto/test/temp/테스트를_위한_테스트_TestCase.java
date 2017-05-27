@@ -1,4 +1,4 @@
-package com.setvect.bokslphoto.test;
+package com.setvect.bokslphoto.test.temp;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.setvect.bokslphoto.test.etc;
+package com.setvect.bokslphoto.test.temp.etc;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
