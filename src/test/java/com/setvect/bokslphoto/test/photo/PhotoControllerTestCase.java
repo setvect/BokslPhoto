@@ -44,7 +44,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 	@Autowired
 	private FolderRepository folderRepository;
 
-	// @Test
+	@Test
 	public void testUploadPhoto() throws Exception {
 		File image = new File("./temp/a.jpg");
 		InputStream input = new FileInputStream(image);
@@ -65,7 +65,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 	 *
 	 * @throws Exception
 	 */
-	// @Test
+	@Test
 	public void testRelationFolder() throws Exception {
 		List<PhotoVo> photoList = photoRepository.findAll();
 		System.out.println("PhotoCount: " + photoList.size());
