@@ -20,14 +20,7 @@ import com.setvect.bokslphoto.vo.UserRoleVo;
 /**
  * 어플리케이션 전반에 사용되는 공통 함수 제공.
  */
-public final class ApplicationUtil {
-
-	/**
-	 * not instance.
-	 */
-	private ApplicationUtil() {
-
-	}
+public abstract class ApplicationUtil {
 
 	/**
 	 * MD5 변환.

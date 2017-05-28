@@ -15,7 +15,7 @@ import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.vo.UserVo;
 
 /**
- * Spring security에 사용할 사용자 데이터를 조회 하는 ㄴ서비스
+ * Spring security에 사용할 사용자 데이터를 조회 하는 서비스
  */
 @Service
 public class MyUserDetailsService implements UserDetailsService {

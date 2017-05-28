@@ -90,14 +90,6 @@ public class PhotoController {
 	}
 
 	/**
-	 * @return 403 에러 페이지
-	 */
-	@RequestMapping("/403")
-	public String accessDenied() {
-		return "errors/403";
-	}
-
-	/**
 	 * @return 사진관리 메인 view 페이지 오픈
 	 */
 	@RequestMapping("/photo")

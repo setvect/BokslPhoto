@@ -239,6 +239,7 @@ public class PhotoService {
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 		return date;
 	}

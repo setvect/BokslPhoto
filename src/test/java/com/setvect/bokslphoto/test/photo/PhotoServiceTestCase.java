@@ -207,7 +207,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 			System.out.printf("%s(%s)\n", file, file.exists());
 		});
 
-		Assert.assertThat(deleteFiles.size(), CoreMatchers.is(0));
+		Assert.assertThat(deleteFiles.size(), CoreMatchers.is(1));
 		System.out.println("끝. ====================");
 	}
 
@@ -217,7 +217,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 	@Test
 	public void testFindDuplicate() {
 		Map<String, List<File>> result = photoService.findDuplicate();
-		Assert.assertThat(result.size(), CoreMatchers.is(0));
+		Assert.assertThat(result.size(), CoreMatchers.is(1));
 		result.entrySet().stream().forEach(p -> {
 			System.out.println(p.getKey());
 			p.getValue().stream().map(file -> "\t" + file.getAbsolutePath()).forEach(System.out::println);
