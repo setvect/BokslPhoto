@@ -50,6 +50,9 @@ public final class BokslPhotoConstant {
 
 		/** 허용 이미지 파일 확장자. */
 		public static final Set<String> ALLOW = new HashSet<>(Arrays.asList("jpg", "png", "gif"));
+
+		/** 보호 이미지 접근 및 해제를 할 수 있는 아이피 */
+		public static final String ALLOW_IP = EnvirmentProperty.getString("com.setvect.photo.allow_ip");
 	}
 
 	/**

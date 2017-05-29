@@ -20,7 +20,6 @@ NEW_20170528: maven test coverage
 NEW_20170527:아래코드 동작 되게
 		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
 NEW_20170516: 지정된 아이피에서만 보호 이미지 보이게 함
-NEW_20170516: 지정된 아이피에서만 보호 이미지 해제 할 수 있음
 NEW_20170515: 사진 UI
 
 
@@ -44,6 +43,7 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170516(20170529): 지정된 아이피에서만 보호 이미지 해제 할 수 있음
 NEW_20170520: test coverage 100%, 동적 테스트 
 	=> 100%까지는 아니지만 필요한 건 거의 다 했다. 이정도 까지만 하자.. ㅡㅡ;
 	- 이미지 복사해서 DB로 로딩. - OK

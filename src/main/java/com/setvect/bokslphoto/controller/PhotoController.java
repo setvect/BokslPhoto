@@ -274,10 +274,17 @@ public class PhotoController {
 	@RequestMapping("/photo/updateProtect.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> updateProtect(@RequestParam("photoId") final String photoId,
-			@RequestParam("protect") final Boolean protect) {
+			@RequestParam("protect") final Boolean protect, HttpServletRequest request) {
 
 		PhotoVo p = photoRepository.findOne(photoId);
 		if (p == null) {
+			return new ResponseEntity<>(false, HttpStatus.OK);
+		}
+
+		String clientIp = request.getRemoteAddr();
+		// 보호 이미지 해제는 허가된 IP에서만 작업 할 수 있음.
+		if (!protect && !clientIp.equals(BokslPhotoConstant.Photo.ALLOW_IP)) {
+			logger.info("not allow ip:{}", clientIp);
 			return new ResponseEntity<>(false, HttpStatus.OK);
 		}
 		p.setProtectF(protect);

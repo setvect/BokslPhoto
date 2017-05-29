@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -18,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -34,6 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.controller.GroupByDate;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
@@ -349,11 +351,16 @@ public class PhotoControllerTestCase extends MainTestBase {
 	public void testProtect() throws Exception {
 		List<PhotoVo> photoList = photoRepository.findAll();
 
+		// 보호 이미지 셋팅은 IP와 상관 없이 처리
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
 		String photoId = photoList.get(0).getPhotoId();
 		callRequest.param("photoId", photoId);
 		callRequest.param("protect", "true");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
+			return paramMockHttpServletRequest;
+		});
 		ResultActions resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		resultActions.andExpect(content().string("true"));
@@ -362,17 +369,36 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
 
+		// 비 허가 IP
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
 		photoId = photoList.get(0).getPhotoId();
 		callRequest.param("photoId", photoId);
 		callRequest.param("protect", "false");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
+			return paramMockHttpServletRequest;
+		});
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("false"));
+		photo = photoRepository.findOne(photoId);
+		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
+
+		// 허가 IP 접근
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
+		photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("protect", "false");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr(BokslPhotoConstant.Photo.ALLOW_IP);
+			return paramMockHttpServletRequest;
+		});
 		resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		resultActions.andExpect(content().string("true"));
-
 		photo = photoRepository.findOne(photoId);
-
 		Assert.assertFalse("보호 이미지 여부", photo.isProtectF());
 
 		System.out.println("끝.");
@@ -422,4 +448,5 @@ public class PhotoControllerTestCase extends MainTestBase {
 		Assert.assertThat(photo.getMemo(), CoreMatchers.is(memo));
 		System.out.println("끝.");
 	}
+
 }
