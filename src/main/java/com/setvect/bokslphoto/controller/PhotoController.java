@@ -237,6 +237,17 @@ public class PhotoController {
 	}
 
 	// 데이터 수정
+	/**
+	 * 이미지 탐색 후 저장
+	 *
+	 * @return 처리결과
+	 */
+	@RequestMapping("/photo/retrievalAndSave.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> retrievalAndSave() {
+		photoService.retrievalPhotoAndSave();
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
 
 	/**
 	 * 메모 정보 업데이트
@@ -269,12 +280,14 @@ public class PhotoController {
 	 *            사진 파일 아이디
 	 * @param protect
 	 *            보호 여부
+	 * @param request
+	 *            request
 	 * @return 처리 결과
 	 */
 	@RequestMapping("/photo/updateProtect.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> updateProtect(@RequestParam("photoId") final String photoId,
-			@RequestParam("protect") final Boolean protect, HttpServletRequest request) {
+			@RequestParam("protect") final Boolean protect, final HttpServletRequest request) {
 
 		PhotoVo p = photoRepository.findOne(photoId);
 		if (p == null) {

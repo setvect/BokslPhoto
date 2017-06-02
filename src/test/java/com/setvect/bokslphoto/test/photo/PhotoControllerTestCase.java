@@ -256,7 +256,29 @@ public class PhotoControllerTestCase extends MainTestBase {
 			private static final long serialVersionUID = 1L;
 		}.getType());
 		Assert.assertThat(result.size(), CoreMatchers.is(0));
+	}
 
+	/**
+	 * 이미지 재탐색 후 저장
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testRetrievalAndSave() throws Exception {
+		List<PhotoVo> before = photoRepository.findAll();
+
+		// 첫 번째
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/retrievalAndSave.do"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		resultActions.andExpect(content().string("true"));
+
+		List<PhotoVo> after = photoRepository.findAll();
+
+		Assert.assertThat(before.size(), CoreMatchers.is(after.size()));
+
+		System.out.printf("before size: %,d, after size: %,d\n", before.size(), after.size());
 	}
 
 	/**

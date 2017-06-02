@@ -1,24 +1,13 @@
 package com.setvect.bokslphoto;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.setvect.bokslphoto.repository.FolderRepository;
-import com.setvect.bokslphoto.repository.UserRepository;
-import com.setvect.bokslphoto.service.PhotoService;
-import com.setvect.bokslphoto.vo.FolderVo;
-import com.setvect.bokslphoto.vo.UserRoleVo;
-import com.setvect.bokslphoto.vo.UserVo;
 
 /**
  * Spring boot application 시작점.
@@ -57,8 +46,6 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 		return () -> {
 			URL configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
 			EnvirmentProperty.init(configUrl);
-			// insertInitValue();
 		};
 	}
-
 }
