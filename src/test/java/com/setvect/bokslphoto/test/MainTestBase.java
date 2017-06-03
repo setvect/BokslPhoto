@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ import com.setvect.bokslphoto.vo.UserVo;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
 @Rollback(true)
+@TestPropertySource(locations="classpath:test.properties")
 public class MainTestBase {
 
 	/** */

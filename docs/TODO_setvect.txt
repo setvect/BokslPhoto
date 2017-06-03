@@ -46,6 +46,7 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170604: junit test할 때 별도 properties 만듦
 NEW_20170603: Spring boot debug에서 jsp hot swapping 되게
 NEW_20170603: Spring boot debug에서 java hot swapping 되게
 	=> 디버그로 하면 별 설정 없이 됨.
