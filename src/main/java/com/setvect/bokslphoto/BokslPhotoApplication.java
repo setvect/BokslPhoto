@@ -2,10 +2,17 @@ package com.setvect.bokslphoto;
 
 import java.net.URL;
 
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
@@ -16,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 public class BokslPhotoApplication extends SpringBootServletInitializer {
 	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
-
 
 	/**
 	 * Application 시작점.
@@ -46,6 +52,35 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 		return () -> {
 			URL configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
 			EnvirmentProperty.init(configUrl);
+		};
+	}
+
+	/**
+	 * @return JSP 변경 체크 여부 설정
+	 */
+	@Bean
+	public EmbeddedServletContainerCustomizer servletContainerCustomizer() {
+		return new EmbeddedServletContainerCustomizer() {
+			@Override
+			public void customize(final ConfigurableEmbeddedServletContainer container) {
+				if (container instanceof TomcatEmbeddedServletContainerFactory) {
+					customizeTomcat((TomcatEmbeddedServletContainerFactory) container);
+				}
+			}
+
+			private void customizeTomcat(final TomcatEmbeddedServletContainerFactory tomcatFactory) {
+				tomcatFactory.addContextCustomizers(new TomcatContextCustomizer() {
+
+					@Override
+					public void customize(final Context context) {
+						Container jsp = context.findChild("jsp");
+						if (jsp instanceof Wrapper) {
+							// true면 변경 체크함, false 안함.
+							((Wrapper) jsp).addInitParameter("development", "true");
+						}
+					}
+				});
+			}
 		};
 	}
 }

@@ -24,8 +24,6 @@ PBM_20170603:아래 문제 해결
 			f.addPhoto(photoList2.getList().get(0));
 
 
-NEW_20170603: Spring boot debug에서 jsp hot swapping 되게
-NEW_20170603: Spring boot debug에서 java hot swapping 되게
 NEW_20170527: 아래코드 동작 되게
 		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
 NEW_20170516: 지정된 아이피에서만 보호 이미지 보이게 함
@@ -48,6 +46,9 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170603: Spring boot debug에서 jsp hot swapping 되게
+NEW_20170603: Spring boot debug에서 java hot swapping 되게
+	=> 디버그로 하면 별 설정 없이 됨.
 NEW_20170603: folder 목록 표시 UI
 NEW_20170603: folder 목록 처리
 NEW_20170601: maven으로 checkstyle 할 수 있게.
