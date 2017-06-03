@@ -72,4 +72,11 @@ import com.setvect.bokslphoto.EnvirmentProperty;
 			};
 		}
 	}
-			
+	
+	
+	===========================
+	
+	update TBBB_FOLDER  SET NAME = '서브1'  where FOLDER_SEQ = 2
+	INSERT INTO TBBB_FOLDER VALUES(3, '서브2', 1);
+
+	INSERT INTO TBBC_MAPPING VALUES('ad3e65a817d3cbe77af598914d088692', 4)

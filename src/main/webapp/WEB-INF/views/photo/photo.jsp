@@ -36,6 +36,16 @@
 			redirectTo : "/list"
 		});
 	});
+
+	// 폴더 구조
+	photoApp.controller('photoFolderController', ['$scope', '$http', function($scope, $http, $sce) {
+		$scope.photoFolder;
+		
+		$http.get("${pageContext.request.contextPath}/photo/folder.json").then(function (success){
+			$scope.photoFolder = success.data;
+			console.log($scope.photoFolder);
+		});
+	}]);
 	
 	// 디렉토리 구조
 	photoApp.controller('photoDirectoryController', ['$scope', '$http', function($scope, $http, $sce) {
@@ -45,6 +55,7 @@
 			$scope.photoDiretory = success.data;
 		});
 	}]);
+
 	
 	// 사진 목록
 	photoApp.controller('photoListController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
@@ -93,10 +104,17 @@
 	</script>
 </head>
 <body class="theme-cyan" data-ng-app="photoApp">
-	<script type="text/ng-template" id="field_renderer.html">
+	<script type="text/ng-template" id="folder_renderer.html">
 		<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span class="label label-info">({{dir.data.photoCount}})</span></a>
 		<ul class="ml-menu">
-			<li ng-repeat="dir in dir.children" ng-include="'field_renderer.html'" photo-dir-directive></li>
+			<li ng-repeat="dir in dir.children" ng-include="'folder_renderer.html'" photo-folder-directive></li>
+		</ul>
+	</script>
+
+	<script type="text/ng-template" id="directory_renderer.html">
+		<a href="javascript:void(0);" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span class="label label-info">({{dir.data.photoCount}})</span></a>
+		<ul class="ml-menu">
+			<li ng-repeat="dir in dir.children" ng-include="'directory_renderer.html'" photo-dir-directive></li>
 		</ul>
 	</script>
 
@@ -160,22 +178,18 @@
 					<li class="{{menu == 'timeList' ? 'active' : ''}}"> 
 						<a href="#!/list"> <i class="material-icons">date_range</i> <span>시간 흐름 순</span></a>
 					</li>
-					<li>
+					<li data-ng-controller="photoFolderController">
 						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류 기준</span></a>
 						<ul class="ml-menu">
-							<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-							<li><a href="javascript:void(0);"> <span>Menu Item - 2</span></a></li>
-							<li><a href="javascript:void(0);" class="menu-toggle"> <span>Level - 2</span></a>
-								<ul class="ml-menu">
-									<li><a href="javascript:void(0);"> <span>Menu Item</span></a></li>
-								</ul>
+							<li data-ng-repeat="dir in photoFolder.children" data-ng-include="'folder_renderer.html'" photo-folder-directive>
+								<a href="javascript:void(0);"> <span>{{dir.data.name}}</span></a>
 							</li>
 						</ul>
 					</li>
 					<li data-ng-controller="photoDirectoryController">
 						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_open</i> <span>디렉토리 기준</span></a>
 						<ul class="ml-menu">
-							<li data-ng-repeat="dir in photoDiretory.children" data-ng-include="'field_renderer.html'" photo-dir-directive>
+							<li data-ng-repeat="dir in photoDiretory.children" data-ng-include="'directory_renderer.html'" photo-dir-directive>
 								<a href="javascript:void(0);"> <span>{{dir.data.name}}</span></a>
 							</li>
 						</ul>

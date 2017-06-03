@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 사진 분류 폴더
  */
@@ -37,6 +39,7 @@ public class FolderVo {
 
 	/** 현재 분류에 소속된 사진 */
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders")
+	@JsonIgnore
 	private List<PhotoVo> photos;
 
 	/**
