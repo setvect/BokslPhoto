@@ -16,6 +16,14 @@
 	[GPS] GPS Longitude - 130° 55' 9.85"
 	
 [진행 해야된는 것]
+NEW_20170603: folder 목록 UI
+PBM_20170603:아래 문제 해결 
+			// TODO 이것 안해도 되야 되는데..
+			// 위에서 사진에 폴더를 추가 했으면 폴더에 속한 사진은 자동적으로 카운트가 되야되는 것 아닌가?
+			// 아 모르겠다.
+			f.addPhoto(photoList2.getList().get(0));
+
+
 NEW_20170603: Spring boot debug에서 jsp hot swapping 되게
 NEW_20170603: Spring boot debug에서 java hot swapping 되게
 NEW_20170527: 아래코드 동작 되게
@@ -40,6 +48,7 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170603: folder 목록 처리
 NEW_20170601: maven으로 checkstyle 할 수 있게.
 	=> 알고봤더니 E:\workspace\BokslPhoto\target\site 복사됨.
 NEW_20170504(20170601): 사진 다시 읽기

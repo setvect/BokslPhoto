@@ -17,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -27,7 +26,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -217,6 +215,26 @@ public class PhotoControllerTestCase extends MainTestBase {
 		TreeNode<PhotoDirectory> treeNode = response.getChildren().get(0);
 		Assert.assertThat(treeNode.getData().getName(), CoreMatchers.is("여행"));
 		Assert.assertThat(treeNode.getChildren().size(), CoreMatchers.is(2));
+	}
+
+	@Test
+	public void testGetFolder() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/folder.json"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		MvcResult mvcResult = resultActions.andReturn();
+		String jsonFolder = mvcResult.getResponse().getContentAsString();
+
+		Type confType = new TypeToken<TreeNode<FolderVo>>() {
+			/** */
+			private static final long serialVersionUID = 8349948434510094988L;
+		}.getType();
+
+		Gson gson = new Gson();
+		TreeNode<FolderVo> response = gson.fromJson(jsonFolder, confType);
+		Assert.assertThat(response.getData().getName(), CoreMatchers.is("ROOT"));
+		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB"));
 	}
 
 	/**

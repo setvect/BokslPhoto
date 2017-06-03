@@ -170,6 +170,16 @@ public class PhotoController {
 		return new ResponseEntity<>(dir, HttpStatus.OK);
 	}
 
+	/**
+	 * @return 모든 분류 폴더 정보 반환
+	 */
+	@RequestMapping("/photo/folder.json")
+	@ResponseBody
+	public ResponseEntity<TreeNode<FolderVo>> getFolder() {
+		TreeNode<FolderVo> folder = photoService.getFolderTree();
+		return new ResponseEntity<>(folder, HttpStatus.OK);
+	}
+
 	// 데이터 등록
 
 	/**

@@ -178,9 +178,12 @@ public class PhotoServiceTestCase extends MainTestBase {
 		GenericPage<PhotoVo> photoList2 = photoRepository.getPhotoPagingList(pageCondition);
 
 		folderList = folderRepository.findAll();
-		folderList.stream().forEach(p -> {
-			p.addPhoto(photoList2.getList().get(0));
-			folderRepository.save(p);
+		folderList.stream().forEach(f -> {
+			// TODO 이것 안해도 되야 되는데..
+			// 위에서 사진에 폴더를 추가 했으면 폴더에 속한 사진은 자동적으로 카운트가 되야되는 것 아닌가?
+			// 아 모르겠다.
+			f.addPhoto(photoList2.getList().get(0));
+			folderRepository.save(f);
 		});
 
 		System.out.println("------------------------------- 폴더 조회");
@@ -254,5 +257,61 @@ public class PhotoServiceTestCase extends MainTestBase {
 		Assert.assertThat(e.get(1).getValue(), CoreMatchers.is(1));
 
 		System.out.println("끝 ===============");
+	}
+
+	/**
+	 * 폴더 트리 테스트
+	 */
+	@Test
+	public void testFolderTree() {
+		TreeNode<FolderVo> folderTree = photoService.getFolderTree();
+
+		// 1. 초기값 테스트
+		List<TreeNode<FolderVo>> nodeList = folderTree.exploreTree();
+		nodeList.stream().forEach(t -> {
+			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
+			System.out.println(depthPadding + t.getData().getName() + "  " + t.getData().getPhotoCount());
+		});
+		Assert.assertThat(nodeList.size(), CoreMatchers.is(2));
+		Assert.assertThat(nodeList.get(0).getData().getName(), CoreMatchers.is("ROOT"));
+		FolderVo sub = nodeList.get(1).getData();
+		Assert.assertThat(sub.getName(), CoreMatchers.is("SUB"));
+		Assert.assertThat(sub.getPhotoCount(), CoreMatchers.is(0));
+
+		// 2. 폴더 추가. 1개
+		FolderVo subOfFolder = new FolderVo();
+		subOfFolder.setName("SUB_1");
+		subOfFolder.setParentId(sub.getFolderSeq());
+		folderRepository.save(subOfFolder);
+
+		List<FolderVo> folderList = folderRepository.findAll();
+		Assert.assertThat(folderList.size(), CoreMatchers.is(3));
+
+		folderTree = photoService.getFolderTree();
+		nodeList = folderTree.exploreTree();
+		nodeList.stream().forEach(t -> {
+			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
+			System.out.println(depthPadding + t.getData().getName() + "  " + t.getData().getPhotoCount());
+		});
+		Assert.assertThat(nodeList.size(), CoreMatchers.is(3));
+		Assert.assertThat(nodeList.get(2).getData().getName(), CoreMatchers.is("SUB_1"));
+		Assert.assertThat(nodeList.get(2).getLevel(), CoreMatchers.is(2));
+
+		// 2. 폴더 추가. 2개
+		subOfFolder = new FolderVo();
+		subOfFolder.setName("SUB_2");
+		subOfFolder.setParentId(sub.getFolderSeq());
+		folderRepository.save(subOfFolder);
+
+		folderTree = photoService.getFolderTree();
+		nodeList = folderTree.exploreTree();
+		nodeList.stream().forEach(t -> {
+			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
+			System.out.println(depthPadding + t.getData().getName() + "  " + t.getData().getPhotoCount());
+		});
+		Assert.assertThat(nodeList.size(), CoreMatchers.is(4));
+		Assert.assertThat(nodeList.get(3).getData().getName(), CoreMatchers.is("SUB_2"));
+		Assert.assertThat(nodeList.get(3).getLevel(), CoreMatchers.is(2));
+
 	}
 }

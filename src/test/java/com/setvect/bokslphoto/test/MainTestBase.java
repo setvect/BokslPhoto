@@ -83,6 +83,8 @@ public class MainTestBase {
 		folderRoot.setParentId(1);
 		folderRoot.setName("ROOT");
 		folderRepository.save(folderRoot);
+		folderRoot.setParentId(folderRoot.getFolderSeq());
+		folderRepository.save(folderRoot);
 
 		FolderVo folderSub = new FolderVo();
 		folderSub.setParentId(folderRoot.getFolderSeq());

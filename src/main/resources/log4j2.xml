@@ -14,17 +14,17 @@
 			<AppenderRef ref="console" />
 		</Logger>
 		
-		<Logger name="org.hibernate.engine.internal.Collections" level="DEBUG" additivity="false">
+		<Logger name="org.hibernate.engine.internal.Collections" level="INFO" additivity="false">
 			<AppenderRef ref="console" />
 			<AppenderRef ref="file" />
 		</Logger>
 		
-		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO" additivity="false">
 <!-- 			<AppenderRef ref="console" /> -->
 			<AppenderRef ref="file" />
 		</Logger>
 		
-		<Logger name="com.setvect" level="DEBUG" additivity="false">
+		<Logger name="com.setvect" level="INFO" additivity="false">
 			<AppenderRef ref="console" />
 			<AppenderRef ref="file" />
 		</Logger>

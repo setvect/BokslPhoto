@@ -33,9 +33,11 @@ import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.BokslPhotoConstant.ImageMeta;
 import com.setvect.bokslphoto.BokslPhotoConstant.RegexPattern;
+import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.TreeNode;
+import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
@@ -48,6 +50,10 @@ public class PhotoService {
 	/** 포토 관련 DB */
 	@Autowired
 	private PhotoRepository photoRepository;
+
+	/** 분류 폴더 */
+	@Autowired
+	private FolderRepository folderRepository;
 
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
@@ -292,6 +298,46 @@ public class PhotoService {
 			return null;
 		}
 		return null;
+	}
+
+	/**
+	 * @return 분류 폴더 구조
+	 */
+	public TreeNode<FolderVo> getFolderTree() {
+		List<FolderVo> folderAll = folderRepository.findAll();
+
+		// 일련번호와 부모 아이디가 같은 경우는 root 폴더.
+		Optional<FolderVo> data = folderAll.stream().filter(f -> f.getFolderSeq() == f.getParentId()).findAny();
+		FolderVo rootData = data.get();
+
+		Map<Integer, List<FolderVo>> folderListByParentId = folderAll.stream()
+				.filter(f -> f.getFolderSeq() != rootData.getFolderSeq())
+				.collect(Collectors.groupingBy(FolderVo::getParentId, Collectors.toList()));
+
+		TreeNode<FolderVo> rootNode = new TreeNode<FolderVo>(rootData);
+
+		findSubFolder(rootNode, folderListByParentId);
+		return rootNode;
+	}
+
+	/**
+	 * 전체 폴더에서 rootNode의 자식을 찾음
+	 *
+	 * @param rootNode
+	 *            트리구조 노드
+	 * @param folderListByParentId
+	 *            전체 폴더. Key: 부모 아이디, Value: 가르키는 부모 아이디가 같은 폴더
+	 */
+	private void findSubFolder(TreeNode<FolderVo> rootNode, Map<Integer, List<FolderVo>> folderListByParentId) {
+		int id = rootNode.getData().getFolderSeq();
+		List<FolderVo> children = folderListByParentId.get(id);
+		if (children == null) {
+			return;
+		}
+		children.stream().forEach(c -> {
+			TreeNode<FolderVo> currentNode = rootNode.addChild(c);
+			findSubFolder(currentNode, folderListByParentId);
+		});
 	}
 
 	// 데이터 저장 관련
