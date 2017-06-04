@@ -29,11 +29,12 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 	@Override
 	public GenericPage<PhotoVo> getPhotoPagingList(final PhotoSearchParam pageCondition) {
-		String queryStatement = "select count(*) from PhotoVo p " + BokslPhotoConstant.SQL_WHERE;
+		String queryStatement = "select count(*) FROM PhotoVo p LEFT OUTER JOIN p.folders f " + BokslPhotoConstant.SQL_WHERE;
 		Query queryCount = makeQueryWithWhere(pageCondition, queryStatement);
 		int totalCount = ((Long) queryCount.getSingleResult()).intValue();
 
-		queryStatement = "SELECT p FROM PhotoVo p " + BokslPhotoConstant.SQL_WHERE + " ORDER BY p.shotDate DESC";
+		queryStatement = "SELECT p FROM PhotoVo p LEFT OUTER JOIN p.folders f " + BokslPhotoConstant.SQL_WHERE
+				+ " ORDER BY p.shotDate DESC";
 
 		Query querySelect = makeQueryWithWhere(pageCondition, queryStatement);
 		querySelect.setFirstResult(pageCondition.getStartCursor());
@@ -108,6 +109,9 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
 			where += " AND p.memo like :memo";
 		}
+		if (pageCondition.getSearchFolderSeq() != 0) {
+			where += " AND f.folderSeq like :folderSeq";
+		}
 
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);
 		Query query = em.createQuery(queryString);
@@ -120,6 +124,9 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		}
 		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
 			query.setParameter("memo", "%" + pageCondition.getSearchMemo() + "%");
+		}
+		if (pageCondition.getSearchFolderSeq() != 0) {
+			query.setParameter("folderSeq", pageCondition.getSearchFolderSeq());
 		}
 
 		return query;

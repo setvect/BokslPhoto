@@ -158,6 +158,41 @@ public class PhotoControllerTestCase extends MainTestBase {
 		param.setSearchTo(DateUtil.getDate("2100-01-01"));
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(countOfhasShotDate));
+
+		// 5. 폴더 검색
+		List<FolderVo> list = folderRepository.findAll();
+		FolderVo folder1 = list.get(1);
+		FolderVo folder2 = list.get(2);
+
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchFolderSeq(folder1.getFolderSeq());
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(0));
+
+		List<PhotoVo> allList = photoRepository.findAll();
+		allList.get(0).addFolder(folder1);
+		allList.get(1).addFolder(folder1);
+		allList.get(1).addFolder(folder2);
+		photoRepository.save(allList.get(0));
+		photoRepository.save(allList.get(1));
+
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchFolderSeq(folder1.getFolderSeq());
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(2));
+		Assert.assertThat(response.getList().size(), CoreMatchers.is(2));
+
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchFolderSeq(folder2.getFolderSeq());
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(1));
+		Assert.assertThat(response.getList().size(), CoreMatchers.is(1));
 	}
 
 	private GenericPage<PhotoVo> listPhoto(PhotoSearchParam param) throws Exception {
@@ -175,6 +210,10 @@ public class PhotoControllerTestCase extends MainTestBase {
 		if (param.isDateBetween()) {
 			callRequest.param("searchFrom", DateUtil.getFormatString(param.getSearchFrom(), "yyyyMMdd"));
 			callRequest.param("searchTo", DateUtil.getFormatString(param.getSearchTo(), "yyyyMMdd"));
+		}
+
+		if (param.getSearchFolderSeq() != 0) {
+			callRequest.param("searchFolderSeq", String.valueOf(param.getSearchFolderSeq()));
 		}
 
 		ResultActions resultActions = mockMvc.perform(callRequest);
