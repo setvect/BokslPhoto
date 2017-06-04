@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 
 /**
@@ -276,9 +277,9 @@ public class PhotoVo {
 	}
 
 	/**
-	 *
 	 * @return 사진 경로. OS 기준 경로임.
 	 */
+	@JsonIgnore
 	public File getFullPath() {
 		File path = new File(BokslPhotoConstant.Photo.BASE_DIR, this.directory);
 		return new File(path, this.name);
