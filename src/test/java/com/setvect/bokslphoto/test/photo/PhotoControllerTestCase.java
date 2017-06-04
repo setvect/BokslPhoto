@@ -294,6 +294,29 @@ public class PhotoControllerTestCase extends MainTestBase {
 		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB1"));
 	}
 
+	/**
+	 * 이미지 url 스트림
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetImage() throws Exception {
+		List<PhotoVo> allImage = photoRepository.findAll();
+
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getImage.do");
+		PhotoVo targetPhoto = allImage.get(0);
+		callRequest.param("photoId", targetPhoto.getPhotoId());
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		MvcResult mvcResult = resultActions.andReturn();
+		byte[] receive = mvcResult.getResponse().getContentAsByteArray();
+		try (InputStream in = new FileInputStream(allImage.get(0).getFullPath());) {
+			byte[] origin = IOUtils.toByteArray(in);
+			Assert.assertThat(receive, CoreMatchers.is(origin));
+		}
+	}
+
 	// ============== 데이터 등록 ==============
 	/**
 	 * 사진 등록

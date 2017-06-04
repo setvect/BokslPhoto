@@ -1,7 +1,9 @@
 package com.setvect.bokslphoto.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,6 +201,25 @@ public class PhotoController {
 	public ResponseEntity<TreeNode<FolderVo>> getFolder() {
 		TreeNode<FolderVo> folder = photoService.getFolderTree();
 		return new ResponseEntity<>(folder, HttpStatus.OK);
+	}
+
+	/**
+	 * 사진 정보를 byte로 전송
+	 *
+	 * @param photoId
+	 *            사진 아이디
+	 * @return 이미지 byte
+	 * @throws IOException
+	 *             파일 처리 오류
+	 */
+	@ResponseBody
+	@RequestMapping("/photo/getImage.do")
+	public byte[] getImage(@RequestParam("photoId") final String photoId) throws IOException {
+		PhotoVo photo = photoRepository.findOne(photoId);
+
+		try (InputStream in = new FileInputStream(photo.getFullPath());) {
+			return IOUtils.toByteArray(in);
+		}
 	}
 
 	// ============== 데이터 등록 ==============

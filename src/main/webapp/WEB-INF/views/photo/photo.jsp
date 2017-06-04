@@ -11,6 +11,9 @@
 	var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
 	
 	photoApp.run(function($rootScope) {
+		$rootScope.log = function(value){
+			console.log("rootScope", value);
+		};
 	});
 	
 	photoApp.directive('photoDirDirective', function() {
@@ -39,8 +42,8 @@
 	// 폴더 구조
 	photoApp.controller('photoFolderController', ['$scope', '$http', function($scope, $http, $sce) {
 		$scope.photoFolder;
-		$http.get("${pageContext.request.contextPath}/photo/folder.json").then(function (success){
-			$scope.photoFolder = success.data;
+		$http.get("${pageContext.request.contextPath}/photo/folder.json").then(function (response){
+			$scope.photoFolder = response.data;
 		});
 	}]);
 	
@@ -48,16 +51,20 @@
 	photoApp.controller('photoDirectoryController', ['$scope', '$http', function($scope, $http, $sce) {
 		$scope.photoDiretory;
 		
-		$http.get("${pageContext.request.contextPath}/photo/directory.json").then(function (success){
-			$scope.photoDiretory = success.data;
+		$http.get("${pageContext.request.contextPath}/photo/directory.json").then(function (response){
+			$scope.photoDiretory = response.data;
 		});
 	}]);
 
-	
 	// 사진 목록
 	photoApp.controller('photoListController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
-		$http.get("${pageContext.request.contextPath}/photo/directory.json").then(function (success){
+		var params = {"startCursor":0, "returnCount": 10};
+		
+		$http.get("${pageContext.request.contextPath}/photo/list.json", {"params":params}).then(function (response){
+			console.log(response.data);
+			$scope.list = response.data.list;
 		});
+		
 	}]);
 	
 	// 사진 업로드
@@ -92,10 +99,7 @@
 				console.warn('File failed to upload from dropzone.', file, xhr);
 			}
 		};
-	
 	}]);
-
-	
 	</script>
 </head>
 <body class="theme-cyan" data-ng-app="photoApp">
