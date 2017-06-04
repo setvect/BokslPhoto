@@ -13,23 +13,18 @@
 		<Logger name="org.springframework" level="INFO" additivity="false">
 			<AppenderRef ref="console" />
 		</Logger>
-		
 		<Logger name="org.hibernate.engine.internal.Collections" level="INFO" additivity="false">
 			<AppenderRef ref="console" />
 			<AppenderRef ref="file" />
 		</Logger>
-		
-		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO" additivity="false">
+		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="DEBUG" additivity="false">
 <!-- 			<AppenderRef ref="console" /> -->
 			<AppenderRef ref="file" />
 		</Logger>
-		
 		<Logger name="com.setvect" level="INFO" additivity="false">
 			<AppenderRef ref="console" />
 			<AppenderRef ref="file" />
 		</Logger>
-		
-		
 		<Root level="INFO">
 			<AppenderRef ref="console" />
 		</Root>

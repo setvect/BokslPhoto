@@ -11,7 +11,6 @@
 	var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
 	
 	photoApp.run(function($rootScope) {
-		$rootScope.menu = 'timeList';
 	});
 	
 	photoApp.directive('photoDirDirective', function() {
@@ -40,10 +39,8 @@
 	// 폴더 구조
 	photoApp.controller('photoFolderController', ['$scope', '$http', function($scope, $http, $sce) {
 		$scope.photoFolder;
-		
 		$http.get("${pageContext.request.contextPath}/photo/folder.json").then(function (success){
 			$scope.photoFolder = success.data;
-			console.log($scope.photoFolder);
 		});
 	}]);
 	
@@ -59,14 +56,12 @@
 	
 	// 사진 목록
 	photoApp.controller('photoListController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
-		$rootScope.menu = 'timeList';
-		console.log("photoListController init.");
+		$http.get("${pageContext.request.contextPath}/photo/directory.json").then(function (success){
+		});
 	}]);
 	
 	// 사진 업로드
 	photoApp.controller('photoUploadController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
-		$rootScope.menu = 'upload';
-		console.log("photoUploadController init.");
 		$scope.showBtns = false;
 		
 		$scope.dzOptions = {

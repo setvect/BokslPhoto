@@ -7,7 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class SearchListParam {
 
-	/** 시작 커서 위치 */
+	/** 시작 커서 위치 (0부터 시작) */
 	private int startCursor;
 	/** 가져올 항목 갯수 */
 	private int returnCount;

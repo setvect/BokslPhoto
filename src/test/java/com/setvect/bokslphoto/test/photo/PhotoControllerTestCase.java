@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -33,12 +34,19 @@ import org.springframework.web.context.WebApplicationContext;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.controller.GroupByDate;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.service.DateGroup;
+import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.test.MainTestBase;
+import com.setvect.bokslphoto.util.DateUtil;
+import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
@@ -97,7 +105,104 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 	@Test
 	public void testList() throws Exception {
+		List<PhotoVo> allImage = photoRepository.findAll();
 
+		// 1. 전체 조회
+		PhotoSearchParam param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+
+		GenericPage<PhotoVo> response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(allImage.size()));
+		Assert.assertThat(response.getList().size(), CoreMatchers.is(param.getReturnCount()));
+
+		// 1-1. 페이지 이동
+		param = new PhotoSearchParam();
+		param.setStartCursor(10);
+		param.setReturnCount(10);
+
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(allImage.size()));
+		Assert.assertThat(response.getList().size(), CoreMatchers.is(allImage.size() - param.getStartCursor()));
+
+		// 2. 메모 검색
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchMemo("메모");
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(2));
+
+		// 3. 디렉토리 검색
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchDirectory("/음식/");
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(3));
+
+		// 4. 날짜 검색
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchFrom(DateUtil.getDate("2012-01-01"));
+		param.setSearchTo(DateUtil.getDate("2015-01-01"));
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(4));
+
+		int countOfhasShotDate = (int) allImage.stream().filter(p -> p.getShotDate() != null).count();
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchFrom(DateUtil.getDate("1970-01-01"));
+		param.setSearchTo(DateUtil.getDate("2100-01-01"));
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(countOfhasShotDate));
+	}
+
+	private GenericPage<PhotoVo> listPhoto(PhotoSearchParam param) throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/list.json");
+		callRequest.param("startCursor", String.valueOf(param.getStartCursor()));
+		callRequest.param("returnCount", String.valueOf(param.getReturnCount()));
+		if (param.getSearchMemo() != null) {
+			callRequest.param("searchMemo", param.getSearchMemo());
+		}
+		if (param.getSearchDirectory() != null) {
+			callRequest.param("searchDirectory", param.getSearchDirectory());
+		}
+
+		if (param.isDateBetween()) {
+			callRequest.param("searchFrom", DateUtil.getFormatString(param.getSearchFrom(), "yyyyMMdd"));
+			callRequest.param("searchTo", DateUtil.getFormatString(param.getSearchTo(), "yyyyMMdd"));
+		}
+
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andDo(MockMvcResultHandlers.print());
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		MvcResult mvcResult = resultActions.andReturn();
+
+		String jsonList = mvcResult.getResponse().getContentAsString();
+
+		Type confType = new TypeToken<GenericPage<PhotoVo>>() {
+			/** */
+			private static final long serialVersionUID = 8598639125420936733L;
+		}.getType();
+
+		// 날짜 파싱. long -> Date
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+			@Override
+			public Date deserialize(final JsonElement json, final Type typeOfT,
+					final JsonDeserializationContext context) throws JsonParseException {
+				long timestamp = json.getAsJsonPrimitive().getAsLong();
+				return new Date(timestamp);
+			}
+		});
+
+		Gson gson = builder.create();
+		GenericPage<PhotoVo> response = gson.fromJson(jsonList, confType);
+		return response;
 	}
 
 	/**

@@ -13,50 +13,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class GenericPage<T> {
 
 	/** 목록 객체 */
-	private List<T> objects;
+	private List<T> list;
 	/** 시작 항목(1부터 시작) */
 	private int startCursor;
 	/** 전체 항목 수 */
 	private int totalCount;
-	/** 한 페이지당 가져올 항목 수 */
-	private int returnCount;
 
 	/**
-	 * @param objects
+	 * @param list
 	 *            리스트
 	 * @param startCursor
 	 *            시작 항목(1부터 시작)
 	 * @param totalCount
 	 *            전체 항목 수
 	 */
-	public GenericPage(final List<T> objects, final int startCursor, final int totalCount) {
-		this.objects = objects;
+	public GenericPage(final List<T> list, final int startCursor, final int totalCount) {
+		this.list = list;
 		this.startCursor = startCursor;
 		this.totalCount = totalCount;
-	}
-
-	/**
-	 * @param objects
-	 *            리스트
-	 * @param startCursor
-	 *            시작 항목(1부터 시작)
-	 * @param totalCount
-	 *            전체 항목 수
-	 * @param returnCount
-	 *            한 페이지당 가져올 항목 수
-	 */
-	public GenericPage(final List<T> objects, final int startCursor, final int totalCount, final int returnCount) {
-		this.objects = objects;
-		this.startCursor = startCursor;
-		this.totalCount = totalCount;
-		this.returnCount = returnCount;
 	}
 
 	/**
 	 * @return 목록 값
 	 */
 	public List<T> getList() {
-		return objects;
+		return list;
 	}
 
 	/**
@@ -71,26 +52,6 @@ public class GenericPage<T> {
 	 */
 	public int getTotalCount() {
 		return totalCount;
-	}
-
-	/**
-	 * @return the returnCount
-	 */
-	public int getReturnCount() {
-		return returnCount;
-	}
-
-	/**
-	 * 전체 페이지 개수
-	 *
-	 * @return the returnCount
-	 */
-	public int getPageCount() {
-		if (returnCount == 0) {
-			return 0;
-		}
-		int page = (int) Math.ceil((double) totalCount / returnCount);
-		return page;
 	}
 
 	/*

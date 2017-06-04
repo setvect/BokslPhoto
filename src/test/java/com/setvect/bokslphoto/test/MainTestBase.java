@@ -3,6 +3,7 @@ package com.setvect.bokslphoto.test;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -21,10 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.repository.FolderRepository;
+import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 import com.setvect.bokslphoto.vo.FolderVo;
+import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
@@ -37,7 +40,7 @@ import com.setvect.bokslphoto.vo.UserVo;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
 @Rollback(true)
-@TestPropertySource(locations="classpath:test.properties")
+@TestPropertySource(locations = "classpath:test.properties")
 public class MainTestBase {
 
 	/** */
@@ -47,6 +50,10 @@ public class MainTestBase {
 	/** */
 	@Autowired
 	private PhotoService photoService;
+
+	/** */
+	@Autowired
+	private PhotoRepository photoRepository;
 
 	/** 암호화 인코더. */
 	@Autowired
@@ -81,6 +88,11 @@ public class MainTestBase {
 
 		photoService.retrievalPhotoAndSave();
 
+		List<PhotoVo> allList = photoRepository.findAll();
+		allList.get(0).setMemo("메모 1");
+		allList.get(1).setMemo("메모 2");
+		allList.get(2).setMemo("테스트 입니다.");
+
 		FolderVo folderRoot = new FolderVo();
 		folderRoot.setParentId(1);
 		folderRoot.setName("ROOT");
@@ -92,8 +104,6 @@ public class MainTestBase {
 		folderSub.setParentId(folderRoot.getFolderSeq());
 		folderSub.setName("SUB");
 		folderRepository.save(folderSub);
-
-
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");
