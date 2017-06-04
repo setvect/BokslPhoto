@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
@@ -82,9 +83,23 @@ public class PhotoControllerTestCase extends MainTestBase {
 	// ============== 데이터 조회 ==============
 	@Test
 	public void testGroupByDate() throws Exception {
+		DateGroup dateGroup = DateGroup.DATE;
+		List<GroupByDate> r = listGroupByDate(dateGroup);
+		Assert.assertThat(r.size(), CoreMatchers.is(13));
+		r.stream().forEach(System.out::println);
+
+		dateGroup = DateGroup.MONTH;
+		r = listGroupByDate(dateGroup);
+		Assert.assertThat(r.size(), CoreMatchers.is(12));
+		r.stream().forEach(System.out::println);
+
+		System.out.println("끝.");
+	}
+
+	private List<GroupByDate> listGroupByDate(DateGroup dateGroup) throws Exception, UnsupportedEncodingException {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/groupByDate.json");
-		callRequest.param("searchDateGroup", DateGroup.MONTH.name());
+		callRequest.param("searchDateGroup", dateGroup.name());
 		ResultActions resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		MvcResult mvcResult = resultActions.andReturn();
@@ -98,9 +113,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		Gson gson = new GsonBuilder().create();
 		List<GroupByDate> r = gson.fromJson(content, type);
-		r.stream().forEach(System.out::println);
-
-		System.out.println("끝.");
+		return r;
 	}
 
 	@Test
