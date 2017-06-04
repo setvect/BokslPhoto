@@ -58,7 +58,7 @@ public class PhotoService {
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
-	// 조회 관련
+	// ============== 조회 관련 ==============
 
 	/**
 	 * 포토 기본 경로에서 사진 파일을 찾음.
@@ -340,7 +340,7 @@ public class PhotoService {
 		});
 	}
 
-	// 데이터 저장 관련
+	// ============== 데이터 저장 관련 ==============
 
 	/**
 	 * 이미지 탐색 후 저장
@@ -409,9 +409,9 @@ public class PhotoService {
 		return true;
 	}
 
-	// 데이터 수정 관련
+	// ============== 데이터 수정 관련 ==============
 
-	// 데이터 삭제 관련
+	// ============== 데이터 삭제 관련 ==============
 
 	/**
 	 * 서로다른 경로에 중복된 파일을 삭제함.<br>

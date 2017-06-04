@@ -71,6 +71,86 @@ public class PhotoControllerTestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	// ============== 데이터 조회 ==============
+	@Test
+	public void testGroupByDate() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/groupByDate.json");
+		callRequest.param("searchDateGroup", DateGroup.MONTH.name());
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		MvcResult mvcResult = resultActions.andReturn();
+		String content = mvcResult.getResponse().getContentAsString();
+		System.out.println(content);
+
+		Type type = new TypeToken<List<GroupByDate>>() {
+			/** */
+			private static final long serialVersionUID = 8349948434510094988L;
+		}.getType();
+
+		Gson gson = new GsonBuilder().create();
+		List<GroupByDate> r = gson.fromJson(content, type);
+		r.stream().forEach(System.out::println);
+
+		System.out.println("끝.");
+	}
+
+	@Test
+	public void testList() throws Exception {
+
+	}
+
+	/**
+	 * 디렉토리 정보
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetDiretory() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/directory.json"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		MvcResult mvcResult = resultActions.andReturn();
+		String jsonDirectory = mvcResult.getResponse().getContentAsString();
+		System.out.println(jsonDirectory);
+
+		Type confType = new TypeToken<TreeNode<PhotoDirectory>>() {
+			/** */
+			private static final long serialVersionUID = 8349948434510094988L;
+		}.getType();
+
+		Gson gson = new Gson();
+		TreeNode<PhotoDirectory> response = gson.fromJson(jsonDirectory, confType);
+		Assert.assertThat(response.getData().getName(), CoreMatchers.is(""));
+		Assert.assertThat(response.getChildren().size(), CoreMatchers.is(3));
+		TreeNode<PhotoDirectory> treeNode = response.getChildren().get(0);
+		Assert.assertThat(treeNode.getData().getName(), CoreMatchers.is("여행"));
+		Assert.assertThat(treeNode.getChildren().size(), CoreMatchers.is(2));
+	}
+
+	@Test
+	public void testGetFolder() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/folder.json"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		MvcResult mvcResult = resultActions.andReturn();
+		String jsonFolder = mvcResult.getResponse().getContentAsString();
+
+		Type confType = new TypeToken<TreeNode<FolderVo>>() {
+			/** */
+			private static final long serialVersionUID = 8349948434510094988L;
+		}.getType();
+
+		Gson gson = new Gson();
+		TreeNode<FolderVo> response = gson.fromJson(jsonFolder, confType);
+		Assert.assertThat(response.getData().getName(), CoreMatchers.is("ROOT"));
+		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB"));
+	}
+
+	// ============== 데이터 등록 ==============
 	/**
 	 * 사진 등록
 	 *
@@ -114,6 +194,238 @@ public class PhotoControllerTestCase extends MainTestBase {
 		System.out.println("끝.");
 	}
 
+	/**
+	 * 사진과 연결되 폴더 추가, 삭제
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testRelationFolder() throws Exception {
+		List<PhotoVo> photoList = photoRepository.findAll();
+		System.out.println("PhotoCount: " + photoList.size());
+
+		List<FolderVo> folderList = folderRepository.findAll();
+		System.out.println("folderCount: " + folderList.size());
+
+		// 1. 연관 폴더 등록
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolder.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		int folderSeq = folderList.get(0).getFolderSeq();
+		callRequest.param("folderSeq", String.valueOf(folderSeq));
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		// resultActions.andDo(MockMvcResultHandlers.print());
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		// 2. 연관 폴더 등록
+		callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolder.do");
+		callRequest.param("photoId", photoId);
+		callRequest.param("folderSeq", String.valueOf(folderList.get(1).getFolderSeq()));
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+		System.out.println(photo);
+
+		Assert.assertThat(photo.getFolders().size(), CoreMatchers.is(2));
+
+		FolderVo folder = folderRepository.findOne(folderSeq);
+		List<PhotoVo> s = folder.getPhotos();
+		System.out.println(s);
+
+		// 3. 폴더 연결 삭제
+		callRequest = MockMvcRequestBuilders.get("/photo/deleteRelationFolder.do");
+		callRequest.param("photoId", photoId);
+		callRequest.param("folderSeq", String.valueOf(folderList.get(1).getFolderSeq()));
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		photo = photoRepository.findOne(photoId);
+		System.out.println(photo);
+
+		Assert.assertThat(photo.getFolders().size(), CoreMatchers.is(1));
+
+		folder = folderRepository.findOne(folderSeq);
+		s = folder.getPhotos();
+		System.out.println(s);
+		// TODO Mapping된 값을 가져오지 못함.
+		// Assert.assertThat(folder.getPhotos().get(0).getPhotoId(),
+		// CoreMatchers.is(photoId));
+
+		System.out.println("끝.");
+	}
+
+	/**
+	 * 이미지 재탐색 후 저장
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testRetrievalAndSave() throws Exception {
+		List<PhotoVo> before = photoRepository.findAll();
+
+		// 첫 번째
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/retrievalAndSave.do"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		resultActions.andExpect(content().string("true"));
+
+		List<PhotoVo> after = photoRepository.findAll();
+
+		Assert.assertThat(before.size(), CoreMatchers.is(after.size()));
+
+		System.out.printf("before size: %,d, after size: %,d\n", before.size(), after.size());
+	}
+
+	// ============== 데이터 수정 ==============
+	/**
+	 * 메모 업데이트
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testUploadMemo() throws Exception {
+		String memo = "복슬이 사랑해~";
+		List<PhotoVo> photoList = photoRepository.findAll();
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateMemo.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("memo", memo);
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+		Assert.assertThat(photo.getMemo(), CoreMatchers.is(memo));
+		System.out.println("끝.");
+	}
+
+	@Test
+	public void testProtect() throws Exception {
+		List<PhotoVo> photoList = photoRepository.findAll();
+
+		// 보호 이미지 셋팅은 IP와 상관 없이 처리
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("protect", "true");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
+			return paramMockHttpServletRequest;
+		});
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+
+		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
+
+		// 비 허가 IP
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
+		photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("protect", "false");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
+			return paramMockHttpServletRequest;
+		});
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("false"));
+		photo = photoRepository.findOne(photoId);
+		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
+
+		// 허가 IP 접근
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
+		photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("protect", "false");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr(BokslPhotoConstant.Photo.ALLOW_IP);
+			return paramMockHttpServletRequest;
+		});
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+		photo = photoRepository.findOne(photoId);
+		Assert.assertFalse("보호 이미지 여부", photo.isProtectF());
+
+		System.out.println("끝.");
+	}
+
+	// ============== 데이터 삭제 ==============
+	/**
+	 * 포토 삭제
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeletePhoto() throws Exception {
+		List<PhotoVo> photoList = photoRepository.findAll();
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/deletePhoto.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+		Assert.assertNull(photo);
+
+		System.out.println("끝.");
+	}
+
+	/**
+	 * 중복 데이터 삭제
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeleteDuplicate() throws Exception {
+		// 첫 번째
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/deleteDuplicate.json"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		MvcResult mvcResult = resultActions.andReturn();
+		String jsonDirectory = mvcResult.getResponse().getContentAsString();
+		System.out.println(jsonDirectory);
+
+		Gson gson = new Gson();
+		List<String> result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
+			/** */
+			private static final long serialVersionUID = 1L;
+		}.getType());
+		Assert.assertThat(result.size(), CoreMatchers.is(1));
+
+		// 두 번째 - 중복 데이터 나오면 안됨.
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/deleteDuplicate.json"));
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		mvcResult = resultActions.andReturn();
+		jsonDirectory = mvcResult.getResponse().getContentAsString();
+		System.out.println(jsonDirectory);
+
+		result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
+			/** */
+			private static final long serialVersionUID = 1L;
+		}.getType());
+		Assert.assertThat(result.size(), CoreMatchers.is(0));
+	}
+
+	// ============== 기타 ==============
 	/**
 	 * DB 조작이 없는 단순 페이지 로딩
 	 *
@@ -185,308 +497,6 @@ public class PhotoControllerTestCase extends MainTestBase {
 		resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/list.do"));
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		resultActions.andDo(MockMvcResultHandlers.print());
-	}
-
-	/**
-	 * 디렉토리 정보
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testGetDiretory() throws Exception {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-
-		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/directory.json"));
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andDo(MockMvcResultHandlers.print());
-		MvcResult mvcResult = resultActions.andReturn();
-		String jsonDirectory = mvcResult.getResponse().getContentAsString();
-		System.out.println(jsonDirectory);
-
-		Type confType = new TypeToken<TreeNode<PhotoDirectory>>() {
-			/** */
-			private static final long serialVersionUID = 8349948434510094988L;
-		}.getType();
-
-		Gson gson = new Gson();
-		TreeNode<PhotoDirectory> response = gson.fromJson(jsonDirectory, confType);
-		Assert.assertThat(response.getData().getName(), CoreMatchers.is(""));
-		Assert.assertThat(response.getChildren().size(), CoreMatchers.is(3));
-		TreeNode<PhotoDirectory> treeNode = response.getChildren().get(0);
-		Assert.assertThat(treeNode.getData().getName(), CoreMatchers.is("여행"));
-		Assert.assertThat(treeNode.getChildren().size(), CoreMatchers.is(2));
-	}
-
-	@Test
-	public void testGetFolder() throws Exception {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/folder.json"));
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andDo(MockMvcResultHandlers.print());
-		MvcResult mvcResult = resultActions.andReturn();
-		String jsonFolder = mvcResult.getResponse().getContentAsString();
-
-		Type confType = new TypeToken<TreeNode<FolderVo>>() {
-			/** */
-			private static final long serialVersionUID = 8349948434510094988L;
-		}.getType();
-
-		Gson gson = new Gson();
-		TreeNode<FolderVo> response = gson.fromJson(jsonFolder, confType);
-		Assert.assertThat(response.getData().getName(), CoreMatchers.is("ROOT"));
-		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB"));
-	}
-
-	/**
-	 * 중복 데이터 삭제
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testDeleteDuplicate() throws Exception {
-		// 첫 번째
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/deleteDuplicate.json"));
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andDo(MockMvcResultHandlers.print());
-		MvcResult mvcResult = resultActions.andReturn();
-		String jsonDirectory = mvcResult.getResponse().getContentAsString();
-		System.out.println(jsonDirectory);
-
-		Gson gson = new Gson();
-		List<String> result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
-			/** */
-			private static final long serialVersionUID = 1L;
-		}.getType());
-		Assert.assertThat(result.size(), CoreMatchers.is(1));
-
-		// 두 번째 - 중복 데이터 나오면 안됨.
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/deleteDuplicate.json"));
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andDo(MockMvcResultHandlers.print());
-		mvcResult = resultActions.andReturn();
-		jsonDirectory = mvcResult.getResponse().getContentAsString();
-		System.out.println(jsonDirectory);
-
-		result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
-			/** */
-			private static final long serialVersionUID = 1L;
-		}.getType());
-		Assert.assertThat(result.size(), CoreMatchers.is(0));
-	}
-
-	/**
-	 * 이미지 재탐색 후 저장
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testRetrievalAndSave() throws Exception {
-		List<PhotoVo> before = photoRepository.findAll();
-
-		// 첫 번째
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/retrievalAndSave.do"));
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andDo(MockMvcResultHandlers.print());
-		resultActions.andExpect(content().string("true"));
-
-		List<PhotoVo> after = photoRepository.findAll();
-
-		Assert.assertThat(before.size(), CoreMatchers.is(after.size()));
-
-		System.out.printf("before size: %,d, after size: %,d\n", before.size(), after.size());
-	}
-
-	/**
-	 * 사진과 연결되 폴더 추가, 삭제
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testRelationFolder() throws Exception {
-		List<PhotoVo> photoList = photoRepository.findAll();
-		System.out.println("PhotoCount: " + photoList.size());
-
-		List<FolderVo> folderList = folderRepository.findAll();
-		System.out.println("folderCount: " + folderList.size());
-
-		// 1. 연관 폴더 등록
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolder.do");
-		String photoId = photoList.get(0).getPhotoId();
-		callRequest.param("photoId", photoId);
-		int folderSeq = folderList.get(0).getFolderSeq();
-		callRequest.param("folderSeq", String.valueOf(folderSeq));
-		ResultActions resultActions = mockMvc.perform(callRequest);
-		// resultActions.andDo(MockMvcResultHandlers.print());
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-
-		// 2. 연관 폴더 등록
-		callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolder.do");
-		callRequest.param("photoId", photoId);
-		callRequest.param("folderSeq", String.valueOf(folderList.get(1).getFolderSeq()));
-		resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-
-		PhotoVo photo = photoRepository.findOne(photoId);
-		System.out.println(photo);
-
-		Assert.assertThat(photo.getFolders().size(), CoreMatchers.is(2));
-
-		FolderVo folder = folderRepository.findOne(folderSeq);
-		List<PhotoVo> s = folder.getPhotos();
-		System.out.println(s);
-
-		// 3. 폴더 연결 삭제
-		callRequest = MockMvcRequestBuilders.get("/photo/deleteRelationFolder.do");
-		callRequest.param("photoId", photoId);
-		callRequest.param("folderSeq", String.valueOf(folderList.get(1).getFolderSeq()));
-		resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-
-		photo = photoRepository.findOne(photoId);
-		System.out.println(photo);
-
-		Assert.assertThat(photo.getFolders().size(), CoreMatchers.is(1));
-
-		folder = folderRepository.findOne(folderSeq);
-		s = folder.getPhotos();
-		System.out.println(s);
-		// TODO Mapping된 값을 가져오지 못함.
-		// Assert.assertThat(folder.getPhotos().get(0).getPhotoId(),
-		// CoreMatchers.is(photoId));
-
-		System.out.println("끝.");
-	}
-
-	@Test
-	public void testGroupByDate() throws Exception {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/groupByDate.json");
-		callRequest.param("searchDateGroup", DateGroup.MONTH.name());
-		ResultActions resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		MvcResult mvcResult = resultActions.andReturn();
-		String content = mvcResult.getResponse().getContentAsString();
-		System.out.println(content);
-
-		Type type = new TypeToken<List<GroupByDate>>() {
-			/** */
-			private static final long serialVersionUID = 8349948434510094988L;
-		}.getType();
-
-		Gson gson = new GsonBuilder().create();
-		List<GroupByDate> r = gson.fromJson(content, type);
-		r.stream().forEach(System.out::println);
-
-		System.out.println("끝.");
-	}
-
-	@Test
-	public void testProtect() throws Exception {
-		List<PhotoVo> photoList = photoRepository.findAll();
-
-		// 보호 이미지 셋팅은 IP와 상관 없이 처리
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
-		String photoId = photoList.get(0).getPhotoId();
-		callRequest.param("photoId", photoId);
-		callRequest.param("protect", "true");
-		callRequest.with((paramMockHttpServletRequest) -> {
-			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
-			return paramMockHttpServletRequest;
-		});
-		ResultActions resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-
-		PhotoVo photo = photoRepository.findOne(photoId);
-
-		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
-
-		// 비 허가 IP
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
-		photoId = photoList.get(0).getPhotoId();
-		callRequest.param("photoId", photoId);
-		callRequest.param("protect", "false");
-		callRequest.with((paramMockHttpServletRequest) -> {
-			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
-			return paramMockHttpServletRequest;
-		});
-		resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("false"));
-		photo = photoRepository.findOne(photoId);
-		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
-
-		// 허가 IP 접근
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
-		photoId = photoList.get(0).getPhotoId();
-		callRequest.param("photoId", photoId);
-		callRequest.param("protect", "false");
-		callRequest.with((paramMockHttpServletRequest) -> {
-			paramMockHttpServletRequest.setRemoteAddr(BokslPhotoConstant.Photo.ALLOW_IP);
-			return paramMockHttpServletRequest;
-		});
-		resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-		photo = photoRepository.findOne(photoId);
-		Assert.assertFalse("보호 이미지 여부", photo.isProtectF());
-
-		System.out.println("끝.");
-	}
-
-	/**
-	 * 포토 삭제
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testDeletePhoto() throws Exception {
-		List<PhotoVo> photoList = photoRepository.findAll();
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/deletePhoto.do");
-		String photoId = photoList.get(0).getPhotoId();
-		callRequest.param("photoId", photoId);
-		ResultActions resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-
-		PhotoVo photo = photoRepository.findOne(photoId);
-		Assert.assertNull(photo);
-
-		System.out.println("끝.");
-	}
-
-	/**
-	 * 메모 업데이트
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testUploadMemo() throws Exception {
-		String memo = "복슬이 사랑해~";
-		List<PhotoVo> photoList = photoRepository.findAll();
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateMemo.do");
-		String photoId = photoList.get(0).getPhotoId();
-		callRequest.param("photoId", photoId);
-		callRequest.param("memo", memo);
-		ResultActions resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		resultActions.andExpect(content().string("true"));
-
-		PhotoVo photo = photoRepository.findOne(photoId);
-		Assert.assertThat(photo.getMemo(), CoreMatchers.is(memo));
-		System.out.println("끝.");
 	}
 
 }

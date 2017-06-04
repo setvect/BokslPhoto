@@ -17,6 +17,7 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
+import com.setvect.bokslphoto.util.StringUtil;
 import com.setvect.bokslphoto.vo.PhotoVo;
 
 /**
@@ -119,7 +120,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 			query.setParameter("directory", pageCondition.getSearchDirectory());
 		}
 		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
-			query.setParameter("memo", "%" + pageCondition.getSearchMemo() + "%");
+			query.setParameter("memo", StringUtil.getSqlStringLike(pageCondition.getSearchMemo()));
 		}
 
 		return query;

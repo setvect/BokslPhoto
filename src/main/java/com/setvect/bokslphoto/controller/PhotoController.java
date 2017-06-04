@@ -37,6 +37,7 @@ import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.util.DateRange;
+import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
@@ -67,7 +68,7 @@ public class PhotoController {
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
-	// 뷰 페이지 오픈
+	// ============== 뷰 페이지 오픈 ==============
 
 	/**
 	 * @param request
@@ -135,7 +136,7 @@ public class PhotoController {
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 	}
 
-	// 데이터 조회
+	// ============== 데이터 조회 ==============
 
 	/**
 	 * 날짜별 건수
@@ -161,6 +162,20 @@ public class PhotoController {
 	}
 
 	/**
+	 * 검색 조건에 맞는 사진 목록을 반환
+	 *
+	 * @param pageCondition
+	 *            검색 조건
+	 * @return 페이징 정보
+	 */
+	@RequestMapping("/photo/list.json")
+	@ResponseBody
+	public GenericPage<PhotoVo> list(final PhotoSearchParam pageCondition) {
+		GenericPage<PhotoVo> page = photoRepository.getPhotoPagingList(pageCondition);
+		return page;
+	}
+
+	/**
 	 * @return 모든 저장 경로를 폴더 구조로 반환.
 	 */
 	@RequestMapping("/photo/directory.json")
@@ -180,7 +195,7 @@ public class PhotoController {
 		return new ResponseEntity<>(folder, HttpStatus.OK);
 	}
 
-	// 데이터 등록
+	// ============== 데이터 등록 ==============
 
 	/**
 	 * 사진 업로드
@@ -246,7 +261,6 @@ public class PhotoController {
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
-	// 데이터 수정
 	/**
 	 * 이미지 탐색 후 저장
 	 *
@@ -258,6 +272,8 @@ public class PhotoController {
 		photoService.retrievalPhotoAndSave();
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
+
+	// ============== 데이터 수정 ==============
 
 	/**
 	 * 메모 정보 업데이트
