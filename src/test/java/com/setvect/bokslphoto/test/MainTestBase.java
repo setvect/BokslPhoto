@@ -102,8 +102,18 @@ public class MainTestBase {
 
 		FolderVo folderSub = new FolderVo();
 		folderSub.setParentId(folderRoot.getFolderSeq());
-		folderSub.setName("SUB");
+		folderSub.setName("SUB1");
 		folderRepository.save(folderSub);
+
+		folderSub = new FolderVo();
+		folderSub.setParentId(folderRoot.getFolderSeq());
+		folderSub.setName("SUB2");
+		folderRepository.save(folderSub);
+
+		FolderVo folderSubSub = new FolderVo();
+		folderSubSub.setParentId(folderSub.getFolderSeq());
+		folderSubSub.setName("SUB2-1");
+		folderRepository.save(folderSubSub);
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");

@@ -151,7 +151,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		System.out.println("-------------------------------");
 
 		folderList = folderRepository.findAll();
-		Assert.assertThat(folderList.size(), CoreMatchers.is(4));
+		Assert.assertThat(folderList.size(), CoreMatchers.is(6));
 
 		folderList.stream().forEach(p -> System.out.println(p));
 
@@ -272,10 +272,10 @@ public class PhotoServiceTestCase extends MainTestBase {
 			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
 			System.out.println(depthPadding + t.getData().getName() + "  " + t.getData().getPhotoCount());
 		});
-		Assert.assertThat(nodeList.size(), CoreMatchers.is(2));
+		Assert.assertThat(nodeList.size(), CoreMatchers.is(4));
 		Assert.assertThat(nodeList.get(0).getData().getName(), CoreMatchers.is("ROOT"));
 		FolderVo sub = nodeList.get(1).getData();
-		Assert.assertThat(sub.getName(), CoreMatchers.is("SUB"));
+		Assert.assertThat(sub.getName(), CoreMatchers.is("SUB1"));
 		Assert.assertThat(sub.getPhotoCount(), CoreMatchers.is(0));
 
 		// 2. 폴더 추가. 1개
@@ -285,7 +285,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		folderRepository.save(subOfFolder);
 
 		List<FolderVo> folderList = folderRepository.findAll();
-		Assert.assertThat(folderList.size(), CoreMatchers.is(3));
+		Assert.assertThat(folderList.size(), CoreMatchers.is(5));
 
 		folderTree = photoService.getFolderTree();
 		nodeList = folderTree.exploreTree();
@@ -293,7 +293,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
 			System.out.println(depthPadding + t.getData().getName() + "  " + t.getData().getPhotoCount());
 		});
-		Assert.assertThat(nodeList.size(), CoreMatchers.is(3));
+		Assert.assertThat(nodeList.size(), CoreMatchers.is(5));
 		Assert.assertThat(nodeList.get(2).getData().getName(), CoreMatchers.is("SUB_1"));
 		Assert.assertThat(nodeList.get(2).getLevel(), CoreMatchers.is(2));
 
@@ -309,7 +309,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 			String depthPadding = String.join("", Collections.nCopies(t.getLevel(), "--"));
 			System.out.println(depthPadding + t.getData().getName() + "  " + t.getData().getPhotoCount());
 		});
-		Assert.assertThat(nodeList.size(), CoreMatchers.is(4));
+		Assert.assertThat(nodeList.size(), CoreMatchers.is(6));
 		Assert.assertThat(nodeList.get(3).getData().getName(), CoreMatchers.is("SUB_2"));
 		Assert.assertThat(nodeList.get(3).getLevel(), CoreMatchers.is(2));
 

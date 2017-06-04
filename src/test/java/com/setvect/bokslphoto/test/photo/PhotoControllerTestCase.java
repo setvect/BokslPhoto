@@ -252,7 +252,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		Gson gson = new Gson();
 		TreeNode<FolderVo> response = gson.fromJson(jsonFolder, confType);
 		Assert.assertThat(response.getData().getName(), CoreMatchers.is("ROOT"));
-		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB"));
+		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB1"));
 	}
 
 	// ============== 데이터 등록 ==============
