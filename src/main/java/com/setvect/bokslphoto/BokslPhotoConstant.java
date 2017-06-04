@@ -81,4 +81,7 @@ public final class BokslPhotoConstant {
 	/** WHERE 절 replace를 하기 위함. */
 	public static final String SQL_WHERE = "{WHERE}";
 
+	/** 테스트 실행 여부을 알수 있는 System property 이름*/
+	public static final String TEST_CHECK_PROPERTY_NAME = "test_run";
+
 }

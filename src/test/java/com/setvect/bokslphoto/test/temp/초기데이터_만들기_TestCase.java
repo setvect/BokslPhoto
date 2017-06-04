@@ -19,13 +19,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
 import com.setvect.bokslphoto.repository.UserRepository;
-import com.setvect.bokslphoto.test.MainTestBase;
-import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 import com.setvect.bokslphoto.vo.UserRoleVo;
 import com.setvect.bokslphoto.vo.UserVo;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { BokslPhotoApplication.class, TestConfiguration.class })
+@ContextConfiguration(classes = { BokslPhotoApplication.class })
 @Transactional
 @Rollback(true)
 public class 초기데이터_만들기_TestCase {

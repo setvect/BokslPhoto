@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
@@ -21,11 +19,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.setvect.bokslphoto.BokslPhotoApplication;
+import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
-import com.setvect.bokslphoto.test.MainTestBase.TestConfiguration;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
@@ -38,10 +36,13 @@ import com.setvect.bokslphoto.vo.UserVo;
 @RunWith(SpringRunner.class)
 @Transactional()
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@SpringBootTest(classes = { BokslPhotoApplication.class, TestConfiguration.class })
+@SpringBootTest(classes = { BokslPhotoApplication.class })
 @Rollback(true)
 @TestPropertySource(locations = "classpath:test.properties")
 public class MainTestBase {
+	static {
+		System.setProperty(BokslPhotoConstant.TEST_CHECK_PROPERTY_NAME, "true");
+	}
 
 	/** */
 	@Autowired
@@ -62,13 +63,6 @@ public class MainTestBase {
 	/** 사용자. */
 	@Autowired
 	private UserRepository userRepository;
-
-	/**
-	 */
-	@PropertySource("classpath:application.properties")
-	@Configuration
-	public static class TestConfiguration {
-	}
 
 	/**
 	 * 초기 값 등록.

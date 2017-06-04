@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 public class BokslPhotoApplication extends SpringBootServletInitializer {
 	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
+	private static final String CONFIG_CONFIG_PROPERTIES_TEST = "/test.properties";
 
 	/**
 	 * Application 시작점.
@@ -50,7 +51,13 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	@Bean
 	InitializingBean init() {
 		return () -> {
-			URL configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
+			String testEnv = System.getProperty("test_run");
+			URL configUrl;
+			if (Boolean.parseBoolean(testEnv)) {
+				configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES_TEST);
+			} else {
+				configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
+			}
 			EnvirmentProperty.init(configUrl);
 		};
 	}
