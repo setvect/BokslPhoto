@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 public class BokslPhotoApplication extends SpringBootServletInitializer {
 	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
+	/** 테스트 설정 파일 경로 */
 	private static final String CONFIG_CONFIG_PROPERTIES_TEST = "/test.properties";
 
 	/**

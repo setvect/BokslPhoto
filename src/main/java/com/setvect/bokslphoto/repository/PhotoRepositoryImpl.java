@@ -29,7 +29,8 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 	@Override
 	public GenericPage<PhotoVo> getPhotoPagingList(final PhotoSearchParam pageCondition) {
-		String queryStatement = "select count(*) FROM PhotoVo p LEFT OUTER JOIN p.folders f " + BokslPhotoConstant.SQL_WHERE;
+		String queryStatement = "select count(*) FROM PhotoVo p LEFT OUTER JOIN p.folders f "
+				+ BokslPhotoConstant.SQL_WHERE;
 		Query queryCount = makeQueryWithWhere(pageCondition, queryStatement);
 		int totalCount = ((Long) queryCount.getSingleResult()).intValue();
 
@@ -100,9 +101,12 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	 */
 	private Query makeQueryWithWhere(final PhotoSearchParam pageCondition, final String queryStatement) {
 		String where = " WHERE 1=1 ";
-		if (pageCondition.isDateBetween()) {
+		if (pageCondition.isDateNoting()) {
+			where += " AND p.shotDate IS NULL ";
+		} else if (pageCondition.isDateBetween()) {
 			where += " AND p.shotDate BETWEEN :from and :to ";
 		}
+
 		if (StringUtils.isNotEmpty(pageCondition.getSearchDirectory())) {
 			where += " AND p.directory = :directory";
 		}
@@ -115,7 +119,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);
 		Query query = em.createQuery(queryString);
-		if (pageCondition.isDateBetween()) {
+		if (!pageCondition.isDateNoting() && pageCondition.isDateBetween()) {
 			query.setParameter("from", pageCondition.getSearchFrom());
 			query.setParameter("to", pageCondition.getSearchTo());
 		}

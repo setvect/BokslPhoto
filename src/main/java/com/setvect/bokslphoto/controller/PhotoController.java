@@ -160,8 +160,8 @@ public class PhotoController {
 
 		List<GroupByDate> reseult = dateCountMap.entrySet().stream().map(entry -> {
 			GroupByDate g = new GroupByDate();
-			g.setFrom(entry.getKey().getStartString("yyyyMMdd"));
-			g.setTo(entry.getKey().getEndString("yyyyMMdd"));
+			g.setFrom(entry.getKey().getStart());
+			g.setTo(entry.getKey().getEnd());
 			g.setCount(entry.getValue());
 			return g;
 		}).collect(Collectors.toList());
@@ -424,8 +424,12 @@ public class PhotoController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	/**
+	 * @param binder
+	 *            날짜 바인드
+	 */
 	@InitBinder
-	protected void initBinder(WebDataBinder binder) {
+	protected void initBinder(final WebDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}

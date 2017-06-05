@@ -10,7 +10,8 @@
 <script type="text/javascript">
 	var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
 	
-	photoApp.run(function($rootScope) {
+	photoApp.run(function($rootScope, $q) {
+		$rootScope.$q = $q;
 		$rootScope.log = function(value){
 			console.log("rootScope", value);
 		};
@@ -41,7 +42,6 @@
 
 	// 폴더 구조
 	photoApp.controller('photoFolderController', ['$scope', '$http', function($scope, $http, $sce) {
-		$scope.photoFolder;
 		$http.get("${pageContext.request.contextPath}/photo/folder.json").then(function (response){
 			$scope.photoFolder = response.data;
 		});
@@ -56,21 +56,43 @@
 		});
 	}]);
 
+
 	// 사진 목록
-	photoApp.controller('photoListController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
-		var params = {"startCursor":0, "returnCount": 10};
-		
-		$http.get("${pageContext.request.contextPath}/photo/list.json", {"params":params}).then(function (response){
-			console.log(response.data);
-			$scope.list = response.data.list;
+	photoApp.controller('photoListController', ['$scope', '$rootScope', '$http', '$filter', function($scope, $rootScope, $http, $filter) {
+		$scope.list = [];
+		var params = {
+			"searchDateGroup" : "YEAR"
+		};
+		$http.get("${pageContext.request.contextPath}/photo/groupByDate.json", {
+			"params" : params
+		}).then(function(response) {
+			$scope.dateGroup = response.data;
+
+			$scope.dateGroup.forEach(function(entry) {
+				console.log("entry", entry);
+				var params = {
+					"startCursor" : 0,
+					"returnCount" : 4
+				};
+
+				var from = $filter("date")(entry.from, "yyyyMMdd");
+				var to = $filter("date")(entry.to, "yyyyMMdd");
+				params["searchFrom"] = from;
+				params["searchTo"] = to;
+
+				$http.get("${pageContext.request.contextPath}/photo/list.json", {
+					"params" : params
+				}).then(function(response) {
+					entry.photoList = response.data.list;
+				});
+			});
 		});
-		
-	}]);
-	
+	} ]);
+
 	// 사진 업로드
-	photoApp.controller('photoUploadController', ['$scope','$rootScope', '$http', function($scope, $rootScope, $http) {
+	photoApp.controller('photoUploadController', [ '$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
 		$scope.showBtns = false;
-		
+
 		$scope.dzOptions = {
 			url : '/photo/uploadProc.do',
 			dictDefaultMessage : 'Add files to show dropzone methods (few)',
@@ -78,29 +100,28 @@
 			parallelUploads : 5,
 			addRemoveLinks : true,
 			autoProcessQueue : false,
-			maxFilesize: 5,  //MB 
+			maxFilesize : 5, //MB 
 		};
-		
+
 		$scope.dzMethods = {};
-		
+
 		$scope.dzCallbacks = {
-			'addedfile' : function(file){
+			'addedfile' : function(file) {
 				$scope.showBtns = true;
 			},
-			'complete' : function(file){
-				if($scope.dzMethods.getDropzone().getQueuedFiles().length != 0){
+			'complete' : function(file) {
+				if ($scope.dzMethods.getDropzone().getQueuedFiles().length != 0) {
 					$scope.dzMethods.processQueue();
-				}
-				else{
+				} else {
 					console.log("upload complete.");
 				}
 			},
-			'error' : function(file, xhr){
+			'error' : function(file, xhr) {
 				console.warn('File failed to upload from dropzone.', file, xhr);
 			}
 		};
-	}]);
-	</script>
+	} ]);
+</script>
 </head>
 <body class="theme-cyan" data-ng-app="photoApp">
 	<script type="text/ng-template" id="folder_renderer.html">

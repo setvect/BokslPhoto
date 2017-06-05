@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -111,7 +112,9 @@ public class PhotoControllerTestCase extends MainTestBase {
 			private static final long serialVersionUID = 8349948434510094988L;
 		}.getType();
 
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().registerTypeAdapter(Date.class,
+				(JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(json.getAsJsonPrimitive().getAsLong()))
+				.create();
 		List<GroupByDate> r = gson.fromJson(content, type);
 		return r;
 	}

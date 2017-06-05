@@ -328,7 +328,8 @@ public class PhotoService {
 	 * @param folderListByParentId
 	 *            전체 폴더. Key: 부모 아이디, Value: 가르키는 부모 아이디가 같은 폴더
 	 */
-	private void findSubFolder(TreeNode<FolderVo> rootNode, Map<Integer, List<FolderVo>> folderListByParentId) {
+	private void findSubFolder(final TreeNode<FolderVo> rootNode,
+			final Map<Integer, List<FolderVo>> folderListByParentId) {
 		int id = rootNode.getData().getFolderSeq();
 		List<FolderVo> children = folderListByParentId.get(id);
 		if (children == null) {
