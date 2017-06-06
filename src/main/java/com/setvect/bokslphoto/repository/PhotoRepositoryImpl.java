@@ -121,7 +121,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		Query query = em.createQuery(queryString);
 		if (!pageCondition.isSearchDateNoting() && pageCondition.isDateBetween()) {
 			query.setParameter("from", pageCondition.getSearchFrom());
-			query.setParameter("to", pageCondition.getSearchTo());
+			query.setParameter("to", pageCondition.getSearchToEnd());
 		}
 		if (StringUtils.isNotEmpty(pageCondition.getSearchDirectory())) {
 			query.setParameter("directory", pageCondition.getSearchDirectory());

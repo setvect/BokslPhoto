@@ -172,6 +172,15 @@ public class PhotoControllerTestCase extends MainTestBase {
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(4));
 
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchFrom(DateUtil.getDate("2017-05-01"));
+		param.setSearchTo(DateUtil.getDate("2017-05-01"));
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(1));
+
+
 		int countOfhasShotDate = (int) allImage.stream().filter(p -> p.getShotDate() != null).count();
 		param = new PhotoSearchParam();
 		param.setStartCursor(0);

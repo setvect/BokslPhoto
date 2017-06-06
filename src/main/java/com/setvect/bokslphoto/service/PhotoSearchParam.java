@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto.service;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -70,6 +71,17 @@ public class PhotoSearchParam extends SearchListParam {
 	 */
 	public Date getSearchTo() {
 		return searchTo;
+	}
+
+	/**
+	 * @return 종료일 + 23:59:59
+	 */
+	public Date getSearchToEnd() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(searchTo);
+		cal.add(Calendar.DATE, 1);
+		cal.add(Calendar.SECOND, -1);
+		return cal.getTime();
 	}
 
 	/**
