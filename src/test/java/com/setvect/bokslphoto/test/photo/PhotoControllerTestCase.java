@@ -180,7 +180,6 @@ public class PhotoControllerTestCase extends MainTestBase {
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(1));
 
-
 		int countOfhasShotDate = (int) allImage.stream().filter(p -> p.getShotDate() != null).count();
 		param = new PhotoSearchParam();
 		param.setStartCursor(0);
@@ -196,7 +195,6 @@ public class PhotoControllerTestCase extends MainTestBase {
 		param.setSearchDateNoting(true);
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(4));
-
 
 		// 5. 폴더 검색
 		List<FolderVo> list = folderRepository.findAll();

@@ -35,9 +35,7 @@ import com.setvect.bokslphoto.vo.UserVo;
  */
 @RunWith(SpringRunner.class)
 @Transactional()
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 @SpringBootTest(classes = { BokslPhotoApplication.class })
-@Rollback(true)
 @TestPropertySource(locations = "classpath:test.properties")
 public class MainTestBase {
 	static {
