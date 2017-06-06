@@ -73,7 +73,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	public List<ImmutablePair<Date, Integer>> getGroupShotDate() {
 		// H2 Database 의존 쿼리
 		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) FROM TBBA_PHOTO p "
-				+ " GROUP BY DATE_STRING ORDER BY DATE_STRING";
+				+ " GROUP BY DATE_STRING ORDER BY DATE_STRING DESC";
 		Query querySelect = em.createNativeQuery(queryStatement);
 
 		List<Object[]> resultList = querySelect.getResultList();
@@ -101,7 +101,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	 */
 	private Query makeQueryWithWhere(final PhotoSearchParam pageCondition, final String queryStatement) {
 		String where = " WHERE 1=1 ";
-		if (pageCondition.isDateNoting()) {
+		if (pageCondition.isSearchDateNoting()) {
 			where += " AND p.shotDate IS NULL ";
 		} else if (pageCondition.isDateBetween()) {
 			where += " AND p.shotDate BETWEEN :from and :to ";
@@ -119,7 +119,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);
 		Query query = em.createQuery(queryString);
-		if (!pageCondition.isDateNoting() && pageCondition.isDateBetween()) {
+		if (!pageCondition.isSearchDateNoting() && pageCondition.isDateBetween()) {
 			query.setParameter("from", pageCondition.getSearchFrom());
 			query.setParameter("to", pageCondition.getSearchTo());
 		}

@@ -118,9 +118,9 @@ public class PhotoServiceTestCase extends MainTestBase {
 		});
 
 		Assert.assertThat(result.size(), CoreMatchers.is(13));
-		Assert.assertNull(result.get(0).getLeft());
-		Assert.assertThat(result.get(0).getRight(), CoreMatchers.is(4));
-		Assert.assertThat(result.get(10).getRight(), CoreMatchers.is(2));
+		Assert.assertNull(result.get(result.size() - 1).getLeft());
+		Assert.assertThat(result.get(2).getRight(), CoreMatchers.is(2));
+		Assert.assertThat(result.get(10).getRight(), CoreMatchers.is(1));
 
 		logger.debug("TotalCount: {}", result.size());
 
@@ -253,8 +253,8 @@ public class PhotoServiceTestCase extends MainTestBase {
 
 		List<Entry<DateRange, Integer>> e = new ArrayList<>(entry);
 
-		Assert.assertThat(e.get(0).getValue(), CoreMatchers.is(4));
-		Assert.assertThat(e.get(1).getValue(), CoreMatchers.is(1));
+		Assert.assertThat(e.get(0).getValue(), CoreMatchers.is(1));
+		Assert.assertThat(e.get(e.size() - 1).getValue(), CoreMatchers.is(4));
 
 		System.out.println("끝 ===============");
 	}

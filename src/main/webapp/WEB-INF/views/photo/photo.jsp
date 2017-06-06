@@ -69,16 +69,23 @@
 			$scope.dateGroup = response.data;
 
 			$scope.dateGroup.forEach(function(entry) {
-				console.log("entry", entry);
 				var params = {
 					"startCursor" : 0,
 					"returnCount" : 4
 				};
-
-				var from = $filter("date")(entry.from, "yyyyMMdd");
-				var to = $filter("date")(entry.to, "yyyyMMdd");
-				params["searchFrom"] = from;
-				params["searchTo"] = to;
+				
+				// 촬영 날짜가 없는 경우 검색 
+				if(entry.from == 0){
+					params["searchDateNoting"] = true;
+				}
+				// 촬영 날짜가 있는 경우 
+				else{
+					var from = $filter("date")(entry.from, "yyyyMMdd");
+					var to = $filter("date")(entry.to, "yyyyMMdd");
+					params["searchFrom"] = from;
+					params["searchTo"] = to;
+					
+				}
 
 				$http.get("${pageContext.request.contextPath}/photo/list.json", {
 					"params" : params

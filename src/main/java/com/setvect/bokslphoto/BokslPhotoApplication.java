@@ -33,7 +33,7 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	 *            사용 안함
 	 */
 	public static void main(final String[] args) {
-		// spring boot에서 클래스가 및 properties 변경되었을 때 restart 안됨.
+		// spring boot에서 클래스가 및 properties 변경되었을 때 restart 안되게 함.
 		// 즉 reload 효과
 		System.setProperty("spring.devtools.restart.enabled", "false");
 		SpringApplication.run(BokslPhotoApplication.class, args);

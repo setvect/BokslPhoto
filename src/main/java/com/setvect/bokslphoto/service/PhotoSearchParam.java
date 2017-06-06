@@ -1,6 +1,5 @@
 package com.setvect.bokslphoto.service;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -24,6 +23,9 @@ public class PhotoSearchParam extends SearchListParam {
 
 	/** 디레토리 조건 */
 	private String searchDirectory;
+
+	/** 촬영 날짜가 없는 사진 검색 */
+	private boolean searchDateNoting;
 
 	/** 분류 조건 */
 	private int searchFolderSeq;
@@ -118,12 +120,16 @@ public class PhotoSearchParam extends SearchListParam {
 	/**
 	 * @return 촬영 날짜가 없는 사진 검색
 	 */
-	public boolean isDateNoting() {
-		// 날짜 범위가 없는 값(1970-01-01 00:00:00)이면 촬영 날짜 선택이 안되었다고 판단
-		Calendar cal = Calendar.getInstance();
-		int offset = cal.getTimeZone().getRawOffset();
-		boolean dateNoting = (searchFrom.getTime() + offset) == 0 && (searchTo.getTime() + offset) == 0;
-		return dateNoting;
+	public boolean isSearchDateNoting() {
+		return searchDateNoting;
+	}
+
+	/**
+	 * @param searchDateNoting
+	 *            촬영 날짜가 없는 사진 검색
+	 */
+	public void setSearchDateNoting(final boolean searchDateNoting) {
+		this.searchDateNoting = searchDateNoting;
 	}
 
 	/**

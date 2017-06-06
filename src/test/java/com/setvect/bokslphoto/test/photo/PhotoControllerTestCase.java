@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -86,13 +85,20 @@ public class PhotoControllerTestCase extends MainTestBase {
 	public void testGroupByDate() throws Exception {
 		DateGroup dateGroup = DateGroup.DATE;
 		List<GroupByDate> r = listGroupByDate(dateGroup);
+
 		Assert.assertThat(r.size(), CoreMatchers.is(13));
 		r.stream().forEach(System.out::println);
+
+		// 최근 날짜가 먼저 나오게
+		Assert.assertTrue(r.get(1).getFrom().getTime() > r.get(2).getFrom().getTime());
 
 		dateGroup = DateGroup.MONTH;
 		r = listGroupByDate(dateGroup);
 		Assert.assertThat(r.size(), CoreMatchers.is(12));
 		r.stream().forEach(System.out::println);
+
+		// 최근 날짜가 먼저 나오게
+		Assert.assertTrue(r.get(5).getTo().getTime() > r.get(6).getTo().getTime());
 
 		System.out.println("끝.");
 	}
@@ -175,6 +181,14 @@ public class PhotoControllerTestCase extends MainTestBase {
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(countOfhasShotDate));
 
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchDateNoting(true);
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(4));
+
+
 		// 5. 폴더 검색
 		List<FolderVo> list = folderRepository.findAll();
 		FolderVo folder1 = list.get(1);
@@ -216,6 +230,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/list.json");
 		callRequest.param("startCursor", String.valueOf(param.getStartCursor()));
 		callRequest.param("returnCount", String.valueOf(param.getReturnCount()));
+
+		callRequest.param("searchDateNoting", String.valueOf(param.isSearchDateNoting()));
 		if (param.getSearchMemo() != null) {
 			callRequest.param("searchMemo", param.getSearchMemo());
 		}

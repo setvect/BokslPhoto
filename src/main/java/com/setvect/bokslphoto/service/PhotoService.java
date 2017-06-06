@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -89,7 +89,7 @@ public class PhotoService {
 					Date date = pair.getKey();
 					DateRange range = makeDateRange(date, groupType);
 					return range;
-				}, () -> new TreeMap<>(), Collectors.summingInt((ImmutablePair<Date, Integer> pair) -> {
+				}, () -> new LinkedHashMap<>(), Collectors.summingInt((ImmutablePair<Date, Integer> pair) -> {
 					return pair.getValue();
 				})));
 
@@ -106,6 +106,7 @@ public class PhotoService {
 	 * @return 날짜 그룹핑 영역의 시작과 종료 범위
 	 */
 	private DateRange makeDateRange(final Date base, final DateGroup groupType) {
+		// 날짜가 없는 경우 timestamp 0으로 함.
 		if (base == null) {
 			return new DateRange(new Date(0), new Date(0));
 		}
