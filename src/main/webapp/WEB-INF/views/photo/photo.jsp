@@ -56,22 +56,29 @@
 		});
 	}]);
 
-
 	// 사진 목록
 	photoApp.controller('photoListController', ['$scope', '$rootScope', '$http', '$filter', function($scope, $rootScope, $http, $filter) {
-		var params = {
-			"searchDateGroup" : "YEAR"
-		};
-		$http.get("${pageContext.request.contextPath}/photo/groupByDate.json", {
-			"params" : params
-		}).then(function(response) {
-			$scope.dateGroup = response.data;
-
-			$scope.dateGroup.forEach(function(entry) {
-				$scope.moreLoadImage(entry);
-			});
-		});
+		$scope.searchOption = {};
+		$scope.searchOption.searchDateGroup = "YEAR";
 		
+		// 최초 사진 목록 로드  
+		$scope.list = function(){
+			var params = {
+				"searchDateGroup" : $scope.searchOption.searchDateGroup
+			};
+
+			$http.get("${pageContext.request.contextPath}/photo/groupByDate.json", {
+				"params" : params
+			}).then(function(response) {
+				$scope.dateGroup = response.data;
+
+				$scope.dateGroup.forEach(function(entry) {
+					$scope.moreLoadImage(entry);
+				});
+			});
+		};
+		
+		// 사진 더 불러오기
 		$scope.moreLoadImage = function(dateGroup){
 			var startCursor = dateGroup.photo == null ? 0 : dateGroup.photo.list.length;
 			var params = {
@@ -95,13 +102,17 @@
 					dateGroup.photo = response.data;
 				}
 				else{
-					console.log("@@@@@@@@@@before", dateGroup.photo.list);
 					dateGroup.photo.list = dateGroup.photo.list.concat(response.data.list);
-					console.log("@@@@@@@@@@after", dateGroup.photo.list);
 				}
 			});
 		};
 		
+		// 날짜 보기 형태 바꾸기
+		$scope.changeDateGroup = function(){
+			$scope.list();
+		};
+		
+		$scope.list();
 		
 	} ]);
 

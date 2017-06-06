@@ -30,6 +30,9 @@
 <!-- Custom Css -->
 <link href="${pageContext.request.contextPath}/static/css/bokslphoto.css" rel="stylesheet">
 
+<!-- Bootstrap Select Css -->
+<link href="${pageContext.request.contextPath}/static/css/bootstrap-select.css" rel="stylesheet" />
+
 <!-- Jquery Core Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/jquery/jquery.min.js"></script>
 
@@ -38,6 +41,9 @@
 
 <!-- Select Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+
+<!-- ng-bootstrap-select -->
+<script src="${pageContext.request.contextPath}/static/plugins/ng-bootstrap-select-master/ng-bootstrap-select.js"></script>
 
 <!-- Slimscroll Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
