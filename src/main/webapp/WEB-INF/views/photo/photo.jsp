@@ -59,7 +59,6 @@
 
 	// 사진 목록
 	photoApp.controller('photoListController', ['$scope', '$rootScope', '$http', '$filter', function($scope, $rootScope, $http, $filter) {
-		$scope.list = [];
 		var params = {
 			"searchDateGroup" : "YEAR"
 		};
@@ -69,31 +68,41 @@
 			$scope.dateGroup = response.data;
 
 			$scope.dateGroup.forEach(function(entry) {
-				var params = {
-					"startCursor" : 0,
-					"returnCount" : 4
-				};
-				
-				// 촬영 날짜가 없는 경우 검색 
-				if(entry.from == 0){
-					params["searchDateNoting"] = true;
-				}
-				// 촬영 날짜가 있는 경우 
-				else{
-					var from = $filter("date")(entry.from, "yyyyMMdd");
-					var to = $filter("date")(entry.to, "yyyyMMdd");
-					params["searchFrom"] = from;
-					params["searchTo"] = to;
-					
-				}
-
-				$http.get("${pageContext.request.contextPath}/photo/list.json", {
-					"params" : params
-				}).then(function(response) {
-					entry.photoList = response.data.list;
-				});
+				$scope.moreLoadImage(entry);
 			});
 		});
+		
+		$scope.moreLoadImage = function(dateGroup){
+			var startCursor = dateGroup.photo == null ? 0 : dateGroup.photo.list.length;
+			var params = {
+				"startCursor" : startCursor,
+				"returnCount" : 4
+			};
+				
+			var from = $filter("date")(dateGroup.from, "yyyyMMdd");
+			var to = $filter("date")(dateGroup.to, "yyyyMMdd");
+			params["searchFrom"] = from;
+			params["searchTo"] = to;
+			// 촬영 날짜가 없는 경우 검색. true 경우 날짜 범위 검색 무시 
+			var dateNoting = dateGroup.from == 0;
+			params["searchDateNoting"] = dateNoting;
+
+			$http.get("${pageContext.request.contextPath}/photo/list.json", {
+				"params" : params
+			}).then(function(response) {
+				// 최초 로딩
+				if(dateGroup.photo == null){
+					dateGroup.photo = response.data;
+				}
+				else{
+					console.log("@@@@@@@@@@before", dateGroup.photo.list);
+					dateGroup.photo.list = dateGroup.photo.list.concat(response.data.list);
+					console.log("@@@@@@@@@@after", dateGroup.photo.list);
+				}
+			});
+		};
+		
+		
 	} ]);
 
 	// 사진 업로드

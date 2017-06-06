@@ -24,19 +24,18 @@
 			</div>
 			<div class="body">
 				<div class="row">
-					
-					<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photoList">
+					<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photo.list">
 						<div class="thumbnail">
 							<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}">
-							<div class="caption">
-								<p>
-									<a href="javascript:void(0);" class="btn btn-primary waves-effect" role="button">BUTTON</a>
-								</p>
-							</div>
+<!-- 							<div class="caption"> -->
+<!-- 								<p> -->
+<!-- 									<a href="javascript:void(0);" class="btn btn-primary waves-effect" role="button">BUTTON</a> -->
+<!-- 								</p> -->
+<!-- 							</div> -->
 						</div>
 					</div>
-					
 				</div>
+				<button type="button" class="btn btn-block btn-lg btn-info waves-effect" data-ng-click="moreLoadImage(group)">더 불러오기({{group.photo.list.length}} / {{group.photo.totalCount}})</button>
 			</div>
 		</div>
 	</div>
