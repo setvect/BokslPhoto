@@ -184,18 +184,6 @@
 	<!-- #END# Page Loader -->
 	<!-- Overlay For Sidebars -->
 	<div class="overlay"></div>
-	<!-- #END# Overlay For Sidebars -->
-	<!-- Search Bar -->
-	<div class="search-bar">
-		<div class="search-icon">
-			<i class="material-icons">search</i>
-		</div>
-		<input type="text" placeholder="검색어 입력">
-		<div class="close-search">
-			<i class="material-icons">close</i>
-		</div>
-	</div>
-	<!-- #END# Search Bar -->
 	<!-- Top Bar -->
 	<nav class="navbar">
 		<div class="container-fluid">
@@ -206,8 +194,6 @@
 			</div>
 			<div class="collapse navbar-collapse" id="navbar-collapse">
 				<ul class="nav navbar-nav navbar-right">
-					<!-- Call Search -->
-					<li><a href="javascript:void(0);" class="js-search" data-close="true"><i class="material-icons">search</i></a></li>
 					<li><a href="${pageContext.request.contextPath}/logout.do" class="_logout" data-close="true"><i
 							class="material-icons">input</i></a></li>
 				</ul>
