@@ -346,14 +346,18 @@ public class PhotoControllerTestCase extends MainTestBase {
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getImage.do");
 		PhotoVo targetPhoto = allImage.get(0);
 		callRequest.param("photoId", targetPhoto.getPhotoId());
+		callRequest.param("w", "100");
+		callRequest.param("h", "100");
 		ResultActions resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		MvcResult mvcResult = resultActions.andReturn();
 		byte[] receive = mvcResult.getResponse().getContentAsByteArray();
-		try (InputStream in = new FileInputStream(allImage.get(0).getFullPath());) {
-			byte[] origin = IOUtils.toByteArray(in);
-			Assert.assertThat(receive, CoreMatchers.is(origin));
-		}
+		Assert.assertTrue(receive.length != 0);
+		// try (InputStream in = new
+		// FileInputStream(allImage.get(0).getFullPath());) {
+		// byte[] origin = IOUtils.toByteArray(in);
+		// Assert.assertThat(receive, CoreMatchers.is(origin));
+		// }
 	}
 
 	// ============== 데이터 등록 ==============

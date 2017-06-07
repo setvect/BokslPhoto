@@ -41,7 +41,7 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photo.list">
 							<div class="thumbnail">
-								<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}">
+								<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=200">
 	<!-- 							<div class="caption"> -->
 	<!-- 								<p> -->
 	<!-- 									<a href="javascript:void(0);" class="btn btn-primary waves-effect" role="button">BUTTON</a> -->

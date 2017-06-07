@@ -44,6 +44,7 @@ import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.service.ThumbnailImageConvert;
 import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.util.TreeNode;
@@ -204,20 +205,56 @@ public class PhotoController {
 	}
 
 	/**
-	 * 사진 정보를 byte로 전송
+	 * 썸네일 사진 정보를 byte로 전송
 	 *
 	 * @param photoId
 	 *            사진 아이디
-	 * @return 이미지 byte
+	 * @param width
+	 *            넓이 픽셀
+	 * @param height
+	 *            높이 픽셀
+	 * @return 섬네일 이미지 byte
 	 * @throws IOException
 	 *             파일 처리 오류
 	 */
 	@ResponseBody
 	@RequestMapping("/photo/getImage.do")
-	public byte[] getImage(@RequestParam("photoId") final String photoId) throws IOException {
+	public byte[] getImage(@RequestParam("photoId") final String photoId, @RequestParam("w") final int width,
+			@RequestParam("h") final int height) throws IOException {
 		PhotoVo photo = photoRepository.findOne(photoId);
 
-		try (InputStream in = new FileInputStream(photo.getFullPath());) {
+		// 입력값이 재대로 입력되지 않으면 그냥 리턴
+		if (photo == null || width == 0 || height == 0) {
+			logger.warn("thumnal error.");
+			return null;
+		}
+
+		File photoFile = photo.getFullPath();
+
+		// 파일이 존재 하지 않으면 그냥 종료
+		if (!photoFile.exists()) {
+			logger.warn("{} not exist.", photoFile);
+			return null;
+		}
+
+		// 섬네일 이미지 파일이름 만들기
+		// e.g) imagename_w33_h44.jpg
+		String name = photoFile.getName();
+		String tempImg = FilenameUtils.getBaseName(name) + "_w" + width + "_h" + height + "."
+				+ FilenameUtils.getExtension(name);
+
+		// 섬네일 버전된 경로
+		File toFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
+		boolean fileExist = toFile.exists();
+		boolean fileOld = toFile.lastModified() < photoFile.lastModified();
+
+		// 기존에 섬네일로 변환된 파일이 있는냐?
+		// 섬네일로 변환된 파일이 없거나, 파일이 수정되었을 경우 섬네일 다시 만들기
+		if (!fileExist || fileOld) {
+			ThumbnailImageConvert.makeThumbnail(photoFile, toFile, width, height);
+		}
+
+		try (InputStream in = new FileInputStream(toFile);) {
 			return IOUtils.toByteArray(in);
 		}
 	}

@@ -40,6 +40,9 @@ public final class BokslPhotoConstant {
 		/** 이미지 저장 기본 경로. */
 		public static final File BASE_DIR = new File(EnvirmentProperty.getString("com.setvect.photo.base"));
 
+		/** 썸네일 이미지 저장 기본 경로 */
+		public static final File THUMBNAIL_DIR = new File(EnvirmentProperty.getString("com.setvect.photo.thumbnail"));
+
 		/**
 		 * 웹으로 업로드한 이미지 저장 경로<br>
 		 * BASE_DIR 하위 디렉토리로 함.<br>
@@ -81,7 +84,7 @@ public final class BokslPhotoConstant {
 	/** WHERE 절 replace를 하기 위함. */
 	public static final String SQL_WHERE = "{WHERE}";
 
-	/** 테스트 실행 여부을 알수 있는 System property 이름*/
+	/** 테스트 실행 여부을 알수 있는 System property 이름 */
 	public static final String TEST_CHECK_PROPERTY_NAME = "test_run";
 
 }
