@@ -225,7 +225,7 @@ public class PhotoController {
 
 		// 입력값이 재대로 입력되지 않으면 그냥 리턴
 		if (photo == null || width == 0 || height == 0) {
-			logger.warn("thumnal error.");
+			logger.warn("thumbnail error.");
 			return null;
 		}
 
@@ -244,17 +244,17 @@ public class PhotoController {
 				+ FilenameUtils.getExtension(name);
 
 		// 섬네일 버전된 경로
-		File toFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
-		boolean fileExist = toFile.exists();
-		boolean fileOld = toFile.lastModified() < photoFile.lastModified();
+		File toThumbnailFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
+		boolean thumbnailExist = toThumbnailFile.exists();
+		boolean oldThumbnail = toThumbnailFile.lastModified() < photoFile.lastModified();
 
 		// 기존에 섬네일로 변환된 파일이 있는냐?
 		// 섬네일로 변환된 파일이 없거나, 파일이 수정되었을 경우 섬네일 다시 만들기
-		if (!fileExist || fileOld) {
-			ThumbnailImageConvert.makeThumbnail(photoFile, toFile, width, height);
+		if (!thumbnailExist || oldThumbnail) {
+			ThumbnailImageConvert.makeThumbnail(photoFile, toThumbnailFile, width, height);
 		}
 
-		try (InputStream in = new FileInputStream(toFile);) {
+		try (InputStream in = new FileInputStream(toThumbnailFile);) {
 			return IOUtils.toByteArray(in);
 		}
 	}
