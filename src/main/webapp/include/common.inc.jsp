@@ -60,3 +60,6 @@
 <!-- Dropzone Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/dropzone/dropzone.js"></script>
 <script src="${pageContext.request.contextPath}/static/plugins/dropzone/ng-dropzone.js"></script>
+
+<!-- 복슬포토에 의존된 Js -->
+<script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>
