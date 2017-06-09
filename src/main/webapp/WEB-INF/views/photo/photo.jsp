@@ -192,7 +192,7 @@
 				<a href="javascript:void(0);" class="bars"></a> 
 				<div class="navbar-brand">
 					<a href="${pageContext.request.contextPath}/">복슬포토</a>
-					<a href="javascript:void(0);" class="_left_menu_toggle"><span class="glyphicon glyphicon-list-alt"></span></a>
+					<a href="javascript:void(0);" class="_left_menu_toggle"><span class="	glyphicon glyphicon-chevron-left"></span></a>
 				</div>  
 			</div>
 			<div class="collapse navbar-collapse" id="navbar-collapse">
