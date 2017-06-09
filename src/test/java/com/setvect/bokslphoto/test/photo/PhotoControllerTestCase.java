@@ -163,6 +163,15 @@ public class PhotoControllerTestCase extends MainTestBase {
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(3));
 
+
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(10);
+		param.setSearchDirectory("/여행/바다/");
+		response = listPhoto(param);
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(7));
+
+
 		// 4. 날짜 검색
 		param = new PhotoSearchParam();
 		param.setStartCursor(0);
