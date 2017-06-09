@@ -1,0 +1,25 @@
+/*
+ * 복슬 포토 
+ */
+.label {
+	display: inline !important;
+	padding: .4em .6em .3em !important;
+	font-size: 75% !important;
+	font-weight: bold !important;
+	line-height: 1 !important;
+	color: #fff !important;
+	text-align: center !important;
+	white-space: nowrap !important;
+	vertical-align: baseline !important;
+	border-radius: .25em !important;
+}
+
+/* 좌측 메뉴 사라진 영역까지 내용 확장  */
+.content_extend {
+	margin-left: 15px !important;
+}
+
+.navbar-brand a {
+	color: #fff;
+	text-decoration: none;
+}

@@ -191,7 +191,7 @@
 				<a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a> 
 				<a href="javascript:void(0);" class="bars"></a> 
 				<div class="navbar-brand">
-					<a href="${pageContext.request.contextPath}/static/index.html">복슬포토</a>
+					<a href="${pageContext.request.contextPath}/">복슬포토</a>
 					<a href="javascript:void(0);" class="_left_menu_toggle"><span class="glyphicon glyphicon-list-alt"></span></a>
 				</div>  
 			</div>

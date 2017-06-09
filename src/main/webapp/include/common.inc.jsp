@@ -5,10 +5,6 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
 
-<!-- angularjs -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular-route.js"></script>
-
 <!-- Bootstrap Core Css -->
 <link href="${pageContext.request.contextPath}/static/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
 
@@ -32,6 +28,11 @@
 
 <!-- Bootstrap Select Css -->
 <link href="${pageContext.request.contextPath}/static/css/bootstrap-select.css" rel="stylesheet" />
+
+
+<!-- angularjs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular-route.js"></script>
 
 <!-- Jquery Core Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/jquery/jquery.min.js"></script>
