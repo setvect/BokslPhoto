@@ -30,6 +30,6 @@ public interface PhotoRepositoryCustom {
 	/**
 	 * @return 날짜별 사진 건수
 	 */
-	public List<ImmutablePair<Date, Integer>> getGroupShotDate();
+	public List<ImmutablePair<Date, Integer>> getGroupShotDate(PhotoSearchParam condition);
 
 }

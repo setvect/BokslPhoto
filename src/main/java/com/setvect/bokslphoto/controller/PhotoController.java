@@ -157,7 +157,7 @@ public class PhotoController {
 	@RequestMapping("/photo/groupByDate.json")
 	@ResponseBody
 	public List<GroupByDate> groupByDate(final PhotoSearchParam searchParam) {
-		Map<DateRange, Integer> dateCountMap = photoService.groupByDate(searchParam.getSearchDateGroup());
+		Map<DateRange, Integer> dateCountMap = photoService.groupByDate(searchParam);
 
 		List<GroupByDate> reseult = dateCountMap.entrySet().stream().map(entry -> {
 			GroupByDate g = new GroupByDate();

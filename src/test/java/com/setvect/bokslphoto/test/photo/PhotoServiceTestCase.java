@@ -112,7 +112,9 @@ public class PhotoServiceTestCase extends MainTestBase {
 	 */
 	@Test
 	public void testGroupBy() {
-		List<ImmutablePair<Date, Integer>> result = photoRepository.getGroupShotDate();
+		PhotoSearchParam param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		List<ImmutablePair<Date, Integer>> result = photoRepository.getGroupShotDate(param);
 		result.stream().forEach(p -> {
 			System.out.printf("%tF: %,d\n", p.getLeft(), p.getRight());
 		});
@@ -236,17 +238,23 @@ public class PhotoServiceTestCase extends MainTestBase {
 	public void testGroupByDate() {
 		for (DateGroup t : DateGroup.values()) {
 			System.out.println("-------------- " + t);
-			Map<DateRange, Integer> r = photoService.groupByDate(t);
+			PhotoSearchParam param = new PhotoSearchParam();
+			param.setSearchDateGroup(t);
+			Map<DateRange, Integer> r = photoService.groupByDate(param);
 			r.entrySet().stream().forEach(System.out::println);
 		}
 
-		Map<DateRange, Integer> r = photoService.groupByDate(DateGroup.DATE);
+		PhotoSearchParam param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		Map<DateRange, Integer> r = photoService.groupByDate(param);
 		Assert.assertThat(r.size(), CoreMatchers.is(13));
 
-		r = photoService.groupByDate(DateGroup.MONTH);
+		param.setSearchDateGroup(DateGroup.MONTH);
+		r = photoService.groupByDate(param);
 		Assert.assertThat(r.size(), CoreMatchers.is(12));
 
-		r = photoService.groupByDate(DateGroup.YEAR);
+		param.setSearchDateGroup(DateGroup.YEAR);
+		r = photoService.groupByDate(param);
 		Assert.assertThat(r.size(), CoreMatchers.is(10));
 
 		Set<Entry<DateRange, Integer>> entry = r.entrySet();

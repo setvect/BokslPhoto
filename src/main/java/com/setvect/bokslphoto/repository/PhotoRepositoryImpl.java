@@ -1,6 +1,7 @@
 package com.setvect.bokslphoto.repository;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,13 +32,13 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	public GenericPage<PhotoVo> getPhotoPagingList(final PhotoSearchParam pageCondition) {
 		String queryStatement = "select count(*) FROM PhotoVo p LEFT OUTER JOIN p.folders f "
 				+ BokslPhotoConstant.SQL_WHERE;
-		Query queryCount = makeQueryWithWhere(pageCondition, queryStatement);
+		Query queryCount = makeListQueryWhere(pageCondition, queryStatement);
 		int totalCount = ((Long) queryCount.getSingleResult()).intValue();
 
 		queryStatement = "SELECT p FROM PhotoVo p LEFT OUTER JOIN p.folders f " + BokslPhotoConstant.SQL_WHERE
 				+ " ORDER BY p.shotDate DESC";
 
-		Query querySelect = makeQueryWithWhere(pageCondition, queryStatement);
+		Query querySelect = makeListQueryWhere(pageCondition, queryStatement);
 		querySelect.setFirstResult(pageCondition.getStartCursor());
 		querySelect.setMaxResults(pageCondition.getReturnCount());
 
@@ -70,11 +71,31 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ImmutablePair<Date, Integer>> getGroupShotDate() {
+	public List<ImmutablePair<Date, Integer>> getGroupShotDate(PhotoSearchParam condition) {
 		// H2 Database 의존 쿼리
-		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) FROM TBBA_PHOTO p "
-				+ " GROUP BY DATE_STRING ORDER BY DATE_STRING DESC";
+		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) FROM TBBA_PHOTO p ";
+		queryStatement += " WHERE  1 = 1 ";
+
+		Map<String, Object> bindMap = new HashMap<>();
+
+		if (StringUtils.isNotEmpty(condition.getSearchDirectory())) {
+			queryStatement += " AND DIRECTORY = :directory";
+			bindMap.put("directory", condition.getSearchDirectory());
+		}
+		if (StringUtils.isNotEmpty(condition.getSearchMemo())) {
+			queryStatement += " AND DIRECTORY like :memo";
+			bindMap.put("memo", "%" + condition.getSearchMemo() + "%");
+		}
+		if (condition.getSearchFolderSeq() != 0) {
+			queryStatement += " AND f.folderSeq = :folderSeq";
+			bindMap.put("folderSeq", condition.getSearchFolderSeq());
+		}
+		queryStatement += " GROUP BY DATE_STRING ORDER BY DATE_STRING DESC";
 		Query querySelect = em.createNativeQuery(queryStatement);
+
+		bindMap.entrySet().stream().forEach(entry -> {
+			querySelect.setParameter(entry.getKey(), entry.getValue());
+		});
 
 		List<Object[]> resultList = querySelect.getResultList();
 
@@ -99,7 +120,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	 *            기본 쿼리
 	 * @return Where조건이 포함된 질의
 	 */
-	private Query makeQueryWithWhere(final PhotoSearchParam pageCondition, final String queryStatement) {
+	private Query makeListQueryWhere(final PhotoSearchParam pageCondition, final String queryStatement) {
 		String where = " WHERE 1=1 ";
 		if (pageCondition.isSearchDateNoting()) {
 			where += " AND p.shotDate IS NULL ";
@@ -114,7 +135,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 			where += " AND p.memo like :memo";
 		}
 		if (pageCondition.getSearchFolderSeq() != 0) {
-			where += " AND f.folderSeq like :folderSeq";
+			where += " AND f.folderSeq = :folderSeq";
 		}
 
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);

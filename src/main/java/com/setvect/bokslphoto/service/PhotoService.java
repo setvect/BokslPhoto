@@ -77,17 +77,17 @@ public class PhotoService {
 	/**
 	 * 날짜별 이미지 건수
 	 *
-	 * @param groupType
+	 * @param searchParam
 	 *            그룹핑 유형
 	 * @return key: 날짜 범위, value: 건수
 	 */
-	public Map<DateRange, Integer> groupByDate(final DateGroup groupType) {
-		List<ImmutablePair<Date, Integer>> countByDate = photoRepository.getGroupShotDate();
+	public Map<DateRange, Integer> groupByDate(final PhotoSearchParam searchParam) {
+		List<ImmutablePair<Date, Integer>> countByDate = photoRepository.getGroupShotDate(searchParam);
 
 		Map<DateRange, Integer> result = countByDate.stream()
 				.collect(Collectors.groupingBy((ImmutablePair<Date, Integer> pair) -> {
 					Date date = pair.getKey();
-					DateRange range = makeDateRange(date, groupType);
+					DateRange range = makeDateRange(date, searchParam.getSearchDateGroup());
 					return range;
 				}, () -> new LinkedHashMap<>(), Collectors.summingInt((ImmutablePair<Date, Integer> pair) -> {
 					return pair.getValue();

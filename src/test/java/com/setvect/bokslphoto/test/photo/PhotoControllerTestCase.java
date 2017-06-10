@@ -83,8 +83,9 @@ public class PhotoControllerTestCase extends MainTestBase {
 	// ============== 데이터 조회 ==============
 	@Test
 	public void testGroupByDate() throws Exception {
-		DateGroup dateGroup = DateGroup.DATE;
-		List<GroupByDate> r = listGroupByDate(dateGroup);
+		PhotoSearchParam param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		List<GroupByDate> r = listGroupByDate(param);
 
 		Assert.assertThat(r.size(), CoreMatchers.is(13));
 		r.stream().forEach(System.out::println);
@@ -92,21 +93,48 @@ public class PhotoControllerTestCase extends MainTestBase {
 		// 최근 날짜가 먼저 나오게
 		Assert.assertTrue(r.get(1).getFrom().getTime() > r.get(2).getFrom().getTime());
 
-		dateGroup = DateGroup.MONTH;
-		r = listGroupByDate(dateGroup);
+		param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.MONTH);
+		r = listGroupByDate(param);
+
 		Assert.assertThat(r.size(), CoreMatchers.is(12));
 		r.stream().forEach(System.out::println);
 
 		// 최근 날짜가 먼저 나오게
 		Assert.assertTrue(r.get(5).getTo().getTime() > r.get(6).getTo().getTime());
 
+		param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		param.setSearchDirectory("/여행/");
+		r = listGroupByDate(param);
+
+		Assert.assertThat(r.size(), CoreMatchers.is(1));
+
 		System.out.println("끝.");
 	}
 
-	private List<GroupByDate> listGroupByDate(DateGroup dateGroup) throws Exception, UnsupportedEncodingException {
+	private List<GroupByDate> listGroupByDate(PhotoSearchParam param) throws Exception, UnsupportedEncodingException {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/groupByDate.json");
-		callRequest.param("searchDateGroup", dateGroup.name());
+
+		callRequest.param("searchDateGroup", param.getSearchDateGroup().name());
+
+		if (param.getSearchMemo() != null) {
+			callRequest.param("searchMemo", param.getSearchMemo());
+		}
+		if (param.getSearchDirectory() != null) {
+			callRequest.param("searchDirectory", param.getSearchDirectory());
+		}
+
+		if (param.isDateBetween()) {
+			callRequest.param("searchFrom", DateUtil.getFormatString(param.getSearchFrom(), "yyyyMMdd"));
+			callRequest.param("searchTo", DateUtil.getFormatString(param.getSearchTo(), "yyyyMMdd"));
+		}
+
+		if (param.getSearchFolderSeq() != 0) {
+			callRequest.param("searchFolderSeq", String.valueOf(param.getSearchFolderSeq()));
+		}
+
 		ResultActions resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		MvcResult mvcResult = resultActions.andReturn();
@@ -163,14 +191,12 @@ public class PhotoControllerTestCase extends MainTestBase {
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(3));
 
-
 		param = new PhotoSearchParam();
 		param.setStartCursor(0);
 		param.setReturnCount(10);
 		param.setSearchDirectory("/여행/바다/");
 		response = listPhoto(param);
 		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(7));
-
 
 		// 4. 날짜 검색
 		param = new PhotoSearchParam();
