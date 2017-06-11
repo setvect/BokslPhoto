@@ -8,7 +8,7 @@
 			<form>
 				<div class="form-line">
 					<span>보기 형태</span> 
-					<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" data-ng-change="changeDateGroup();">
+					<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" data-ng-change="changeDateGroup();" selectpicker >
 						<option value="DATE">일 단위</option>
 						<option value="MONTH">월 단위</option>
 						<option value="YEAR">년 단위</option>
@@ -41,7 +41,7 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photo.list">
 							<div class="thumbnail">
-								<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=200">
+								<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170">
 	<!-- 							<div class="caption"> -->
 	<!-- 								<p> -->
 	<!-- 									<a href="javascript:void(0);" class="btn btn-primary waves-effect" role="button">BUTTON</a> -->
