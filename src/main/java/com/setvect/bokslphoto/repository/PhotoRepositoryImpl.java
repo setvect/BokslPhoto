@@ -30,12 +30,12 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 	@Override
 	public GenericPage<PhotoVo> getPhotoPagingList(final PhotoSearchParam pageCondition) {
-		String queryStatement = "select count(*) FROM PhotoVo p LEFT OUTER JOIN p.folders f "
+		String queryStatement = "select count(DISTINCT p.photoId) FROM PhotoVo p LEFT OUTER JOIN p.folders f "
 				+ BokslPhotoConstant.SQL_WHERE;
 		Query queryCount = makeListQueryWhere(pageCondition, queryStatement);
 		int totalCount = ((Long) queryCount.getSingleResult()).intValue();
 
-		queryStatement = "SELECT p FROM PhotoVo p LEFT OUTER JOIN p.folders f " + BokslPhotoConstant.SQL_WHERE
+		queryStatement = "SELECT DISTINCT p FROM PhotoVo p LEFT OUTER JOIN p.folders f " + BokslPhotoConstant.SQL_WHERE
 				+ " ORDER BY p.shotDate DESC";
 
 		Query querySelect = makeListQueryWhere(pageCondition, queryStatement);
@@ -73,7 +73,8 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	@Override
 	public List<ImmutablePair<Date, Integer>> getGroupShotDate(PhotoSearchParam condition) {
 		// H2 Database 의존 쿼리
-		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) FROM TBBA_PHOTO p ";
+		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) " //
+				+ " FROM TBBA_PHOTO P LEFT OUTER JOIN TBBC_MAPPING  F ON P.PHOTO_ID = F.PHOTO_ID ";
 		queryStatement += " WHERE  1 = 1 ";
 
 		Map<String, Object> bindMap = new HashMap<>();
@@ -83,11 +84,11 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 			bindMap.put("directory", condition.getSearchDirectory());
 		}
 		if (StringUtils.isNotEmpty(condition.getSearchMemo())) {
-			queryStatement += " AND DIRECTORY like :memo";
+			queryStatement += " AND MEMO like :memo";
 			bindMap.put("memo", "%" + condition.getSearchMemo() + "%");
 		}
 		if (condition.getSearchFolderSeq() != 0) {
-			queryStatement += " AND f.folderSeq = :folderSeq";
+			queryStatement += " AND F.FOLDER_SEQ = :folderSeq";
 			bindMap.put("folderSeq", condition.getSearchFolderSeq());
 		}
 		queryStatement += " GROUP BY DATE_STRING ORDER BY DATE_STRING DESC";

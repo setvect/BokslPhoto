@@ -9,11 +9,8 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,11 +88,15 @@ public class MainTestBase {
 		folderRepository.save(folderRoot);
 		folderRoot.setParentId(folderRoot.getFolderSeq());
 		folderRepository.save(folderRoot);
+		allList.get(1).addFolder(folderRoot);
+		allList.get(2).addFolder(folderRoot);
 
 		FolderVo folderSub = new FolderVo();
 		folderSub.setParentId(folderRoot.getFolderSeq());
 		folderSub.setName("SUB1");
 		folderRepository.save(folderSub);
+		allList.get(1).addFolder(folderSub);
+		allList.get(10).addFolder(folderSub);
 
 		folderSub = new FolderVo();
 		folderSub.setParentId(folderRoot.getFolderSeq());
@@ -106,6 +107,9 @@ public class MainTestBase {
 		folderSubSub.setParentId(folderSub.getFolderSeq());
 		folderSubSub.setName("SUB2-1");
 		folderRepository.save(folderSubSub);
+		allList.get(9).addFolder(folderSubSub);
+		allList.get(10).addFolder(folderSubSub);
+		allList.get(11).addFolder(folderSubSub);
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");

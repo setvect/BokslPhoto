@@ -35,6 +35,9 @@
 		}).when("/listDirectory/:directoryName", {
 			templateUrl : "${pageContext.request.contextPath}/photo/list.do",
 			controller : "photoListController"
+		}).when("/listFolder/:folderSeq", {
+			templateUrl : "${pageContext.request.contextPath}/photo/list.do",
+			controller : "photoListController"
 		}).when("/upload", {
 			templateUrl : "${pageContext.request.contextPath}/photo/upload.do",
 			controller : "photoUploadController"
@@ -45,6 +48,10 @@
 
 	// 폴더 구조
 	photoApp.controller('photoFolderController', ['$scope', '$http', function($scope, $http, $sce) {
+		$scope.viewFolder = function(folder){
+			location.href="#!/listFolder/" + folder.folderSeq;
+		}
+		
 		$http.get("${pageContext.request.contextPath}/photo/folder.json").then(function (response){
 			$scope.photoFolder = response.data;
 		});
@@ -71,15 +78,23 @@
 		if($routeParams.directoryName != null){
 			decodedirectoryName = decodeURIComponent(window.atob($routeParams.directoryName));
 		}
-		console.log("cccc##", decodedirectoryName);
+		var folderSeq;
+		if($routeParams.folderSeq != null){
+			folderSeq = $routeParams.folderSeq;
+		}
+		console.log($routeParams.folderSeq);
 		
 		// 최초 사진 목록 로드  
 		$scope.list = function(){
 			var params = {
 				"searchDateGroup" : $scope.searchOption.searchDateGroup,
-				"searchDirectory" : decodedirectoryName
+				"searchDirectory" : decodedirectoryName,
+				"searchFolderSeq" : folderSeq
 			};
 
+
+			console.log("params#########", params);
+			
 			$http.get("${pageContext.request.contextPath}/photo/groupByDate.json", {
 				"params" : params
 			}).then(function(response) {
@@ -98,7 +113,8 @@
 			var params = {
 				"startCursor" : startCursor,
 				"returnCount" : 4,
-				"searchDirectory" : decodedirectoryName
+				"searchDirectory" : decodedirectoryName,
+				"searchFolderSeq" : folderSeq
 			};
 				
 			var from = $filter("date")(dateGroup.from, "yyyyMMdd");
@@ -167,14 +183,14 @@
 </head>
 <body class="theme-cyan" data-ng-app="photoApp">
 	<script type="text/ng-template" id="folder_renderer.html">
-		<a href="javascript:void(0);" class="{{folder.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{folder.data.name}}</span><span class="label label-info">({{folder.data.photoCount}})</span></a>
+		<a href="javascript:void(0);" data-ng-click="viewFolder(folder.data)" class="{{folder.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{folder.data.name}}</span><span class="label label-info">({{folder.data.photoCount}})</span></a>
 		<ul class="ml-menu">
 			<li ng-repeat="folder in folder.children" ng-include="'folder_renderer.html'" photo-folder-directive></li>
 		</ul>
 	</script>
 
 	<script type="text/ng-template" id="directory_renderer.html">
-		<a href="javascript:void(0);" data-ng-click="viewDirectory(dir.data)"  class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span class="label label-info">({{dir.data.photoCount}})</span></a>
+		<a href="javascript:void(0);" data-ng-click="viewDirectory(dir.data)" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span class="label label-info">({{dir.data.photoCount}})</span></a>
 		<ul class="ml-menu">
 			<li ng-repeat="dir in dir.children" ng-include="'directory_renderer.html'" photo-dir-directive></li>
 		</ul>

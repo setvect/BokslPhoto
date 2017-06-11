@@ -99,15 +99,41 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		Assert.assertThat(r.size(), CoreMatchers.is(12));
 		r.stream().forEach(System.out::println);
-
-		// 최근 날짜가 먼저 나오게
+		// 최근 날짜가 먼저 나오는것 확인
 		Assert.assertTrue(r.get(5).getTo().getTime() > r.get(6).getTo().getTime());
 
+		// 디렉토리 이름 검색
 		param = new PhotoSearchParam();
 		param.setSearchDateGroup(DateGroup.DATE);
 		param.setSearchDirectory("/여행/");
 		r = listGroupByDate(param);
+		Assert.assertThat(r.size(), CoreMatchers.is(1));
 
+		// 폴더 검색
+		List<FolderVo> folder = folderRepository.findAll();
+		Assert.assertThat(4, CoreMatchers.is(folder.size()));
+
+		param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		param.setSearchFolderSeq(folder.get(1).getFolderSeq());
+		r = listGroupByDate(param);
+		r.stream().forEach(System.out::println);
+		Assert.assertThat(r.size(), CoreMatchers.is(2));
+
+		// 메모 검색
+		param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		param.setSearchMemo("메모");
+		r = listGroupByDate(param);
+		r.stream().forEach(System.out::println);
+		Assert.assertThat(r.size(), CoreMatchers.is(2));
+
+		// 메모 검색
+		param = new PhotoSearchParam();
+		param.setSearchDateGroup(DateGroup.DATE);
+		param.setSearchMemo("테스트");
+		r = listGroupByDate(param);
+		r.stream().forEach(System.out::println);
 		Assert.assertThat(r.size(), CoreMatchers.is(1));
 
 		System.out.println("끝.");
@@ -241,7 +267,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		param.setReturnCount(10);
 		param.setSearchFolderSeq(folder1.getFolderSeq());
 		response = listPhoto(param);
-		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(0));
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(2));
 
 		List<PhotoVo> allList = photoRepository.findAll();
 		allList.get(0).addFolder(folder1);
@@ -255,8 +281,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		param.setReturnCount(10);
 		param.setSearchFolderSeq(folder1.getFolderSeq());
 		response = listPhoto(param);
-		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(2));
-		Assert.assertThat(response.getList().size(), CoreMatchers.is(2));
+		Assert.assertThat(response.getTotalCount(), CoreMatchers.is(4));
+		Assert.assertThat(response.getList().size(), CoreMatchers.is(4));
 
 		param = new PhotoSearchParam();
 		param.setStartCursor(0);

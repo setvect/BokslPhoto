@@ -195,7 +195,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		FolderVo folderGet = folderRepository.getOne(folderList.get(2).getFolderSeq());
 		System.out.printf("========= %s: %s\n", folderGet, folderGet.getPhotoCount());
 		Assert.assertThat(folderGet.getPhotoCount(), CoreMatchers.is(1));
-		Assert.assertThat(folderGet.getPhotos().get(0).getFolders().size(), CoreMatchers.is(2));
+		Assert.assertThat(folderGet.getPhotos().get(0).getFolders().size(), CoreMatchers.is(4));
 
 		System.out.println("끝. ====================");
 	}
@@ -261,7 +261,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 
 		List<Entry<DateRange, Integer>> e = new ArrayList<>(entry);
 
-		Assert.assertThat(e.get(0).getValue(), CoreMatchers.is(1));
+		Assert.assertThat(e.get(0).getValue(), CoreMatchers.is(2));
 		Assert.assertThat(e.get(e.size() - 1).getValue(), CoreMatchers.is(4));
 
 		System.out.println("끝 ===============");
