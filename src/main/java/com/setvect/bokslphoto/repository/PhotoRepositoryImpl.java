@@ -47,6 +47,8 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 		GenericPage<PhotoVo> resultPage = new GenericPage<PhotoVo>(resultList, pageCondition.getStartCursor(),
 				totalCount);
 
+		// 만들어진 객체 비영속
+		em.clear();
 		return resultPage;
 	}
 

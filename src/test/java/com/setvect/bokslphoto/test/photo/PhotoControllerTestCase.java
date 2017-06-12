@@ -323,6 +323,16 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		String jsonList = mvcResult.getResponse().getContentAsString();
 
+		return unmarshallingPhotoPage(jsonList);
+	}
+
+	/**
+	 * json를 받아 이미지 목록 객체로 변환
+	 *
+	 * @param jsonList
+	 * @return
+	 */
+	private GenericPage<PhotoVo> unmarshallingPhotoPage(String jsonList) {
 		Type confType = new TypeToken<GenericPage<PhotoVo>>() {
 			/** */
 			private static final long serialVersionUID = 8598639125420936733L;
@@ -402,23 +412,29 @@ public class PhotoControllerTestCase extends MainTestBase {
 	@Test
 	public void testGetImage() throws Exception {
 		List<PhotoVo> allImage = photoRepository.findAll();
-
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getImage.do");
 		PhotoVo targetPhoto = allImage.get(0);
-		callRequest.param("photoId", targetPhoto.getPhotoId());
-		callRequest.param("w", "100");
-		callRequest.param("h", "100");
-		ResultActions resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
-		MvcResult mvcResult = resultActions.andReturn();
-		byte[] receive = mvcResult.getResponse().getContentAsByteArray();
+		String photoId = targetPhoto.getPhotoId();
+		byte[] receive = getImageByte(photoId);
+
 		Assert.assertTrue(receive.length != 0);
 		// try (InputStream in = new
 		// FileInputStream(allImage.get(0).getFullPath());) {
 		// byte[] origin = IOUtils.toByteArray(in);
 		// Assert.assertThat(receive, CoreMatchers.is(origin));
 		// }
+	}
+
+	private byte[] getImageByte(String photoId) throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getImage.do");
+		callRequest.param("photoId", photoId);
+		callRequest.param("w", "100");
+		callRequest.param("h", "100");
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		MvcResult mvcResult = resultActions.andReturn();
+		byte[] receive = mvcResult.getResponse().getContentAsByteArray();
+		return receive;
 	}
 
 	// ============== 데이터 등록 ==============
@@ -581,6 +597,15 @@ public class PhotoControllerTestCase extends MainTestBase {
 	public void testProtect() throws Exception {
 		List<PhotoVo> photoList = photoRepository.findAll();
 
+		// 전체 조회
+		PhotoSearchParam param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(Integer.MAX_VALUE);
+		GenericPage<PhotoVo> photoPage = listPhoto(param);
+		photoPage.getList().forEach(p -> {
+			Assert.assertFalse("보호 이미지 여부", p.isProtectF());
+		});
+
 		// 보호 이미지 셋팅은 IP와 상관 없이 처리
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
@@ -599,7 +624,40 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		Assert.assertTrue("보호 이미지 여부", photo.isProtectF());
 
-		// 비 허가 IP
+		// 전체 조회. 비허가 IP
+		param = new PhotoSearchParam();
+		param.setStartCursor(0);
+		param.setReturnCount(Integer.MAX_VALUE);
+		photoPage = listPhoto(param);
+		Assert.assertThat(photoPage.getList().stream().filter(PhotoVo::isProtectF).count(), CoreMatchers.is(1L));
+		Assert.assertThat(photoPage.getList().stream().filter(PhotoVo::isDeny).count(), CoreMatchers.is(1L));
+		String checkId = photoId;
+		photoPage.getList().stream().filter(PhotoVo::isDeny).findAny().ifPresent(p -> {
+			Assert.assertThat(p.getPhotoId(), CoreMatchers.is(checkId));
+			Assert.assertNull(p.getName());
+		});
+
+		byte[] receive = getImageByte(photoId);
+		Assert.assertArrayEquals(new byte[0], receive);
+
+		// 전체 조회. 허가 IP
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/list.json");
+		callRequest.param("startCursor", String.valueOf(param.getStartCursor()));
+		callRequest.param("returnCount", String.valueOf(param.getReturnCount()));
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr(BokslPhotoConstant.Photo.ALLOW_IP);
+			return paramMockHttpServletRequest;
+		});
+		resultActions = mockMvc.perform(callRequest);
+		MvcResult mvcResult = resultActions.andReturn();
+
+		String jsonList = mvcResult.getResponse().getContentAsString();
+		photoPage = unmarshallingPhotoPage(jsonList);
+		Assert.assertThat(photoPage.getList().stream().filter(PhotoVo::isProtectF).count(), CoreMatchers.is(1L));
+		Assert.assertThat(photoPage.getList().stream().filter(PhotoVo::isDeny).count(), CoreMatchers.is(0L));
+
+		// 비허가 IP
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		callRequest = MockMvcRequestBuilders.get("/photo/updateProtect.do");
 		photoId = photoList.get(0).getPhotoId();

@@ -175,12 +175,23 @@ public class PhotoController {
 	 *
 	 * @param pageCondition
 	 *            검색 조건
+	 * @param request
+	 *            servletRequest
 	 * @return 페이징 정보
 	 */
 	@RequestMapping("/photo/list.json")
 	@ResponseBody
-	public GenericPage<PhotoVo> list(final PhotoSearchParam pageCondition) {
+	public GenericPage<PhotoVo> list(final PhotoSearchParam pageCondition, final HttpServletRequest request) {
 		GenericPage<PhotoVo> page = photoRepository.getPhotoPagingList(pageCondition);
+		String clientIp = request.getRemoteAddr();
+		// 허가된 아이피가 아니면 비공개 이미지의 경로 정보를 제거함
+		if (!isAllowAccessProtected(clientIp)) {
+			page.getList().stream().filter(PhotoVo::isProtectF).forEach(p -> {
+				p.setName(null);
+				p.setDeny(true);
+			});
+		}
+
 		return page;
 	}
 
@@ -213,6 +224,8 @@ public class PhotoController {
 	 *            넓이 픽셀
 	 * @param height
 	 *            높이 픽셀
+	 * @param request
+	 *            servletRequest
 	 * @return 섬네일 이미지 byte
 	 * @throws IOException
 	 *             파일 처리 오류
@@ -220,8 +233,15 @@ public class PhotoController {
 	@ResponseBody
 	@RequestMapping("/photo/getImage.do")
 	public byte[] getImage(@RequestParam("photoId") final String photoId, @RequestParam("w") final int width,
-			@RequestParam("h") final int height) throws IOException {
+			@RequestParam("h") final int height, final HttpServletRequest request) throws IOException {
 		PhotoVo photo = photoRepository.findOne(photoId);
+
+		String clientIp = request.getRemoteAddr();
+		// 허가된 아이피가 아니면 비공개 이미지의 경로 정보를 제거함
+		if (!isAllowAccessProtected(clientIp) && photo.isProtectF()) {
+			logger.warn("deny access image. client ip:{}", clientIp);
+			return null;
+		}
 
 		// 입력값이 재대로 입력되지 않으면 그냥 리턴
 		if (photo == null || width == 0 || height == 0) {
@@ -386,7 +406,7 @@ public class PhotoController {
 
 		String clientIp = request.getRemoteAddr();
 		// 보호 이미지 해제는 허가된 IP에서만 작업 할 수 있음.
-		if (!protect && !clientIp.equals(BokslPhotoConstant.Photo.ALLOW_IP)) {
+		if (!protect && !isAllowAccessProtected(clientIp)) {
 			logger.info("not allow ip:{}", clientIp);
 			return new ResponseEntity<>(false, HttpStatus.OK);
 		}
@@ -459,6 +479,17 @@ public class PhotoController {
 				.collect(Collectors.toList());
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	/**
+	 * 비공개 이미지 접근 여부
+	 *
+	 * @param clientIp
+	 *            클라이언트 아이피
+	 * @return true: 비공개 이미지 접근
+	 */
+	private boolean isAllowAccessProtected(String clientIp) {
+		return clientIp.equals(BokslPhotoConstant.Photo.ALLOW_IP);
 	}
 
 	/**

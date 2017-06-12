@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -73,6 +74,10 @@ public class PhotoVo {
 	/** 등록일 */
 	@Column(name = "REG_DATE", nullable = false)
 	private Date regData;
+
+	/** 이미지를 볼 수 없는 경우 true. 비공개 이미지 이면서 허가된 IP로 접속되지 않는 경우 보이지 않음. */
+	@Transient
+	private boolean deny;
 
 	/** 해당 사진이 속한 폴더 */
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -274,6 +279,25 @@ public class PhotoVo {
 	 */
 	public void setLongitude(final Double longitude) {
 		this.longitude = longitude;
+	}
+
+	/**
+	 * 비공개 이미지 이면서 허가된 IP로 접속되지 않는 경우 보이지 않음. *
+	 *
+	 * @return 이미지를 볼 수 없는 경우 true.
+	 */
+	public boolean isDeny() {
+		return deny;
+	}
+
+	/**
+	 * 비공개 이미지 이면서 허가된 IP로 접속되지 않는 경우 보이지 않음. *
+	 *
+	 * @param deny
+	 *            이미지를 볼 수 없는 경우 true.
+	 */
+	public void setDeny(boolean deny) {
+		this.deny = deny;
 	}
 
 	/**
