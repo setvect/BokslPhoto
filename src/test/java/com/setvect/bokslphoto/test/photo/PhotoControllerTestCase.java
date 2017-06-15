@@ -415,13 +415,14 @@ public class PhotoControllerTestCase extends MainTestBase {
 		PhotoVo targetPhoto = allImage.get(0);
 		String photoId = targetPhoto.getPhotoId();
 		byte[] receive = getImageByte(photoId);
-
 		Assert.assertTrue(receive.length != 0);
-		// try (InputStream in = new
-		// FileInputStream(allImage.get(0).getFullPath());) {
-		// byte[] origin = IOUtils.toByteArray(in);
-		// Assert.assertThat(receive, CoreMatchers.is(origin));
-		// }
+
+		receive = getImageOrgByte(photoId);
+		Assert.assertTrue(receive.length != 0);
+		try (InputStream in = new FileInputStream(targetPhoto.getFullPath());) {
+			byte[] origin = IOUtils.toByteArray(in);
+			Assert.assertThat(receive, CoreMatchers.is(origin));
+		}
 	}
 
 	private byte[] getImageByte(String photoId) throws Exception {
@@ -430,6 +431,24 @@ public class PhotoControllerTestCase extends MainTestBase {
 		callRequest.param("photoId", photoId);
 		callRequest.param("w", "100");
 		callRequest.param("h", "100");
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		MvcResult mvcResult = resultActions.andReturn();
+		byte[] receive = mvcResult.getResponse().getContentAsByteArray();
+		return receive;
+	}
+
+	/**
+	 * 원본 이미지
+	 *
+	 * @param photoId
+	 * @return
+	 * @throws Exception
+	 */
+	private byte[] getImageOrgByte(String photoId) throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getImageOrg.do");
+		callRequest.param("photoId", photoId);
 		ResultActions resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		MvcResult mvcResult = resultActions.andReturn();
@@ -638,6 +657,9 @@ public class PhotoControllerTestCase extends MainTestBase {
 		});
 
 		byte[] receive = getImageByte(photoId);
+		Assert.assertArrayEquals(new byte[0], receive);
+
+		receive = getImageOrgByte(photoId);
 		Assert.assertArrayEquals(new byte[0], receive);
 
 		// 전체 조회. 허가 IP

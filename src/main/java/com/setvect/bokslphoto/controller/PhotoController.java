@@ -216,6 +216,35 @@ public class PhotoController {
 	}
 
 	/**
+	 * 원본 사진 정보를 byte로 전송
+	 *
+	 * @param photoId
+	 *            사진 아이디
+	 * @param request
+	 * @return 이미지 byte
+	 * @throws IOException
+	 *             파일 처리 오류
+	 */
+	@ResponseBody
+	@RequestMapping("/photo/getImageOrg.do")
+	public byte[] getImageOrg(@RequestParam("photoId") final String photoId, final HttpServletRequest request)
+			throws IOException {
+		PhotoVo photo = photoRepository.findOne(photoId);
+
+		String clientIp = request.getRemoteAddr();
+		// 허가된 아이피가 아니면 비공개 이미지의 경로 정보를 제거함
+		if (!isAllowAccessProtected(clientIp) && photo.isProtectF()) {
+			logger.warn("deny access image. client ip:{}", clientIp);
+			return null;
+		}
+		File photoFile = photo.getFullPath();
+
+		try (InputStream in = new FileInputStream(photoFile);) {
+			return IOUtils.toByteArray(in);
+		}
+	}
+
+	/**
 	 * 썸네일 사진 정보를 byte로 전송
 	 *
 	 * @param photoId
