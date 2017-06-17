@@ -29,6 +29,9 @@
 <!-- Bootstrap Select Css -->
 <link href="${pageContext.request.contextPath}/static/css/bootstrap-select.css" rel="stylesheet" />
 
+<!-- Light Gallery Plugin -->
+<link href="${pageContext.request.contextPath}/static/plugins/light-gallery/css/lightgallery.css" rel="stylesheet">
+
 
 <!-- angularjs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js"></script>
@@ -61,6 +64,9 @@
 <!-- Dropzone Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/dropzone/dropzone.js"></script>
 <script src="${pageContext.request.contextPath}/static/plugins/dropzone/ng-dropzone.js"></script>
+
+<!-- Light Gallery Plugin -->
+<script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lightgallery-all.js"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>

@@ -21,13 +21,23 @@
 		return function(scope, element, attrs) {
 			// 마지막 바인드가 되면 이벤드 발생 
 			if (scope.$last) {
-				// TODO 의존성 제거
 				Waves.attach('.menu .list a', ['waves-block']);
 				Waves.init();
 			}
 		};
 	});
 
+	photoApp.directive('lightgallery', function() {
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				 if (scope.$last) {
+					$(element.parent()).lightGallery();
+				}
+			}
+		}
+	});
+	
 	photoApp.config(function($routeProvider) {
 		$routeProvider.when("/list", {
 			templateUrl : "${pageContext.request.contextPath}/photo/list.do",
@@ -82,18 +92,14 @@
 		if($routeParams.folderSeq != null){
 			folderSeq = $routeParams.folderSeq;
 		}
-		console.log($routeParams.folderSeq);
 		
 		// 최초 사진 목록 로드  
-		$scope.list = function(){
+		$scope.listGroup = function(){
 			var params = {
 				"searchDateGroup" : $scope.searchOption.searchDateGroup,
 				"searchDirectory" : decodedirectoryName,
 				"searchFolderSeq" : folderSeq
 			};
-
-
-			console.log("params#########", params);
 			
 			$http.get("${pageContext.request.contextPath}/photo/groupByDate.json", {
 				"params" : params
@@ -138,13 +144,17 @@
 			});
 		};
 		
-		// 날짜 보기 형태 바꾸기
-		$scope.changeDateGroup = function(){
-			$scope.list();
+		// 이미지 원본 경로 
+		$scope.getOrgFullUrl = function(photoId){
+			return "${pageContext.request.contextPath}/photo/getImageOrg.do?photoId=" + photoId;
 		};
 		
-		$scope.list();
+		// 날짜 보기 형태 바꾸기
+		$scope.changeDateGroup = function(){
+			$scope.listGroup();
+		};
 		
+		$scope.listGroup();
 	} ]);
 
 	// 사진 업로드
