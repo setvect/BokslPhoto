@@ -66,7 +66,7 @@
 <script src="${pageContext.request.contextPath}/static/plugins/dropzone/ng-dropzone.js"></script>
 
 <!-- Light Gallery Plugin -->
-<script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lightgallery-all.js"></script>
+<script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lightgallery.js"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>
