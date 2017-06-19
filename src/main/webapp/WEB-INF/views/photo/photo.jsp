@@ -33,7 +33,9 @@
 			link: function(scope, element, attrs) {
 				 if (scope.$last) {
 // 					$(element.parent()).data('lightGallery').destroy(true);
-					$(element.parent()).lightGallery();
+					$(element.parent()).lightGallery({
+						zoom: true
+					});
 				}
 			}
 		}
