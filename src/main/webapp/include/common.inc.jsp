@@ -68,6 +68,7 @@
 <!-- Light Gallery Plugin -->
 <script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lightgallery.js"></script>
 <script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lg-zoom.js"></script>
+<script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lg-fullscreen.js"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>

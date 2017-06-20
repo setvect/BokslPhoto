@@ -34,7 +34,8 @@
 				 if (scope.$last) {
 // 					$(element.parent()).data('lightGallery').destroy(true);
 					$(element.parent()).lightGallery({
-						zoom: true
+						zoom: true,
+						fullScreen: true
 					});
 				}
 			}
