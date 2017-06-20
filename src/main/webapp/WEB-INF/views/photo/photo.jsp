@@ -35,7 +35,8 @@
 // 					$(element.parent()).data('lightGallery').destroy(true);
 					$(element.parent()).lightGallery({
 						zoom: true,
-						fullScreen: true
+						fullScreen: true,
+						thumbnail:true
 					});
 				}
 			}
