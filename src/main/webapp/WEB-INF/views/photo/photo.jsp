@@ -31,8 +31,10 @@
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
-				 if (scope.$last) {
-// 					$(element.parent()).data('lightGallery').destroy(true);
+				if (scope.$last) {
+					if($(element.parent()).data('lightGallery') != null){
+						$(element.parent()).data('lightGallery').destroy(true);
+					}
 					$(element.parent()).lightGallery({
 						zoom: true,
 						fullScreen: true,
@@ -159,7 +161,6 @@
 					$scope.listGroup();
 				};
 
-				console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 				$scope.listGroup();
 			} ]);
 
