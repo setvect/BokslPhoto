@@ -89,10 +89,18 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 			queryStatement += " AND MEMO like :memo";
 			bindMap.put("memo", "%" + condition.getSearchMemo() + "%");
 		}
+
+		if (condition.isDateBetween()) {
+			queryStatement += " AND SHOT_DATE BETWEEN :from AND :to";
+			bindMap.put("from", condition.getSearchFrom());
+			bindMap.put("to", condition.getSearchToEnd());
+		}
+
 		if (condition.getSearchFolderSeq() != 0) {
 			queryStatement += " AND F.FOLDER_SEQ = :folderSeq";
 			bindMap.put("folderSeq", condition.getSearchFolderSeq());
 		}
+
 		queryStatement += " GROUP BY DATE_STRING ORDER BY DATE_STRING DESC";
 		Query querySelect = em.createNativeQuery(queryStatement);
 

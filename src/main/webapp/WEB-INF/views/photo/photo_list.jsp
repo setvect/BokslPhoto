@@ -7,7 +7,7 @@
 				<div class="form-inline">
 					<div class="form-group">
 						<span>보기 형태</span> 
-						<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" data-ng-change="changeDateGroup();" selectpicker >
+						<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" selectpicker >
 							<option value="DATE">일 단위</option>
 							<option value="MONTH">월 단위</option>
 							<option value="YEAR">년 단위</option>

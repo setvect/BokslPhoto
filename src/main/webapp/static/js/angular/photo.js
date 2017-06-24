@@ -40,13 +40,18 @@ photoApp.directive('datepicker', function() {
 		require : 'ngModel',
 		link : function(scope, element, attrs, ngModelCtrl) {
 			$(element).bootstrapMaterialDatePicker({
-				format: 'YYYY-MM-DD',
+				format: 'YYYYMMDD',
 				clearButton: true,
 				weekStart: 0,
 				time: false
 			}).on('change', function(event, date){
 				scope.$apply(function() {
-					ngModelCtrl.$setViewValue(date.format("YYYY-MM-DD"));
+					if(date != null){
+						ngModelCtrl.$setViewValue(date.format("YYYYMMDD"));
+					}
+					else{
+						ngModelCtrl.$setViewValue("");
+					}
 				});
 			});
 		}
@@ -116,6 +121,8 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.listGroup = function() {
 		var params = {
 			"searchDateGroup" : $scope.searchOption.searchDateGroup,
+			"searchFrom" : $scope.searchOption.searchFrom,
+			"searchTo" : $scope.searchOption.searchTo,
 			"searchDirectory" : decodedirectoryName,
 			"searchFolderSeq" : folderSeq
 		};
@@ -166,15 +173,10 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.getOrgFullUrl = function(photoId) {
 		return CONTEXT_PATH + "/photo/getImageOrg.do?photoId=" + photoId;
 	};
-
-	// 날짜 보기 형태 바꾸기
-	$scope.changeDateGroup = function() {
-		$scope.listGroup();
-	};
 	
 	// 검색
 	$scope.search = function(){
-		console.log("@@@@@@@@@@@@@", $scope.searchOption);
+		$scope.listGroup();
 	};
 	
 	$scope.listGroup();
