@@ -14,7 +14,7 @@ public class ImageMetaExtrator_GEO_TestCase {
 	private static Logger logger = LoggerFactory.getLogger(ImageMetaExtrator_GEO_TestCase.class);
 
 	public static void main(String[] args) throws ImageProcessingException, IOException {
-		File file = new File("temp/20160709_104847.jpg");
+		File file = new File("test_data/temp_folder/여행/풍경/2012-12-01_13-56-13_632.jpg");
 		GeoCoordinates g = PhotoService.getGeo(file);
 		System.out.println(g);
 		System.out.println("끝.");

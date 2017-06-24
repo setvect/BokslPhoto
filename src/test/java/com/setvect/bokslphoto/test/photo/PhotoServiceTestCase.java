@@ -66,11 +66,18 @@ public class PhotoServiceTestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	// ============== 데이터 조회 ==============
 	/**
 	 * 목록 조회
 	 */
 	@Test
 	public void testList() {
+
+		List<PhotoVo> all = photoRepository.findAll();
+		for (PhotoVo a : all) {
+			System.out.println(a);
+		}
+
 		PhotoSearchParam pageCondition = new PhotoSearchParam(0, 10);
 		pageCondition.setSearchFrom(DateUtil.getDate("2014-01-01", "yyyy-MM-dd"));
 		pageCondition.setSearchTo(DateUtil.getDate("2017-05-01", "yyyy-MM-dd"));
@@ -129,6 +136,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		System.out.println("끝. ====================");
 	}
 
+	// ============== 데이터 등록 ==============
 	/**
 	 * 폴더 추가<br>
 	 * 폴더 매핑<br>
@@ -197,22 +205,6 @@ public class PhotoServiceTestCase extends MainTestBase {
 		Assert.assertThat(folderGet.getPhotoCount(), CoreMatchers.is(1));
 		Assert.assertThat(folderGet.getPhotos().get(0).getFolders().size(), CoreMatchers.is(4));
 
-		System.out.println("끝. ====================");
-	}
-
-	/**
-	 * 중복된 파일 삭제
-	 */
-	@Test
-	public void testDeleteDuplicate() {
-		List<File> deleteFiles = photoService.deleteDuplicate();
-		System.out.println("삭제 파일들");
-
-		deleteFiles.stream().forEach(file -> {
-			System.out.printf("%s(%s)\n", file, file.exists());
-		});
-
-		Assert.assertThat(deleteFiles.size(), CoreMatchers.is(1));
 		System.out.println("끝. ====================");
 	}
 
@@ -322,4 +314,49 @@ public class PhotoServiceTestCase extends MainTestBase {
 		Assert.assertThat(nodeList.get(3).getLevel(), CoreMatchers.is(2));
 
 	}
+
+	/**
+	 * 이미지 메타 정보 확인
+	 */
+	@Test
+	public void testImageMeta() {
+		List<PhotoVo> all = photoRepository.findAll();
+		Map<String, String> meta = PhotoService.getImageMeta(all.get(2).getFullPath());
+
+		meta.entrySet().stream().forEach(entry -> {
+			System.out.printf("%s  :: %s\n", entry.getKey(), entry.getValue());
+		});
+
+		Assert.assertThat(meta.get("[Exif IFD0]Date/Time"), CoreMatchers.is("2016:05:01 11:42:12"));
+		Assert.assertThat(meta.get("[Exif IFD0]Image Width"), CoreMatchers.is("1280 pixels"));
+		Assert.assertThat(meta.get("[Exif IFD0]Focal Length"), CoreMatchers.is("4.4 mm"));
+
+		System.out.println("\n======================\n");
+
+		meta = PhotoService.getImageMeta(all.get(all.size() - 1).getFullPath());
+		meta.entrySet().stream().forEach(entry -> {
+			System.out.printf("%s  :: %s\n", entry.getKey(), entry.getValue());
+		});
+		Assert.assertThat(meta.get("[File]File Size"), CoreMatchers.is("74665 bytes"));
+	}
+	// ============== 데이터 수정 ==============
+
+	// ============== 데이터 삭제 ==============
+
+	/**
+	 * 중복된 파일 삭제
+	 */
+	@Test
+	public void testDeleteDuplicate() {
+		List<File> deleteFiles = photoService.deleteDuplicate();
+		System.out.println("삭제 파일들");
+
+		deleteFiles.stream().forEach(file -> {
+			System.out.printf("%s(%s)\n", file, file.exists());
+		});
+
+		Assert.assertThat(deleteFiles.size(), CoreMatchers.is(1));
+		System.out.println("끝. ====================");
+	}
+
 }

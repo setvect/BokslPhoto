@@ -16,7 +16,7 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 
 public class ImageMetaExtrator_촬영일_TestCase {
 	public static void main(String[] args) throws ImageProcessingException, IOException {
-		File file = new File("temp/20160514_134430.jpg");
+		File file = new File("test_data/temp_folder/여행/풍경/2013-04-12_11-55-47_282.jpg");
 
 		Metadata metadata = ImageMetadataReader.readMetadata(file);
 		ExifSubIFDDirectory meta = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);

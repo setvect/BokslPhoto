@@ -31,7 +31,7 @@ public class ImageMetaExtratorTestCase {
 	 *            command line parameters
 	 */
 	public static void main(String[] args) {
-		File file = new File("temp/크기변환_2013-07-17_12-18-29_437.jpg");
+		File file = new File("test_data/temp_folder/여행/풍경/2013-04-12_11-55-47_282.jpg");
 
 		System.out.println("AAAA");
 		// There are multiple ways to get a Metadata object for a file

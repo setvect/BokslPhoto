@@ -3,6 +3,7 @@ package com.setvect.bokslphoto.service;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -12,11 +13,16 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -26,7 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.setvect.bokslphoto.ApplicationUtil;
@@ -249,6 +258,29 @@ public class PhotoService {
 			throw new RuntimeException(e);
 		}
 		return date;
+	}
+
+	/**
+	 * 메타 정보
+	 *
+	 * @param imageFile
+	 *            이미지 파일
+	 * @return Key: 메타 이름, Value: 값
+	 */
+	public static Map<String, String> getImageMeta(final File imageFile) {
+		try {
+			Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+
+			Map<String, String> result = StreamSupport.stream(metadata.getDirectories().spliterator(), false)
+					.flatMap(p -> p.getTags().stream()).filter(Objects::nonNull).collect(Collectors.toMap(p -> {
+						return "[" + p.getDirectoryName() + "]" + p.getTagName();
+					}, p -> p.getDescription(), (v1, v2) -> v1, TreeMap::new));
+
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getMessage() + ": " + imageFile.getAbsolutePath(), e);
+			return null;
+		}
 	}
 
 	/**
