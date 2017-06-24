@@ -27,3 +27,16 @@
 .image_center {
 	margin: auto;
 }
+
+/* style.css 재정의. 나중에 이것 때문에 문제가 될 수도 있음. */
+.form-group{
+	width: auto !important;
+}
+
+section.content{
+	margin-top: 80px;
+}
+
+.searchArea{
+	padding-bottom: 10px;
+}

@@ -1,19 +1,28 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <div>
-	<div class="body">
+	<div class="body searchArea">
 		<div class="row clearfix">
-			<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-			<form>
-				<div class="form-line">
-					<span>보기 형태</span> 
-					<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" data-ng-change="changeDateGroup();" selectpicker >
-						<option value="DATE">일 단위</option>
-						<option value="MONTH">월 단위</option>
-						<option value="YEAR">년 단위</option>
-					</select>
+			<div class="col-lg-12">
+				<div class="form-inline">
+					<div class="form-group">
+						<span>보기 형태</span> 
+						<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" data-ng-change="changeDateGroup();" selectpicker >
+							<option value="DATE">일 단위</option>
+							<option value="MONTH">월 단위</option>
+							<option value="YEAR">년 단위</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="시작일" data-ng-model="searchOption.searchFrom" datepicker/>
+					</div>
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="종료일" data-ng-model="searchOption.searchTo" datepicker/>
+					</div>
+					<div class="form-group">
+						<button type="button" class="btn btn-primary waves-effect" data-ng-click="search();">검색</button>
+					</div>
 				</div>
-				</form>
 			</div>
 		</div>
 	</div>

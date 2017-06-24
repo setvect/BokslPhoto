@@ -32,6 +32,8 @@
 <!-- Light Gallery Plugin -->
 <link href="${pageContext.request.contextPath}/static/plugins/light-gallery/css/lightgallery.css" rel="stylesheet">
 
+<!-- Bootstrap Material Datetime Picker Css -->
+<link href="${pageContext.request.contextPath}/static/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
 
 <!-- angularjs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js"></script>
@@ -70,6 +72,12 @@
 <script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lg-zoom.js"></script>
 <script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lg-fullscreen.js"></script>
 <script src="${pageContext.request.contextPath}/static/plugins/light-gallery/js/lg-thumbnail.js"></script>
+
+<!-- Moment Plugin Js -->
+<script src="${pageContext.request.contextPath}/static/plugins/momentjs/moment.js"></script>
+
+<!-- Bootstrap Material Datetime Picker Plugin Js -->
+<script src="${pageContext.request.contextPath}/static/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>
