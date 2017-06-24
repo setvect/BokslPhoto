@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
-<div>
+<div infinite-scroll='loadMore()'>
 	<div class="body searchArea">
 		<div class="row clearfix">
 			<div class="col-lg-12">
@@ -27,7 +27,7 @@
 		</div>
 	</div>
 
-	<div class="row clearfix" data-ng-repeat="group in dateGroup">
+	<div class="row clearfix" data-ng-repeat="group in lazyDateGroup">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 			<div class="card">
 				<div class="header">

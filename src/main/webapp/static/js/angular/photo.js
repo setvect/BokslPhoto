@@ -1,4 +1,4 @@
-var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
+var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone', 'infinite-scroll']);
 photoApp.run(function($rootScope, $q) {
 	$rootScope.$q = $q;
 	$rootScope.log = function(value){
@@ -102,12 +102,13 @@ photoApp.controller('photoDirectoryController', [ '$scope', '$http', function($s
 // 사진 목록
 photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$filter', '$routeParams',
     function($scope, $rootScope, $http, $filter, $routeParams) {
+	$scope.lazyDateGroup = [];
+	
 	$scope.searchOption = {};
 	$scope.searchOption.searchDateGroup = "YEAR";
 	$scope.searchOption.searchFrom = "";
 	$scope.searchOption.searchTo= "";
 	
-
 	var decodedirectoryName;
 	if ($routeParams.directoryName != null) {
 		decodedirectoryName = decodeURIComponent(window.atob($routeParams.directoryName));
@@ -134,8 +135,10 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			$scope.dateGroup.forEach(function(entry) {
 				$scope.moreLoadImage(entry);
 			});
-
+			// F5 새로고침 했을 때 셀렉트 박스가 안나오는 경우 있음. 이를 해결하기 위해 아래 코드 넣었음
 			$('.selectpicker').selectpicker();
+			$scope.lazyDateGroup = [];
+			$scope.loadMore();
 		});
 	};
 
@@ -177,6 +180,18 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	// 검색
 	$scope.search = function(){
 		$scope.listGroup();
+	};
+
+	// 스크롤 이벤트. 
+	$scope.loadMore = function() {
+		if($scope.dateGroup == null){
+			return;
+		}
+
+		var currentSize = $scope.lazyDateGroup.length;
+		for(var i = currentSize; i < $scope.dateGroup.length && i < currentSize + 3; i++){
+			$scope.lazyDateGroup.push($scope.dateGroup[i]);
+		}
 	};
 	
 	$scope.listGroup();

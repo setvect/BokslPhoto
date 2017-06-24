@@ -23,9 +23,6 @@
 <!-- Dropzone Css -->
 <link href="${pageContext.request.contextPath}/static/plugins/dropzone/dropzone.css" rel="stylesheet">
 
-<!-- Custom Css -->
-<link href="${pageContext.request.contextPath}/static/css/bokslphoto.css" rel="stylesheet">
-
 <!-- Bootstrap Select Css -->
 <link href="${pageContext.request.contextPath}/static/css/bootstrap-select.css" rel="stylesheet" />
 
@@ -35,12 +32,15 @@
 <!-- Bootstrap Material Datetime Picker Css -->
 <link href="${pageContext.request.contextPath}/static/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
 
-<!-- angularjs -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular-route.js"></script>
+<!-- Custom Css -->
+<link href="${pageContext.request.contextPath}/static/css/bokslphoto.css" rel="stylesheet">
 
 <!-- Jquery Core Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/jquery/jquery.min.js"></script>
+
+<!-- angularjs -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
 
 <!-- Bootstrap Core Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/bootstrap/js/bootstrap.js"></script>
@@ -78,6 +78,9 @@
 
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+<!-- ngInfiniteScroll-1.0.0 -->
+<script src="${pageContext.request.contextPath}/static/plugins/ngInfiniteScroll-1.0.0/ng-infinite-scroll.js"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>
