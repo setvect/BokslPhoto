@@ -31,7 +31,7 @@
 <body class="login-page">
 	<div class="login-box">
 		<div class="logo">
-			<a href="javascript:void(0);">Admin<b>BSB</b></a> <small>Admin BootStrap Based - Material Design</small>
+			<a href="javascript:void(0);">복슬<b>포토</b></a>
 		</div>
 		<div class="card">
 			<div class="body">
@@ -39,13 +39,13 @@
 				<form action="${loginUrl}" method="post">
 
 					<c:if test="${param.error != null}">
-						<p>Invalid username and password.</p>
+						<p>아이디, 패스워드 입력 해</p>
 					</c:if>
 					<c:if test="${param.logout != null}">
-						<p>You have been logged out.</p>
+						<p>로그아웃 됐다</p>
 					</c:if>
 
-					<div class="msg">Sign in to start your session</div>
+					<div class="msg">로그인 해라</div>
 					<div class="input-group">
 						<span class="input-group-addon"> <i class="material-icons">person</i>
 						</span>
@@ -63,10 +63,10 @@
 					<div class="row">
 						<div class="col-xs-8 p-t-5">
 							<input type="checkbox" name="remember-me" id="rememberme" class="filled-in chk-col-pink" value="true" /> <label
-								for="rememberme">Remember Me</label>
+								for="rememberme">로그인 기억</label>
 						</div>
 						<div class="col-xs-4">
-							<button class="btn btn-block bg-pink waves-effect" type="submit">SIGN IN</button>
+							<button class="btn btn-block bg-pink waves-effect" type="submit">로그인</button>
 						</div>
 					</div>
 					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
