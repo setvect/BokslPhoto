@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
@@ -454,6 +455,43 @@ public class PhotoControllerTestCase extends MainTestBase {
 		MvcResult mvcResult = resultActions.andReturn();
 		byte[] receive = mvcResult.getResponse().getContentAsByteArray();
 		return receive;
+	}
+
+	/**
+	 * 메타 정보 테스트
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetMeta() throws Exception {
+		List<PhotoVo> allImage = photoRepository.findAll();
+		PhotoVo targetPhoto = allImage.get(2);
+		String photoId = targetPhoto.getPhotoId();
+
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getMeta.do");
+		callRequest.param("photoId", photoId);
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+
+		MvcResult mvcResult = resultActions.andReturn();
+		String jsonFolder = mvcResult.getResponse().getContentAsString();
+
+		Type confType = new TypeToken<Map<String, String>>() {
+			/** */
+			private static final long serialVersionUID = 8349948434510094988L;
+		}.getType();
+
+		Gson gson = new Gson();
+		Map<String, String> meta = gson.fromJson(jsonFolder, confType);
+
+		meta.entrySet().stream().forEach(entry -> {
+			System.out.printf("%s  :: %s\n", entry.getKey(), entry.getValue());
+		});
+
+		Assert.assertThat(meta.get("[Exif IFD0]Date/Time"), CoreMatchers.is("2016:05:01 11:42:12"));
+		Assert.assertThat(meta.get("[Exif IFD0]Image Width"), CoreMatchers.is("1280 pixels"));
+		Assert.assertThat(meta.get("[Exif IFD0]Focal Length"), CoreMatchers.is("4.4 mm"));
 	}
 
 	// ============== 데이터 등록 ==============

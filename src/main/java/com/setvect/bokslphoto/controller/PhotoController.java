@@ -310,6 +310,19 @@ public class PhotoController {
 		}
 	}
 
+	/**
+	 * @param photoId
+	 *            사진 아이디
+	 * @return 이미지 메타 정보
+	 */
+	@ResponseBody
+	@RequestMapping("/photo/getMeta.do")
+	public ResponseEntity<Map<String, String>> getImage(@RequestParam("photoId") final String photoId) {
+		PhotoVo photo = photoRepository.findOne(photoId);
+		Map<String, String> meta = PhotoService.getImageMeta(photo.getFullPath());
+		return new ResponseEntity<>(meta, HttpStatus.OK);
+	}
+
 	// ============== 데이터 등록 ==============
 
 	/**
