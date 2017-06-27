@@ -50,7 +50,7 @@
 								<a href="javascript:void(1);">
 									<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170" class="img-responsive thumbnail image_center">
 								</a>
-								<div class="caption">
+								<div class="caption photo_memo">
 									<p>
 										{{item.memo}}
 									</p>

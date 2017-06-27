@@ -50,3 +50,7 @@ section.content{
 .form-control{
 	height: 30px !important;
 }
+
+.photo_memo{
+	text-align: center;
+}
