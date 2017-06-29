@@ -29,28 +29,38 @@
 }
 
 /* style.css 재정의. 나중에 이것 때문에 문제가 될 수도 있음. */
-.form-group{
+.form-group {
 	width: auto !important;
 }
 
 /* style.css 재정의. 나중에 이것 때문에 문제가 될 수도 있음. */
-.form-group .form-control{
+.form-group .form-control {
 	padding-left: 6px !important;
 }
 
-section.content{
+section.content {
 	margin-top: 80px;
 }
 
-.searchArea{
+.searchArea {
 	padding-bottom: 10px;
 }
 
 /* bootstrap.css 재정의. 나중에 이것 때문에 문제가 될 수도 있음. */
-.form-control{
+.form-control {
 	height: 30px !important;
 }
 
-.photo_memo{
+.photo_memo {
 	text-align: center;
+}
+
+.photo_area { 
+	position: relative;
+}
+
+.photo_button {
+	position: absolute;
+	bottom: 10px;
+	right: 25px;
 }

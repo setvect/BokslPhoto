@@ -45,11 +45,21 @@
 				</div>
 				<div class="body">
 					<div class="row">
-						<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photo.list" data-src="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" lightgallery>
+						<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photo.list" lightgallery>
 							<div>
-								<a href="javascript:void(1);">
-									<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170" class="img-responsive thumbnail image_center">
-								</a>
+								<div class="photo_area">
+									<a href="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" >
+										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170" class="img-responsive thumbnail image_center">
+									</a>
+									<div class="photo_button">
+										<button type="button" class="btn bg-grey waves-effect btn-xs" data-ng-click="openMemoLayer()">
+											<i class="material-icons">speaker_notes</i>
+										</button>
+										<button type="button" class="btn bg-light-blue waves-effect btn-xs" data-ng-click="openFolderLayer()">
+											<i class="material-icons">folder_open</i>
+										</button>
+									</div>
+								</div>
 								<div class="caption photo_memo">
 									<p>
 										{{item.memo}}

@@ -24,10 +24,12 @@ photoApp.directive('lightgallery', function() {
 				if($(element.parent()).data('lightGallery') != null){
 					$(element.parent()).data('lightGallery').destroy(true);
 				}
+				console.log($(element.parent()));
 				$(element.parent()).lightGallery({
 					zoom: true,
 					fullScreen: true,
-					thumbnail:true
+					thumbnail:true,
+					selector:"a"
 				});
 			}
 		}
@@ -180,6 +182,16 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	// 검색
 	$scope.search = function(){
 		$scope.listGroup();
+	};
+	
+	// 메모 추가 
+	$scope.openMemoLayer = function(){
+		alert("todo 메모");
+	};
+
+	// 폴더 지정
+	$scope.openFolderLayer = function(){
+		alert("todo 폴더");
 	};
 
 	// 스크롤 이벤트. 
