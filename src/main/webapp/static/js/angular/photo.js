@@ -24,7 +24,6 @@ photoApp.directive('lightgallery', function() {
 				if($(element.parent()).data('lightGallery') != null){
 					$(element.parent()).data('lightGallery').destroy(true);
 				}
-				console.log($(element.parent()));
 				$(element.parent()).lightGallery({
 					zoom: true,
 					fullScreen: true,
@@ -183,15 +182,49 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.search = function(){
 		$scope.listGroup();
 	};
-	
-	// 메모 추가 
-	$scope.openMemoLayer = function(){
-		alert("todo 메모");
+		
+	// 메모 추가
+	$scope.openMemoLayer = function(item, groupIdx, listIdx) {
+		swal({
+			title : "메모 입력",
+			text : "느낌 나는 데로 입력:",
+			type : "input",
+			inputValue: item.memo,
+			showCancelButton : true,
+			closeOnConfirm : false,
+			inputPlaceholder : "아무거나 입력해라."
+		}, function(inputValue) {
+			$scope.$apply(function () {
+				if (inputValue === false)
+					return false;
+				if (inputValue === "") {
+					swal.showInputError("입력 안 했다.");
+					return false
+				}
+				item.memo = inputValue;
+				$scope.updatePhoto(item.photoId, item.memo);
+				swal("입력완료", "", "success");
+			});
+		});
 	};
 
 	// 폴더 지정
 	$scope.openFolderLayer = function(){
 		alert("todo 폴더");
+	};
+
+	// 메모 수정
+	$scope.updatePhoto = function(photoId, memo) {
+		$http({
+			method : 'POST',
+			url : CONTEXT_PATH + "/photo/updateMemo.do",
+			headers: {
+				'Content-Type': undefined
+			},
+			params : {"photoId": photoId, "memo": memo }
+		}).then(function(response) {
+			// 아무런 동작 없음.
+		});
 	};
 
 	// 스크롤 이벤트. 

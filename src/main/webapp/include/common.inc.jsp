@@ -32,6 +32,9 @@
 <!-- Bootstrap Material Datetime Picker Css -->
 <link href="${pageContext.request.contextPath}/static/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
 
+<!-- Sweetalert Css -->
+<link href="${pageContext.request.contextPath}/static/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
 <!-- Custom Css -->
 <link href="${pageContext.request.contextPath}/static/css/bokslphoto.css" rel="stylesheet">
 
@@ -81,6 +84,10 @@
 
 <!-- ngInfiniteScroll-1.0.0 -->
 <script src="${pageContext.request.contextPath}/static/plugins/ngInfiniteScroll-1.0.0/ng-infinite-scroll.js"></script>
+
+<!-- SweetAlert Plugin Js -->
+<script src="${pageContext.request.contextPath}/static/plugins/sweetalert/sweetalert.min.js"></script>
+
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>

@@ -52,7 +52,7 @@
 										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170" class="img-responsive thumbnail image_center">
 									</a>
 									<div class="photo_button">
-										<button type="button" class="btn bg-grey waves-effect btn-xs" data-ng-click="openMemoLayer()">
+										<button type="button" class="btn bg-grey waves-effect btn-xs" data-ng-click="openMemoLayer(item)">
 											<i class="material-icons">speaker_notes</i>
 										</button>
 										<button type="button" class="btn bg-light-blue waves-effect btn-xs" data-ng-click="openFolderLayer()">
