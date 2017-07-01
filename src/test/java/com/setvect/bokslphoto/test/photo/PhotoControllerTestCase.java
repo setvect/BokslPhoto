@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -395,7 +396,6 @@ public class PhotoControllerTestCase extends MainTestBase {
 		String jsonFolder = mvcResult.getResponse().getContentAsString();
 
 		Type confType = new TypeToken<TreeNode<FolderVo>>() {
-			/** */
 			private static final long serialVersionUID = 8349948434510094988L;
 		}.getType();
 
@@ -403,6 +403,27 @@ public class PhotoControllerTestCase extends MainTestBase {
 		TreeNode<FolderVo> response = gson.fromJson(jsonFolder, confType);
 		Assert.assertThat(response.getData().getName(), CoreMatchers.is("ROOT"));
 		Assert.assertThat(response.getChildren().get(0).getData().getName(), CoreMatchers.is("SUB1"));
+
+		List<TreeNode<FolderVo>> l = response.exploreTree();
+
+		Assert.assertThat(l.size(), CoreMatchers.is(4));
+
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/folderPath.json");
+		callRequest.param("folderSeq", String.valueOf(l.get(2).getData().getFolderSeq()));
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		mvcResult = resultActions.andReturn();
+		jsonFolder = mvcResult.getResponse().getContentAsString();
+
+		Type listType = new TypeToken<List<FolderVo>>() {
+			private static final long serialVersionUID = 146747589101472417L;
+		}.getType();
+
+		List<FolderVo> pathResponse = gson.fromJson(jsonFolder, listType);
+		Assert.assertThat(pathResponse.size(), CoreMatchers.is(2));
+		Assert.assertThat(pathResponse.get(0).getName(), CoreMatchers.is("ROOT"));
+		Assert.assertThat(pathResponse.get(1).getName(), CoreMatchers.is("SUB2"));
 	}
 
 	/**

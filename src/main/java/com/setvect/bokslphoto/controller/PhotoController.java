@@ -217,6 +217,23 @@ public class PhotoController {
 	}
 
 	/**
+	 * @param folderSeq
+	 *            폴더 아이디
+	 * @return 현재 분류폴더 까지 경로 반환 테스트 케이스<br>
+	 *         ex)홈 > 추억 > 고등학교
+	 */
+	@RequestMapping("/photo/folderPath.json")
+	@ResponseBody
+	public ResponseEntity<List<FolderVo>> getFolderPath(@RequestParam("folderSeq") final int folderSeq) {
+		TreeNode<FolderVo> folder = photoService.getFolderTree();
+		FolderVo findFolder = new FolderVo();
+		findFolder.setFolderSeq(folderSeq);
+		TreeNode<FolderVo> baseFolder = folder.getTreeNode(findFolder);
+		List<FolderVo> path = baseFolder.getPath();
+		return new ResponseEntity<>(path, HttpStatus.OK);
+	}
+
+	/**
 	 * 원본 사진 정보를 byte로 전송
 	 *
 	 * @param photoId
