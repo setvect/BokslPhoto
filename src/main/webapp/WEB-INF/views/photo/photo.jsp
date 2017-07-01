@@ -16,14 +16,20 @@
 </head>
 <body class="theme-cyan" data-ng-app="photoApp">
 	<script type="text/ng-template" id="folder_renderer.html">
-		<a href="javascript:void(0);" data-ng-click="viewFolder(folder.data)" class="{{folder.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{folder.data.name}}</span><span class="label label-info">({{folder.data.photoCount}})</span></a>
+		<a href="javascript:void(0);" data-ng-click="viewFolder(folder.data)" class="{{folder.children.length == 0 ? '' : 'menu-toggle'}}"> 
+			<span>{{folder.data.name}}</span>
+			<span class="label label-info">({{folder.data.photoCount}})</span>
+		</a>
 		<ul class="ml-menu">
 			<li ng-repeat="folder in folder.children" ng-include="'folder_renderer.html'" photo-folder-directive></li>
 		</ul>
 	</script>
 
 	<script type="text/ng-template" id="directory_renderer.html">
-		<a href="javascript:void(0);" data-ng-click="viewDirectory(dir.data)" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> <span>{{dir.data.name}}</span><span class="label label-info">({{dir.data.photoCount}})</span></a>
+		<a href="javascript:void(0);" data-ng-click="viewDirectory(dir.data)" class="{{dir.children.length == 0 ? '' : 'menu-toggle'}}"> 
+			<span>{{dir.data.name}}</span>
+			<span class="label label-info">({{dir.data.photoCount}})</span>
+		</a>
 		<ul class="ml-menu">
 			<li ng-repeat="dir in dir.children" ng-include="'directory_renderer.html'" photo-dir-directive></li>
 		</ul>
