@@ -110,13 +110,26 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.searchOption.searchFrom = "";
 	$scope.searchOption.searchTo= "";
 	
+	// 상단 경로(분류, 디렉토리)표시
+	$scope.path = {};
+	$scope.path.view = false;
+	$scope.path.name ="";
+	$scope.path.type="";
+	$scope.path.functionButton = false;
+	
 	var decodedirectoryName;
 	if ($routeParams.directoryName != null) {
 		decodedirectoryName = decodeURIComponent(window.atob($routeParams.directoryName));
+		$scope.path.view = true;
+		$scope.path.type = "디렉토리 경로";
+		$scope.path.name = decodedirectoryName;
 	}
 	var folderSeq;
 	if ($routeParams.folderSeq != null) {
 		folderSeq = $routeParams.folderSeq;
+		$scope.path.type = "분류 경로";
+		$scope.path.view = true;
+		$scope.path.functionButton = true;
 	}
 
 	// 최초 사진 목록 로드  

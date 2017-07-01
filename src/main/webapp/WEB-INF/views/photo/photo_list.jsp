@@ -26,6 +26,20 @@
 			</div>
 		</div>
 	</div>
+	<div class="row clearfix" data-ng-show="path.view">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="card">
+				<div class="header">
+					<small>{{path.type}} <code>{{path.name}}</code></small>
+					<div class="btn-toolbar photo_path_btn" role="toolbar" data-ng-show="path.functionButton">
+						<button type="button" class="btn btn-info btn-xs waves-effect waves-light">이름변경</button>
+						<button type="button" class="btn btn-info btn-xs waves-effect waves-light">하위폴더 추가</button>
+						<button type="button" class="btn bg-pink btn-xs waves-effect waves-light">삭제</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="row clearfix" data-ng-repeat="group in lazyDateGroup">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
