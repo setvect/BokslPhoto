@@ -1,5 +1,8 @@
 package com.setvect.bokslphoto.test.photo;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Matchers.contains;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,10 +15,13 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.beans.HasProperty;
+import org.hamcrest.beans.HasPropertyWithValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +52,7 @@ import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.service.DateGroup;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
+import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.test.MainTestBase;
 import com.setvect.bokslphoto.util.DateUtil;
 import com.setvect.bokslphoto.util.GenericPage;
@@ -58,6 +65,9 @@ import com.setvect.bokslphoto.vo.UserVo;
 public class PhotoControllerTestCase extends MainTestBase {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
+
+	@Autowired
+	private PhotoService photoService;
 
 	@Autowired
 	private PhotoRepository photoRepository;
@@ -385,8 +395,13 @@ public class PhotoControllerTestCase extends MainTestBase {
 		Assert.assertThat(treeNode.getChildren().size(), CoreMatchers.is(2));
 	}
 
+	/**
+	 * 분류 폴더관련 테스트(조회, 추가, 수정, 삭제)
+	 *
+	 * @throws Exception
+	 */
 	@Test
-	public void testGetFolder() throws Exception {
+	public void testFolder() throws Exception {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/photo/folder.json"));
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
@@ -416,6 +431,31 @@ public class PhotoControllerTestCase extends MainTestBase {
 		pathResponse = getFolderPath(folderSeq, false);
 		Assert.assertThat(pathResponse.size(), CoreMatchers.is(1));
 		Assert.assertThat(pathResponse.get(0).getName(), CoreMatchers.is("SUB2"));
+
+		List<FolderVo> allFolder = folderRepository.findAll();
+
+		FolderVo baseFolder = allFolder.get(1);
+
+		// 폴더 추가
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/addFolder.do");
+		callRequest.param("parentId", String.valueOf(baseFolder.getFolderSeq()));
+		callRequest.param("name", String.valueOf("추가"));
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		mvcResult = resultActions.andReturn();
+
+		// 폴더 하위에 입력되는지 검사
+		List<FolderVo> allAfter = folderRepository.findAll();
+		Assert.assertThat(allAfter.size(), CoreMatchers.is(allFolder.size() + 1));
+
+		TreeNode<FolderVo> folderTree = photoService.getFolderTree();
+		TreeNode<FolderVo> a = folderTree.getTreeNode(baseFolder);
+		List<TreeNode<FolderVo>> b = a.getChildren();
+
+		List<String> c = b.stream().map(t -> t.getData().getName()).collect(Collectors.toList());
+		Assert.assertThat(c, hasItem("추가"));
 	}
 
 	private List<FolderVo> getFolderPath(int folderSeq, boolean includeRoot)

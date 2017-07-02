@@ -78,13 +78,13 @@ photoApp.config(function($routeProvider) {
 });
 
 // 폴더 구조
-photoApp.controller('photoFolderController', [ '$scope', '$http', function($scope, $http, $sce) {
+photoApp.controller('photoFolderController', [ '$scope', '$http', '$rootScope', function($scope, $http, $rootScope, $sce) {
 	$scope.viewFolder = function(folder) {
 		location.href = "#!/listFolder/" + folder.folderSeq;
 	}
 
 	$http.get(CONTEXT_PATH + "/photo/folder.json").then(function(response) {
-		$scope.photoFolder = response.data;
+		$rootScope.photoFolder = response.data;
 	});
 } ]);
 
@@ -233,7 +233,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 				}
 				item.memo = inputValue;
 				$scope.updatePhoto(item.photoId, item.memo);
-				swal("입력완료", "", "success");
+				swal("입력 완료", "", "success");
 			});
 		});
 	};
@@ -268,6 +268,63 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			$scope.lazyDateGroup.push($scope.dateGroup[i]);
 		}
 	};
+	
+	// 분류 이름 수정
+	$scope.folderModify = function(){
+		var currentFolder = findFolder($rootScope.photoFolder, folderSeq);
+		
+		swal({
+			title : "분류 이름 수정",
+			type : "input",
+			inputValue: currentFolder.name,
+			showCancelButton : true,
+			closeOnConfirm : false,
+			inputPlaceholder : "분류"
+		}, function(inputValue) {
+			$scope.$apply(function () {
+				if (inputValue === false)
+					return false;
+				if (inputValue === "") {
+					swal.showInputError("입력 안 했다.");
+					return false
+				}
+				currentFolder.name = inputValue;
+				swal("수정 완료", "", "success");
+			});
+		});
+		
+//		alert("폴더 이름 수정");
+	};
+	
+	// 하위 분류 추가
+	$scope.folderAdd = function(){
+		alert("폴더 추가");
+	};
+
+	// 현재 분류 삭제 
+	$scope.folderDelete = function(){
+		alert("폴더 삭제");
+	};
+	
+	/**
+	 * 재귀적으로 폴더 정보를 탐색
+	 * @param folderTree 폴더 목록
+	 * @param findFolderSeq 찾고자하는 폴더 아이디 
+	 * @return 있으면 폴더 객체, 없으면 null 
+	 */
+	function findFolder(folderTree, findFolderSeq){
+		if(folderTree.data.folderSeq == findFolderSeq){
+			return folderTree.data;
+		}
+		
+		for(var i =0; i < folderTree.children.length; i++){
+			v = findFolder(folderTree.children[i], findFolderSeq);
+			if(v != null){
+				return v;
+			}
+		} 
+		return null;
+	}
 	
 	$scope.listGroup();
 } ]);

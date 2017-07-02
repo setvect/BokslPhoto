@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -427,6 +428,20 @@ public class PhotoController {
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
+	/**
+	 * 분류 폴더 추가
+	 *
+	 * @param folder
+	 *            폴더
+	 * @return 처리결과
+	 */
+	@RequestMapping("/photo/addFolder.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> addFolder(final FolderVo folder) {
+		folderRepository.save(folder);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
 	// ============== 데이터 수정 ==============
 
 	/**
@@ -485,7 +500,26 @@ public class PhotoController {
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
-	// 데이터 삭제
+	/**
+	 * 분류 폴더 삭제
+	 *
+	 * @param folder
+	 *            폴더
+	 * @return 처리결과
+	 */
+	@RequestMapping("/photo/updateFolder.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> updateFolder(final FolderVo folder) {
+
+		FolderVo v = folderRepository.findOne(folder.getFolderSeq());
+		v.setName(folder.getName());
+		v.setParentId(folder.getParentId());
+
+		folderRepository.save(v);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	// ============== 데이터 삭제 ==============
 	/**
 	 * 이미지 삭제<br>
 	 * 물리적인 파일도 삭제함
@@ -550,6 +584,37 @@ public class PhotoController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
+	/**
+	 * 분류 폴더 삭제
+	 *
+	 * @param folderSeq
+	 *            폴더 아이디
+	 * @return 처리결과
+	 */
+	@RequestMapping("/photo/deleteFolder.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> deleteFolder(@RequestParam("folderSeq") final int folderSeq) {
+
+		TreeNode<FolderVo> folder = photoService.getFolderTree();
+
+		FolderVo findFolder = new FolderVo();
+		findFolder.setFolderSeq(folderSeq);
+
+		TreeNode<FolderVo> targetFolder = folder.getTreeNode(findFolder);
+		List<TreeNode<FolderVo>> targetFolderList = targetFolder.exploreTree();
+
+		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
+		Collections.reverse(targetFolderList);
+
+		targetFolderList.forEach(f -> {
+			folderRepository.delete(f.getData());
+		});
+
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	// ============== CRUD 성격 아님 ==============
 
 	/**
 	 * 비공개 이미지 접근 여부

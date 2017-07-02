@@ -32,9 +32,9 @@
 				<div class="header">
 					<small>{{path.type}} <code>{{path.name}}</code></small>
 					<div class="btn-toolbar photo_path_btn" role="toolbar" data-ng-show="path.functionButton">
-						<button type="button" class="btn btn-info btn-xs waves-effect waves-light">이름변경</button>
-						<button type="button" class="btn btn-info btn-xs waves-effect waves-light">하위폴더 추가</button>
-						<button type="button" class="btn bg-pink btn-xs waves-effect waves-light">삭제</button>
+						<button type="button" class="btn btn-info btn-xs waves-effect waves-light" data-ng-click="folderModify()">이름변경</button>
+						<button type="button" class="btn btn-info btn-xs waves-effect waves-light" data-ng-click="folderAdd()">하위폴더 추가</button>
+						<button type="button" class="btn bg-pink btn-xs waves-effect waves-light" data-ng-click="folderDelete()">삭제</button>
 					</div>
 				</div>
 			</div>
