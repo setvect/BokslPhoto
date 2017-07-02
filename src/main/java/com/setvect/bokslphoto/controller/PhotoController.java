@@ -219,17 +219,26 @@ public class PhotoController {
 	/**
 	 * @param folderSeq
 	 *            폴더 아이디
+	 * @param includeRoot
+	 *            TODO
 	 * @return 현재 분류폴더 까지 경로 반환 테스트 케이스<br>
 	 *         ex)홈 > 추억 > 고등학교
 	 */
 	@RequestMapping("/photo/folderPath.json")
 	@ResponseBody
-	public ResponseEntity<List<FolderVo>> getFolderPath(@RequestParam("folderSeq") final int folderSeq) {
+	public ResponseEntity<List<FolderVo>> getFolderPath(@RequestParam("folderSeq") final int folderSeq,
+			@RequestParam("includeRoot") final boolean includeRoot) {
 		TreeNode<FolderVo> folder = photoService.getFolderTree();
 		FolderVo findFolder = new FolderVo();
 		findFolder.setFolderSeq(folderSeq);
 		TreeNode<FolderVo> baseFolder = folder.getTreeNode(findFolder);
 		List<FolderVo> path = baseFolder.getPath();
+
+		// 루트 경로 제거
+		if (!includeRoot) {
+			path.remove(0);
+		}
+
 		return new ResponseEntity<>(path, HttpStatus.OK);
 	}
 

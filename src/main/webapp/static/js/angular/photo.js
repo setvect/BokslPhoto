@@ -130,6 +130,23 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		$scope.path.type = "분류 경로";
 		$scope.path.view = true;
 		$scope.path.functionButton = true;
+
+		// 분류 경로 불러오기 
+		$http({
+			method : 'GET',
+			url : CONTEXT_PATH + "/photo/folderPath.json",
+			params : {"folderSeq": folderSeq, "includeRoot": false}
+		}).then(function(response) {
+			var pathArray = [];
+			
+			response.data.forEach(function(value, idx){
+				console.log("value", value);
+				pathArray.push(value.name);
+			});
+
+			console.log(pathArray);
+			$scope.path.name = pathArray.join("/"); 
+		});
 	}
 
 	// 최초 사진 목록 로드  

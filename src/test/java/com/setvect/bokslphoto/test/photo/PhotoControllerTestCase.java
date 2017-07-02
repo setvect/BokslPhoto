@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -407,9 +406,27 @@ public class PhotoControllerTestCase extends MainTestBase {
 		List<TreeNode<FolderVo>> l = response.exploreTree();
 
 		Assert.assertThat(l.size(), CoreMatchers.is(4));
+		int folderSeq = l.get(2).getData().getFolderSeq();
 
+		List<FolderVo> pathResponse = getFolderPath(folderSeq, true);
+		Assert.assertThat(pathResponse.size(), CoreMatchers.is(2));
+		Assert.assertThat(pathResponse.get(0).getName(), CoreMatchers.is("ROOT"));
+		Assert.assertThat(pathResponse.get(1).getName(), CoreMatchers.is("SUB2"));
+
+		pathResponse = getFolderPath(folderSeq, false);
+		Assert.assertThat(pathResponse.size(), CoreMatchers.is(1));
+		Assert.assertThat(pathResponse.get(0).getName(), CoreMatchers.is("SUB2"));
+	}
+
+	private List<FolderVo> getFolderPath(int folderSeq, boolean includeRoot)
+			throws Exception, UnsupportedEncodingException {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		ResultActions resultActions;
+		MvcResult mvcResult;
+		String jsonFolder;
 		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/folderPath.json");
-		callRequest.param("folderSeq", String.valueOf(l.get(2).getData().getFolderSeq()));
+		callRequest.param("folderSeq", String.valueOf(folderSeq));
+		callRequest.param("includeRoot", String.valueOf(includeRoot));
 		resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		resultActions.andDo(MockMvcResultHandlers.print());
@@ -420,10 +437,9 @@ public class PhotoControllerTestCase extends MainTestBase {
 			private static final long serialVersionUID = 146747589101472417L;
 		}.getType();
 
+		Gson gson = new Gson();
 		List<FolderVo> pathResponse = gson.fromJson(jsonFolder, listType);
-		Assert.assertThat(pathResponse.size(), CoreMatchers.is(2));
-		Assert.assertThat(pathResponse.get(0).getName(), CoreMatchers.is("ROOT"));
-		Assert.assertThat(pathResponse.get(1).getName(), CoreMatchers.is("SUB2"));
+		return pathResponse;
 	}
 
 	/**
