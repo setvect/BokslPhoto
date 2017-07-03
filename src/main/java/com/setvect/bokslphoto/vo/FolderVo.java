@@ -40,11 +40,17 @@ public class FolderVo implements Serializable {
 	@Column(name = "PARENT_ID", nullable = false)
 	private int parentId;
 
-	/** 부모 */
+	/**
+	 * 부모 <br>
+	 * TODO NEW_20170703: 분류 폴더 자기 참조 셋팅. 결론 동작 안함.
+	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	private FolderVo parent;
 
-	/** 자식 */
+	/**
+	 * 자식<br>
+	 * TODO NEW_20170703: 분류 폴더 자기 참조 셋팅. 결론 동작 안함.
+	 */
 	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<FolderVo> children;
 
