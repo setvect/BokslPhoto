@@ -596,6 +596,9 @@ public class PhotoController {
 	@ResponseBody
 	public ResponseEntity<Boolean> deleteFolder(@RequestParam("folderSeq") final int folderSeq) {
 
+		FolderVo a = folderRepository.getOne(1);
+		System.out.println(a.getChildren());
+
 		TreeNode<FolderVo> folder = photoService.getFolderTree();
 
 		FolderVo findFolder = new FolderVo();
@@ -606,10 +609,12 @@ public class PhotoController {
 
 		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
 		Collections.reverse(targetFolderList);
-
 		targetFolderList.forEach(f -> {
-			folderRepository.delete(f.getData());
+			System.out.println(f.getData().getFolderSeq() + ": " + f.getData().getName());
+			folderRepository.delete(f.getData().getFolderSeq());
 		});
+
+		List<FolderVo> aaa = folderRepository.findAll();
 
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}

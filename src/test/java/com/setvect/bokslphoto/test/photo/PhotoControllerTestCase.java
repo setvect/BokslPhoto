@@ -1,8 +1,6 @@
 package com.setvect.bokslphoto.test.photo;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Matchers.contains;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,8 +18,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.beans.HasProperty;
-import org.hamcrest.beans.HasPropertyWithValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -456,6 +452,36 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		List<String> c = b.stream().map(t -> t.getData().getName()).collect(Collectors.toList());
 		Assert.assertThat(c, hasItem("추가"));
+
+		// 폴더 수정
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/updateFolder.do");
+		callRequest.param("folderSeq", String.valueOf(baseFolder.getFolderSeq()));
+		callRequest.param("parentId", String.valueOf(baseFolder.getParentId()));
+		callRequest.param("name", String.valueOf("수정했음"));
+
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		mvcResult = resultActions.andReturn();
+
+		FolderVo f = folderRepository.findOne(baseFolder.getFolderSeq());
+		Assert.assertThat(f.getName(), CoreMatchers.is("수정했음"));
+		Assert.assertThat(f.getParentId(), CoreMatchers.is(baseFolder.getParentId()));
+
+//		// 폴더 삭제
+//		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+//		callRequest = MockMvcRequestBuilders.get("/photo/deleteFolder.do");
+//		// 루트 폴더 삭제
+//		callRequest.param("folderSeq", "1");
+//
+//		resultActions = mockMvc.perform(callRequest);
+//		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+//		resultActions.andDo(MockMvcResultHandlers.print());
+//		mvcResult = resultActions.andReturn();
+//
+//		allAfter = folderRepository.findAll();
+//		Assert.assertThat(allAfter.size(), CoreMatchers.is(0));
 	}
 
 	private List<FolderVo> getFolderPath(int folderSeq, boolean includeRoot)

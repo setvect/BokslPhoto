@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
+import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.DateGroup;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
@@ -32,6 +33,7 @@ import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
+import com.setvect.bokslphoto.vo.UserVo;
 
 /**
  * Web controller를 제외한 테스트.
@@ -49,6 +51,10 @@ public class PhotoServiceTestCase extends MainTestBase {
 	/** */
 	@Autowired
 	private PhotoService photoService;
+
+	/** */
+	@Autowired
+	private UserRepository userRepository;
 
 	/** */
 	private Logger logger = LoggerFactory.getLogger(PhotoServiceTestCase.class);
@@ -134,6 +140,26 @@ public class PhotoServiceTestCase extends MainTestBase {
 		logger.debug("TotalCount: {}", result.size());
 
 		System.out.println("끝. ====================");
+	}
+
+	/**
+	 * 회원 정보 조회
+	 */
+	@Test
+	public void testUser() {
+		UserVo user = userRepository.findOne("admin");
+		Assert.assertThat(user.getUserId(), CoreMatchers.is("admin"));
+		Assert.assertThat(user.getUserRole().size(), CoreMatchers.is(2));
+	}
+
+	/**
+	 * 폴더 조회
+	 */
+	@Test
+	public void testSelectFolder() {
+		FolderVo folder = folderRepository.findOne(2);
+		Assert.assertNotNull(folder);
+		// Assert.assertThat(folder.getChildren().size(), CoreMatchers.is(2));
 	}
 
 	// ============== 데이터 등록 ==============
