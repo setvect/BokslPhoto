@@ -1,8 +1,10 @@
 package com.setvect.bokslphoto.vo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -21,7 +25,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "TBBB_FOLDER")
-public class FolderVo {
+public class FolderVo implements Serializable {
+	/** */
+	private static final long serialVersionUID = -2233365039548913827L;
+
 	/** 일련번호 */
 	@Id
 	@Column(name = "FOLDER_SEQ", nullable = false)
@@ -33,12 +40,21 @@ public class FolderVo {
 	@Column(name = "PARENT_ID", nullable = false)
 	private int parentId;
 
+	/** 부모 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	private FolderVo parent;
+
+	/** 자식 */
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<FolderVo> children;
+
 	/** 폴더 이름 */
 	@Column(name = "NAME", nullable = false, length = 50)
 	private String name;
 
 	/** 현재 분류에 소속된 사진 */
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders", cascade = { CascadeType.MERGE, CascadeType.PERSIST,
+			CascadeType.REFRESH })
 	@JsonIgnore
 	private List<PhotoVo> photos;
 
@@ -121,6 +137,34 @@ public class FolderVo {
 			return 0;
 		}
 		return photos.size();
+	}
+
+	/**
+	 * @return
+	 */
+	public FolderVo getParent() {
+		return parent;
+	}
+
+	/**
+	 * @param parent
+	 */
+	public void setParent(FolderVo parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<FolderVo> getChildren() {
+		return children;
+	}
+
+	/**
+	 * @param children
+	 */
+	public void setChildren(List<FolderVo> children) {
+		this.children = children;
 	}
 
 	@Override
