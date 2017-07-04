@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -586,36 +587,17 @@ public class PhotoController {
 	}
 
 	/**
-	 * 분류 폴더 삭제
+	 * 분류 폴더 삭제<br>
+	 * 하위 분류까지 삭제 함
 	 *
 	 * @param folderSeq
-	 *            폴더 아이디
+	 *            분류 폴더 아이디
 	 * @return 처리결과
 	 */
 	@RequestMapping("/photo/deleteFolder.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> deleteFolder(@RequestParam("folderSeq") final int folderSeq) {
-
-		FolderVo a = folderRepository.getOne(1);
-		System.out.println(a.getChildren());
-
-		TreeNode<FolderVo> folder = photoService.getFolderTree();
-
-		FolderVo findFolder = new FolderVo();
-		findFolder.setFolderSeq(folderSeq);
-
-		TreeNode<FolderVo> targetFolder = folder.getTreeNode(findFolder);
-		List<TreeNode<FolderVo>> targetFolderList = targetFolder.exploreTree();
-
-		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
-		Collections.reverse(targetFolderList);
-		targetFolderList.forEach(f -> {
-			System.out.println(f.getData().getFolderSeq() + ": " + f.getData().getName());
-			folderRepository.delete(f.getData().getFolderSeq());
-		});
-
-		List<FolderVo> aaa = folderRepository.findAll();
-
+		photoService.deleteFolder(folderSeq);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
@@ -628,7 +610,7 @@ public class PhotoController {
 	 *            클라이언트 아이피
 	 * @return true: 비공개 이미지 접근
 	 */
-	private boolean isAllowAccessProtected(String clientIp) {
+	private boolean isAllowAccessProtected(final String clientIp) {
 		return clientIp.equals(BokslPhotoConstant.Photo.ALLOW_IP);
 	}
 

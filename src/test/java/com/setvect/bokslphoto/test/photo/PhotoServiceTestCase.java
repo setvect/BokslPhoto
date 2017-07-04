@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -156,10 +158,12 @@ public class PhotoServiceTestCase extends MainTestBase {
 	 * 폴더 조회
 	 */
 	@Test
+	@Transactional
 	public void testSelectFolder() {
-		FolderVo folder = folderRepository.findOne(2);
+		FolderVo folder = folderRepository.findOne(1);
 		Assert.assertNotNull(folder);
-		// Assert.assertThat(folder.getChildren().size(), CoreMatchers.is(2));
+		Assert.assertNotNull(folder.getPhotos());
+		Assert.assertThat(folder.getPhotoCount(), CoreMatchers.is(2));
 	}
 
 	// ============== 데이터 등록 ==============
@@ -228,6 +232,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 
 		FolderVo folderGet = folderRepository.getOne(folderList.get(2).getFolderSeq());
 		System.out.printf("========= %s: %s\n", folderGet, folderGet.getPhotoCount());
+
 		Assert.assertThat(folderGet.getPhotoCount(), CoreMatchers.is(1));
 		Assert.assertThat(folderGet.getPhotos().get(0).getFolders().size(), CoreMatchers.is(4));
 
@@ -302,7 +307,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		Assert.assertThat(nodeList.get(0).getData().getName(), CoreMatchers.is("ROOT"));
 		FolderVo sub = nodeList.get(1).getData();
 		Assert.assertThat(sub.getName(), CoreMatchers.is("SUB1"));
-		Assert.assertThat(sub.getPhotoCount(), CoreMatchers.is(0));
+		Assert.assertThat(sub.getPhotoCount(), CoreMatchers.is(2));
 
 		// 2. 폴더 추가. 1개
 		FolderVo subOfFolder = new FolderVo();

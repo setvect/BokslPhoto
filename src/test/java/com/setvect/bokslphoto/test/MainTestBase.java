@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,10 @@ public class MainTestBase {
 	@Autowired
 	private UserRepository userRepository;
 
+	/** 엔티티의 캐시를 지우기 위한 목적 */
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	/**
 	 * 초기 값 등록.
 	 *
@@ -91,25 +98,31 @@ public class MainTestBase {
 		allList.get(1).addFolder(folderRoot);
 		allList.get(2).addFolder(folderRoot);
 
-		FolderVo folderSub = new FolderVo();
-		folderSub.setParentId(folderRoot.getFolderSeq());
-		folderSub.setName("SUB1");
-		folderRepository.save(folderSub);
-		allList.get(1).addFolder(folderSub);
-		allList.get(10).addFolder(folderSub);
+		FolderVo folderSub1 = new FolderVo();
+		folderSub1.setParentId(folderRoot.getFolderSeq());
+		folderSub1.setName("SUB1");
+		folderRepository.save(folderSub1);
+		allList.get(1).addFolder(folderSub1);
+		allList.get(10).addFolder(folderSub1);
 
-		folderSub = new FolderVo();
-		folderSub.setParentId(folderRoot.getFolderSeq());
-		folderSub.setName("SUB2");
-		folderRepository.save(folderSub);
+		FolderVo folderSub2 = new FolderVo();
+		folderSub2.setParentId(folderRoot.getFolderSeq());
+		folderSub2.setName("SUB2");
+		folderRepository.save(folderSub2);
 
-		FolderVo folderSubSub = new FolderVo();
-		folderSubSub.setParentId(folderSub.getFolderSeq());
-		folderSubSub.setName("SUB2-1");
-		folderRepository.save(folderSubSub);
-		allList.get(9).addFolder(folderSubSub);
-		allList.get(10).addFolder(folderSubSub);
-		allList.get(11).addFolder(folderSubSub);
+		FolderVo folderSub2_1 = new FolderVo();
+		folderSub2_1.setParentId(folderSub2.getFolderSeq());
+		folderSub2_1.setName("SUB2-1");
+		folderRepository.save(folderSub2_1);
+		allList.get(9).addFolder(folderSub2_1);
+		allList.get(10).addFolder(folderSub2_1);
+		allList.get(11).addFolder(folderSub2_1);
+
+		photoRepository.saveAndFlush(allList.get(1));
+		photoRepository.saveAndFlush(allList.get(2));
+		photoRepository.saveAndFlush(allList.get(9));
+		photoRepository.saveAndFlush(allList.get(10));
+		photoRepository.saveAndFlush(allList.get(11));
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");
@@ -133,5 +146,21 @@ public class MainTestBase {
 		user.setUserRole(userRole);
 
 		userRepository.save(user);
+
+		folderRepository.saveAndFlush(folderRoot);
+		folderRepository.saveAndFlush(folderSub1);
+		folderRepository.saveAndFlush(folderSub2);
+		folderRepository.saveAndFlush(folderSub2_1);
+
+		entityManager.refresh(allList.get(1));
+		entityManager.refresh(allList.get(2));
+		entityManager.refresh(allList.get(9));
+		entityManager.refresh(allList.get(10));
+		entityManager.refresh(allList.get(11));
+
+		entityManager.refresh(folderRoot);
+		entityManager.refresh(folderSub1);
+		entityManager.refresh(folderSub2);
+		entityManager.refresh(folderSub2_1);
 	}
 }

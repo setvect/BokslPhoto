@@ -29,6 +29,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -474,6 +475,38 @@ public class PhotoService {
 		});
 
 		return deleteFile;
+	}
+
+	/**
+	 * 분류 폴더 삭제<br>
+	 * 하위 분류까지 삭제 함
+	 *
+	 * @param folderSeq
+	 *            분류 폴더 아이디
+	 */
+	public void deleteFolder(final int folderSeq) {
+		TreeNode<FolderVo> folder = getFolderTree();
+
+		FolderVo findFolder = new FolderVo();
+		findFolder.setFolderSeq(folderSeq);
+
+		TreeNode<FolderVo> targetFolder = folder.getTreeNode(findFolder);
+		List<TreeNode<FolderVo>> targetFolderList = targetFolder.exploreTree();
+
+		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
+		Collections.reverse(targetFolderList);
+		targetFolderList.forEach(f -> {
+			logger.info(f.getData().getFolderSeq() + ": " + f.getData().getName());
+			try {
+				folderRepository.delete(f.getData().getFolderSeq());
+			} catch (EmptyResultDataAccessException ex) {
+				logger.warn(ex.getMessage(), ex);
+			}
+		});
+
+		List<FolderVo> allList = folderRepository.findAll();
+		System.out.println(allList);
+
 	}
 
 }
