@@ -110,13 +110,13 @@ public class MainTestBase {
 		folderSub2.setName("SUB2");
 		folderRepository.save(folderSub2);
 
-		FolderVo folderSub2_1 = new FolderVo();
-		folderSub2_1.setParentId(folderSub2.getFolderSeq());
-		folderSub2_1.setName("SUB2-1");
-		folderRepository.save(folderSub2_1);
-		allList.get(9).addFolder(folderSub2_1);
-		allList.get(10).addFolder(folderSub2_1);
-		allList.get(11).addFolder(folderSub2_1);
+		FolderVo folderSub21 = new FolderVo();
+		folderSub21.setParentId(folderSub2.getFolderSeq());
+		folderSub21.setName("SUB2-1");
+		folderRepository.save(folderSub21);
+		allList.get(9).addFolder(folderSub21);
+		allList.get(10).addFolder(folderSub21);
+		allList.get(11).addFolder(folderSub21);
 
 		photoRepository.saveAndFlush(allList.get(1));
 		photoRepository.saveAndFlush(allList.get(2));
@@ -147,21 +147,9 @@ public class MainTestBase {
 
 		userRepository.save(user);
 
-		// TODO 삭제 해보기
-		folderRepository.saveAndFlush(folderRoot);
-		folderRepository.saveAndFlush(folderSub1);
-		folderRepository.saveAndFlush(folderSub2);
-		folderRepository.saveAndFlush(folderSub2_1);
-
-		entityManager.refresh(allList.get(1));
-		entityManager.refresh(allList.get(2));
-		entityManager.refresh(allList.get(9));
-		entityManager.refresh(allList.get(10));
-		entityManager.refresh(allList.get(11));
-
 		entityManager.refresh(folderRoot);
 		entityManager.refresh(folderSub1);
 		entityManager.refresh(folderSub2);
-		entityManager.refresh(folderSub2_1);
+		entityManager.refresh(folderSub21);
 	}
 }
