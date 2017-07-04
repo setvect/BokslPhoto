@@ -3,7 +3,6 @@ package com.setvect.bokslphoto.service;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,9 +18,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.FilenameUtils;
@@ -33,10 +30,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.setvect.bokslphoto.ApplicationUtil;
@@ -503,10 +497,5 @@ public class PhotoService {
 				logger.warn(ex.getMessage(), ex);
 			}
 		});
-
-		List<FolderVo> allList = folderRepository.findAll();
-		System.out.println(allList);
-
 	}
-
 }

@@ -13,6 +13,7 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -472,8 +473,11 @@ public class PhotoControllerTestCase extends MainTestBase {
 		// 폴더 삭제
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		callRequest = MockMvcRequestBuilders.get("/photo/deleteFolder.do");
+
+		Optional<FolderVo> rootFolder = allFolder.stream().filter(p -> p.getName().equals("ROOT")).findAny();
+
 		// 루트 폴더 삭제
-		callRequest.param("folderSeq", "1");
+		callRequest.param("folderSeq", String.valueOf(rootFolder.get().getFolderSeq()));
 
 		resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));

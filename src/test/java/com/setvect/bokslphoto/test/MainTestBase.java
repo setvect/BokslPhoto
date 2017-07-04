@@ -147,6 +147,7 @@ public class MainTestBase {
 
 		userRepository.save(user);
 
+		// TODO 삭제 해보기
 		folderRepository.saveAndFlush(folderRoot);
 		folderRepository.saveAndFlush(folderSub1);
 		folderRepository.saveAndFlush(folderSub2);
