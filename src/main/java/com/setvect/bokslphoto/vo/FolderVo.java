@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -32,27 +34,27 @@ public class FolderVo implements Serializable {
 	@Id
 	@Column(name = "FOLDER_SEQ", nullable = false)
 	@GenericGenerator(name = "hibernate-increment", strategy = "increment")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate-increment")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "hibernate-increment")
 	private int folderSeq;
 
 	/** 부모 일련번호 */
 	@Column(name = "PARENT_ID", nullable = false)
 	private int parentId;
-	//
-	// /**
-	// * 부모 <br>
-	// * TODO NEW_20170703: 분류 폴더 자기 참조 셋팅. 결론 동작 안함.
-	// */
-	// @ManyToOne(fetch = FetchType.EAGER)
-	// private FolderVo parent;
-	//
-	// /**
-	// * 자식<br>
-	// * TODO NEW_20170703: 분류 폴더 자기 참조 셋팅. 결론 동작 안함.
-	// */
-	// @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade =
-	// CascadeType.ALL)
-	// private List<FolderVo> children;
+
+	/**
+	 * 부모 <br>
+	 */
+	@ManyToOne
+	@JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
+	@JsonIgnore
+	private FolderVo parent;
+
+	/**
+	 * 자식<br>
+	 */
+	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<FolderVo> children;
 
 	/** 폴더 이름 */
 	@Column(name = "NAME", nullable = false, length = 50)
@@ -143,34 +145,34 @@ public class FolderVo implements Serializable {
 		}
 		return photos.size();
 	}
-	//
-	// /**
-	// * @return
-	// */
-	// public FolderVo getParent() {
-	// return parent;
-	// }
-	//
-	// /**
-	// * @param parent
-	// */
-	// public void setParent(FolderVo parent) {
-	// this.parent = parent;
-	// }
-	//
-	// /**
-	// * @return
-	// */
-	// public List<FolderVo> getChildren() {
-	// return children;
-	// }
-	//
-	// /**
-	// * @param children
-	// */
-	// public void setChildren(List<FolderVo> children) {
-	// this.children = children;
-	// }
+
+	/**
+	 * @return
+	 */
+	public FolderVo getParent() {
+		return parent;
+	}
+
+	/**
+	 * @param parent
+	 */
+	public void setParent(FolderVo parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<FolderVo> getChildren() {
+		return children;
+	}
+
+	/**
+	 * @param children
+	 */
+	public void setChildren(List<FolderVo> children) {
+		this.children = children;
+	}
 
 	@Override
 	public int hashCode() {

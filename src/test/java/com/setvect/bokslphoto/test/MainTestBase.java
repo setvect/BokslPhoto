@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.runner.RunWith;
@@ -34,7 +35,7 @@ import com.setvect.bokslphoto.vo.UserVo;
  * spring과 연관된 테스트는 해당 클래스를 상속 한다.
  */
 @RunWith(SpringRunner.class)
-@Transactional()
+@Transactional
 @SpringBootTest(classes = { BokslPhotoApplication.class })
 @TestPropertySource(locations = "classpath:test.properties")
 public class MainTestBase {
@@ -89,12 +90,12 @@ public class MainTestBase {
 		allList.get(1).setMemo("메모 2");
 		allList.get(2).setMemo("테스트 입니다.");
 
-		FolderVo folderRoot = new FolderVo();
-		folderRoot.setParentId(1);
-		folderRoot.setName("ROOT");
-		folderRepository.save(folderRoot);
-		folderRoot.setParentId(folderRoot.getFolderSeq());
-		folderRepository.save(folderRoot);
+		Query a = entityManager
+				.createNativeQuery("insert into tbbb_folder  (folder_seq, parent_id, name) values (?, ?, ?)");
+		a.setParameter(1, 1).setParameter(2, 1).setParameter(3, "ROOT").executeUpdate();
+
+		FolderVo folderRoot = folderRepository.findOne(1);
+
 		allList.get(1).addFolder(folderRoot);
 		allList.get(2).addFolder(folderRoot);
 
@@ -118,11 +119,11 @@ public class MainTestBase {
 		allList.get(10).addFolder(folderSub21);
 		allList.get(11).addFolder(folderSub21);
 
-		photoRepository.saveAndFlush(allList.get(1));
-		photoRepository.saveAndFlush(allList.get(2));
-		photoRepository.saveAndFlush(allList.get(9));
-		photoRepository.saveAndFlush(allList.get(10));
-		photoRepository.saveAndFlush(allList.get(11));
+		photoRepository.save(allList.get(1));
+		photoRepository.save(allList.get(2));
+		photoRepository.save(allList.get(9));
+		photoRepository.save(allList.get(10));
+		photoRepository.save(allList.get(11));
 
 		UserVo user = new UserVo();
 		user.setUserId("admin");
@@ -146,6 +147,11 @@ public class MainTestBase {
 		user.setUserRole(userRole);
 
 		userRepository.save(user);
+
+		folderRepository.saveAndFlush(folderRoot);
+		folderRepository.saveAndFlush(folderSub1);
+		folderRepository.saveAndFlush(folderSub2);
+		folderRepository.saveAndFlush(folderSub21);
 
 		entityManager.refresh(folderRoot);
 		entityManager.refresh(folderSub1);

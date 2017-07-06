@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -487,11 +488,23 @@ public class PhotoService {
 		TreeNode<FolderVo> targetFolder = folder.getTreeNode(findFolder);
 		List<TreeNode<FolderVo>> targetFolderList = targetFolder.exploreTree();
 
+		System.out.println("============================");
+		targetFolderList.forEach(p -> {
+			System.out.printf("%s%d:%s\n", StringUtils.leftPad("-", p.getLevel() * 3), p.getData().getFolderSeq(),
+					p.getData().getName());
+		});
+		System.out.println("============================");
+
+		List<FolderVo> all = folderRepository.findAll();
+		System.out.println(all);
+
 		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
 		Collections.reverse(targetFolderList);
 		targetFolderList.forEach(f -> {
 			logger.info(f.getData().getFolderSeq() + ": " + f.getData().getName());
 			try {
+				System.out.println(f.getLevel());
+				System.out.println(f.getData());
 				folderRepository.delete(f.getData().getFolderSeq());
 			} catch (EmptyResultDataAccessException ex) {
 				logger.warn(ex.getMessage(), ex);

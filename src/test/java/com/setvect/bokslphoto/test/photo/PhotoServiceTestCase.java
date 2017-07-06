@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -158,12 +156,16 @@ public class PhotoServiceTestCase extends MainTestBase {
 	 * 폴더 조회
 	 */
 	@Test
-	@Transactional
 	public void testSelectFolder() {
-		FolderVo folder = folderRepository.findOne(1);
-		Assert.assertNotNull(folder);
-		Assert.assertNotNull(folder.getPhotos());
-		Assert.assertThat(folder.getPhotoCount(), CoreMatchers.is(2));
+		FolderVo folderRoot = folderRepository.findOne(1);
+		Assert.assertNotNull(folderRoot);
+		Assert.assertNotNull(folderRoot.getPhotos());
+		Assert.assertThat(folderRoot.getPhotoCount(), CoreMatchers.is(2));
+		List<FolderVo> children = folderRoot.getChildren();
+		Assert.assertThat(children.size(), CoreMatchers.is(3));
+
+		FolderVo folderSub = folderRepository.findOne(3);
+		Assert.assertThat(folderSub.getParent(), CoreMatchers.is(folderRoot));
 	}
 
 	// ============== 데이터 등록 ==============
