@@ -63,8 +63,8 @@ public class MainTestBase {
 	@Autowired
 	private UserRepository userRepository;
 
-	/** 엔티티의 캐시를 지우기 위한 목적 */
-	@PersistenceContext
+	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
+	@Autowired
 	private EntityManager entityManager;
 
 	/**
@@ -148,14 +148,7 @@ public class MainTestBase {
 
 		userRepository.save(user);
 
-		folderRepository.saveAndFlush(folderRoot);
-		folderRepository.saveAndFlush(folderSub1);
-		folderRepository.saveAndFlush(folderSub2);
-		folderRepository.saveAndFlush(folderSub21);
-
-		entityManager.refresh(folderRoot);
-		entityManager.refresh(folderSub1);
-		entityManager.refresh(folderSub2);
-		entityManager.refresh(folderSub21);
+		photoRepository.flush();
+		folderRepository.flush();
 	}
 }

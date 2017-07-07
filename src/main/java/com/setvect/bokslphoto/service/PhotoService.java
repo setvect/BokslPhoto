@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +22,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.persistence.EntityManager;
+
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -62,6 +63,10 @@ public class PhotoService {
 
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
+
+	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
+	@Autowired
+	private EntityManager entityManager;
 
 	// ============== 조회 관련 ==============
 
@@ -335,6 +340,10 @@ public class PhotoService {
 	public TreeNode<FolderVo> getFolderTree() {
 		List<FolderVo> folderAll = folderRepository.findAll();
 
+		folderAll.forEach(f -> {
+			entityManager.refresh(f);
+		});
+
 		// 일련번호와 부모 아이디가 같은 경우는 root 폴더.
 		Optional<FolderVo> data = folderAll.stream().filter(f -> f.getFolderSeq() == f.getParentId()).findAny();
 		FolderVo rootData = data.get();
@@ -488,27 +497,21 @@ public class PhotoService {
 		TreeNode<FolderVo> targetFolder = folder.getTreeNode(findFolder);
 		List<TreeNode<FolderVo>> targetFolderList = targetFolder.exploreTree();
 
-		System.out.println("============================");
-		targetFolderList.forEach(p -> {
-			System.out.printf("%s%d:%s\n", StringUtils.leftPad("-", p.getLevel() * 3), p.getData().getFolderSeq(),
-					p.getData().getName());
-		});
-		System.out.println("============================");
-
-		List<FolderVo> all = folderRepository.findAll();
-		System.out.println(all);
-
 		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
 		Collections.reverse(targetFolderList);
 		targetFolderList.forEach(f -> {
-			logger.info(f.getData().getFolderSeq() + ": " + f.getData().getName());
-			try {
-				System.out.println(f.getLevel());
-				System.out.println(f.getData());
-				folderRepository.delete(f.getData().getFolderSeq());
-			} catch (EmptyResultDataAccessException ex) {
-				logger.warn(ex.getMessage(), ex);
-			}
+			FolderVo deleteFolder = f.getData();
+			entityManager.refresh(deleteFolder);
+			logger.info(deleteFolder.getFolderSeq() + ": " + deleteFolder.getName());
+
+			deleteFolder.getPhotos().forEach(p -> {
+				p.setFolders(new HashSet<>());
+			});
+
+			photoRepository.flush();
+			entityManager.refresh(deleteFolder);
+			folderRepository.delete(deleteFolder);
+			folderRepository.flush();
 		});
 	}
 }

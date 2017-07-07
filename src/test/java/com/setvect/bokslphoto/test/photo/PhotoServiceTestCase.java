@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.persistence.EntityManager;
+
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -55,6 +58,10 @@ public class PhotoServiceTestCase extends MainTestBase {
 	/** */
 	@Autowired
 	private UserRepository userRepository;
+
+	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
+	@Autowired
+	private EntityManager entityManager;
 
 	/** */
 	private Logger logger = LoggerFactory.getLogger(PhotoServiceTestCase.class);
@@ -165,6 +172,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		Assert.assertThat(children.size(), CoreMatchers.is(3));
 
 		FolderVo folderSub = folderRepository.findOne(3);
+		entityManager.refresh(folderSub);
 		Assert.assertThat(folderSub.getParent(), CoreMatchers.is(folderRoot));
 	}
 

@@ -61,7 +61,8 @@ public class FolderVo implements Serializable {
 	private String name;
 
 	/** 현재 분류에 소속된 사진 */
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders", cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "folders", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.DETACH })
 	@JsonIgnore
 	private List<PhotoVo> photos;
 

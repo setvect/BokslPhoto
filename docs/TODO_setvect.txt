@@ -16,11 +16,23 @@
 	[GPS] GPS Longitude - 130° 55' 9.85"
 	
 [진행 해야된는 것]
+NEW_20170708: readme 넣기
+NEW_20170707: checkstyle 아래 경우 ignore 처리
+'{' is followed by whitespace. 
+
+
+NEW_20170707: 상수처리. BokslPhotoApplication String testEnv = System.getProperty("test_run");
+
+NEW_20170707: 설정 변경 test.properties
+com.setvect.photo.thumbnail=${com.setvect.photo.home}/temp/thumbnail
+
+
+NEW_20170707: \->\\로 변경 안내 넣기
+
+NEW_20170707: 이미지 삭제. ignore 처리
+
 NEW_20170704: 테스트 중 브레이크 포인트로 멈쳤을 때 데이터 베이스 볼 수 있도록 만듦. 즉 h2-console 되어야 한다는 뜻.
 NEW_20170702: 이미지. 소속된 폴더 출력
-NEW_20170702: 분류 폴더 삭제
-NEW_20170702: 분류 폴더 수정
-NEW_20170702: 하위 분류 폴더 추가
 NEW_20170702: 월단위 일단위 검색
 NEW_20170701: 메모 검색 추가
 NEW_20170624: 모바일 스크롤 이벤트
@@ -55,6 +67,12 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170706(20170708): 분명히 데이터가 있는데 아래처럼 오류가 남. 미쳐 버리겠다.
+		org.springframework.dao.EmptyResultDataAccessException: No class com.setvect.bokslphoto.vo.FolderVo entity with id 3 exists!
+NEW_20170702(20170708): 분류 폴더 삭제
+NEW_20170702(20170708): 분류 폴더 수정
+NEW_20170702(20170708): 하위 분류 폴더 추가
+
 NEW_20170703(20170706): 분류 폴더 자기 참조 셋팅
 NEW_20170702(20170705): 분류 폴더 삭제 테스트 케이스
 NEW_20170702(20170703): 분류 폴더 수정 테스트 케이스
