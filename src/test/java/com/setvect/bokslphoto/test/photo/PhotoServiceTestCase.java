@@ -227,20 +227,22 @@ public class PhotoServiceTestCase extends MainTestBase {
 
 		GenericPage<PhotoVo> photoList2 = photoRepository.getPhotoPagingList(pageCondition);
 
+		FolderVo folderGet = folderRepository.getOne(folderList.get(2).getFolderSeq());
+		Assert.assertThat(folderGet.getPhotoCount(), CoreMatchers.is(0));
+
 		folderList = folderRepository.findAll();
+		// 특정 사진을 모든 폴더와 맵핑
 		folderList.stream().forEach(f -> {
-			// TODO 이것 안해도 되야 되는데..
-			// 위에서 사진에 폴더를 추가 했으면 폴더에 속한 사진은 자동적으로 카운트가 되야되는 것 아닌가?
-			// 아 모르겠다.
 			f.addPhoto(photoList2.getList().get(0));
 			folderRepository.save(f);
 		});
+		folderRepository.flush();
 
 		System.out.println("------------------------------- 폴더 조회");
 		folderList = folderRepository.findAll();
 		folderList.stream().forEach(p -> System.out.printf("%s: %s\n", p, p.getPhotoCount()));
 
-		FolderVo folderGet = folderRepository.getOne(folderList.get(2).getFolderSeq());
+		folderGet = folderRepository.getOne(folderList.get(2).getFolderSeq());
 		System.out.printf("========= %s: %s\n", folderGet, folderGet.getPhotoCount());
 
 		Assert.assertThat(folderGet.getPhotoCount(), CoreMatchers.is(1));
