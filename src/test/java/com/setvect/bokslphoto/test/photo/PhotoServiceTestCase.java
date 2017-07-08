@@ -318,6 +318,7 @@ public class PhotoServiceTestCase extends MainTestBase {
 		Assert.assertThat(nodeList.size(), CoreMatchers.is(4));
 		Assert.assertThat(nodeList.get(0).getData().getName(), CoreMatchers.is("ROOT"));
 		FolderVo sub = nodeList.get(1).getData();
+		entityManager.refresh(sub);
 		Assert.assertThat(sub.getName(), CoreMatchers.is("SUB1"));
 		Assert.assertThat(sub.getPhotoCount(), CoreMatchers.is(2));
 

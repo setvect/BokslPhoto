@@ -43,6 +43,9 @@ REF_20170507: 의존성 제거
 
 
 [진행 된 것]
+NEW_20170708: 분류가 나오지 않음 
+	javax.persistence.TransactionRequiredException: No EntityManager with actual transaction available for current thread - cannot reliably process 'refresh' call
+		at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:282)
 NEW_20170422: 디자인 페이지 적용하기
 	=> 예전부터 하고 있었음.
 NEW_20170527(20170608): 아래코드 동작 되게

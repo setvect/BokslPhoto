@@ -61,10 +61,6 @@ public class PhotoService {
 	@Autowired
 	private FolderRepository folderRepository;
 
-	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
-	@Autowired
-	private EntityManager entityManager;
-
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
@@ -339,10 +335,6 @@ public class PhotoService {
 	 */
 	public TreeNode<FolderVo> getFolderTree() {
 		List<FolderVo> folderAll = folderRepository.findAll();
-
-		folderAll.forEach(f -> {
-			entityManager.refresh(f);
-		});
 
 		// 일련번호와 부모 아이디가 같은 경우는 root 폴더.
 		Optional<FolderVo> data = folderAll.stream().filter(f -> isRootFolder(f)).findAny();
