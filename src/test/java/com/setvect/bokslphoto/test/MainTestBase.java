@@ -43,8 +43,7 @@ import com.setvect.bokslphoto.vo.UserVo;
 public class MainTestBase {
 	static {
 		System.setProperty(BokslPhotoConstant.TEST_CHECK_PROPERTY_NAME, "true");
-
-		openH2WebConsole();
+		// openH2WebConsole();
 	}
 
 	/**

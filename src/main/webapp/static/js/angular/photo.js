@@ -1,4 +1,4 @@
-var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone', 'infinite-scroll']);
+var photoApp = angular.module('photoApp', ['ngRoute', 'thatisuday.dropzone']);
 photoApp.run(function($rootScope, $q) {
 	$rootScope.$q = $q;
 	$rootScope.log = function(value){
@@ -116,6 +116,19 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.path.name ="";
 	$scope.path.type="";
 	$scope.path.functionButton = false;
+
+	// 날짜별 무한 스크롤 처리 
+	$(document).scroll(function() {
+		$scope.$apply(function(){
+			var maxHeight = $(document).height();
+			var currentScroll = $(window).scrollTop() + $(window).height();
+			
+			// NOTE. 일반 브라우저에서 10만 해도 충문한데 모바일에선 넉넉히 해야 됨. 
+			if (maxHeight <= currentScroll + 70) {
+				$scope.loadMore();
+			}
+		});
+	});
 	
 	var decodedirectoryName;
 	if ($routeParams.directoryName != null) {

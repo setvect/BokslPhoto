@@ -82,9 +82,6 @@
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
-<!-- ngInfiniteScroll-1.0.0 -->
-<script src="${pageContext.request.contextPath}/static/plugins/ngInfiniteScroll-1.0.0/ng-infinite-scroll.js"></script>
-
 <!-- SweetAlert Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/sweetalert/sweetalert.min.js"></script>
 
