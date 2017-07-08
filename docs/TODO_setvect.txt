@@ -21,11 +21,6 @@ NEW_20170708: readme 넣기
 
 NEW_20170707: 상수처리. BokslPhotoApplication String testEnv = System.getProperty("test_run");
 
-NEW_20170707: 설정 변경 test.properties
-com.setvect.photo.thumbnail=${com.setvect.photo.home}/temp/thumbnail
-
-
-NEW_20170707: \->\\로 변경 안내 넣기
 
 NEW_20170704: 테스트 중 브레이크 포인트로 멈쳤을 때 데이터 베이스 볼 수 있도록 만듦. 즉 h2-console 되어야 한다는 뜻.
 NEW_20170702: 이미지. 소속된 폴더 출력
@@ -63,6 +58,9 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170707(20170708): 설정파일 안내 추가. \->\\로 변경 안내 넣기
+NEW_20170707(20170708): 설정 변경 test.properties
+com.setvect.photo.thumbnail=${com.setvect.photo.home}/temp/thumbnail
 NEW_20170707(20170708): 테스트 이미지 삭제. ignore 처리
 NEW_20170708: 폴더 삭제 시 @EntityListeners이용해 @PreRemove 처리
 
