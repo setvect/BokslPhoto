@@ -2,6 +2,8 @@ package com.setvect.bokslphoto.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,9 +12,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.io.FileUtils;
+import org.h2.tools.Server;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
@@ -41,6 +43,27 @@ import com.setvect.bokslphoto.vo.UserVo;
 public class MainTestBase {
 	static {
 		System.setProperty(BokslPhotoConstant.TEST_CHECK_PROPERTY_NAME, "true");
+
+		openH2WebConsole();
+	}
+
+	/**
+	 * 디버깅중 데이터 입력 값을 확인하기 위해 만듦.<br>
+	 * TEST 중 JDBC 접속은 TCP로 되어야 됨<br>
+	 * jdbc:h2:mem:BokslPhto <-- 메모리로 DB를 오픈하면 당연히 접속을 못함.<br>
+	 *
+	 * 하지만 테스트 과정에서 트랜잭션이 적용되었기 때문에 테스트 과정에서 입력된 데이터를 확인할 수 없다.
+	 */
+	private static void openH2WebConsole() {
+		try {
+			String[] optionWeb = "-webAllowOthers -webPort 8082".split(" ");
+			Server h2Web;
+			h2Web = Server.createWebServer(optionWeb);
+			h2Web.setOut(new PrintStream(System.out));
+			h2Web.start();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/** */
@@ -66,6 +89,10 @@ public class MainTestBase {
 	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
 	@Autowired
 	private EntityManager entityManager;
+
+	/** 로깅 */
+	// private Logger logger =
+	// LoggerFactory.getLogger(PhotoServiceTestCase.class);
 
 	/**
 	 * 초기 값 등록.
