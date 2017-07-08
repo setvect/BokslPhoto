@@ -177,9 +177,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		String content = mvcResult.getResponse().getContentAsString();
 		System.out.println(content);
 
+		@SuppressWarnings("serial")
 		Type type = new TypeToken<List<GroupByDate>>() {
-			/** */
-			private static final long serialVersionUID = 8349948434510094988L;
 		}.getType();
 
 		Gson gson = new GsonBuilder().registerTypeAdapter(Date.class,
@@ -343,9 +342,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 	 * @return
 	 */
 	private GenericPage<PhotoVo> unmarshallingPhotoPage(String jsonList) {
+		@SuppressWarnings("serial")
 		Type confType = new TypeToken<GenericPage<PhotoVo>>() {
-			/** */
-			private static final long serialVersionUID = 8598639125420936733L;
 		}.getType();
 
 		// 날짜 파싱. long -> Date
@@ -380,9 +378,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		String jsonDirectory = mvcResult.getResponse().getContentAsString();
 		System.out.println(jsonDirectory);
 
+		@SuppressWarnings("serial")
 		Type confType = new TypeToken<TreeNode<PhotoDirectory>>() {
-			/** */
-			private static final long serialVersionUID = 8349948434510094988L;
 		}.getType();
 
 		Gson gson = new Gson();
@@ -408,8 +405,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		MvcResult mvcResult = resultActions.andReturn();
 		String jsonFolder = mvcResult.getResponse().getContentAsString();
 
+		@SuppressWarnings("serial")
 		Type confType = new TypeToken<TreeNode<FolderVo>>() {
-			private static final long serialVersionUID = 8349948434510094988L;
 		}.getType();
 
 		Gson gson = new Gson();
@@ -510,8 +507,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		mvcResult = resultActions.andReturn();
 		jsonFolder = mvcResult.getResponse().getContentAsString();
 
+		@SuppressWarnings("serial")
 		Type listType = new TypeToken<List<FolderVo>>() {
-			private static final long serialVersionUID = 146747589101472417L;
 		}.getType();
 
 		Gson gson = new Gson();
@@ -591,9 +588,8 @@ public class PhotoControllerTestCase extends MainTestBase {
 		MvcResult mvcResult = resultActions.andReturn();
 		String jsonFolder = mvcResult.getResponse().getContentAsString();
 
+		@SuppressWarnings("serial")
 		Type confType = new TypeToken<Map<String, String>>() {
-			/** */
-			private static final long serialVersionUID = 8349948434510094988L;
 		}.getType();
 
 		Gson gson = new Gson();
@@ -890,6 +886,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 	 *
 	 * @throws Exception
 	 */
+	@SuppressWarnings("serial")
 	@Test
 	public void testDeleteDuplicate() throws Exception {
 		// 첫 번째
@@ -903,8 +900,6 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		Gson gson = new Gson();
 		List<String> result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
-			/** */
-			private static final long serialVersionUID = 1L;
 		}.getType());
 		Assert.assertThat(result.size(), CoreMatchers.is(1));
 
@@ -918,8 +913,6 @@ public class PhotoControllerTestCase extends MainTestBase {
 		System.out.println(jsonDirectory);
 
 		result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
-			/** */
-			private static final long serialVersionUID = 1L;
 		}.getType());
 		Assert.assertThat(result.size(), CoreMatchers.is(0));
 	}
