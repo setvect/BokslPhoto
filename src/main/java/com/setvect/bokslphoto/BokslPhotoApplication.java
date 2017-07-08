@@ -52,7 +52,7 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	@Bean
 	InitializingBean init() {
 		return () -> {
-			String testEnv = System.getProperty("test_run");
+			String testEnv = System.getProperty(BokslPhotoConstant.TEST_CHECK_PROPERTY_NAME);
 			URL configUrl;
 			if (Boolean.parseBoolean(testEnv)) {
 				configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES_TEST);
