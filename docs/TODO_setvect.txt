@@ -29,8 +29,6 @@ NEW_20170606: 날짜 정보 없으면 사용자 지정 날짜로 정렬. 뷰을 
 
 NEW_20170603: 폴더, 디렉토리에 이미지 건수 표시 할 때 하위 폴더 갯수 포함.
 
-NEW_20170527: 아래코드 동작 되게
-		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
 NEW_20170515: 사진 UI
 NEW_20170515: 검색 UI
 
@@ -47,6 +45,9 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170527(20170608): 아래코드 동작 되게
+		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
+
 PBM_20170603(20170608):아래 문제 해결 
 			// TODO 이것 안해도 되야 되는데..
 			// 위에서 사진에 폴더를 추가 했으면 폴더에 속한 사진은 자동적으로 카운트가 되야되는 것 아닌가?

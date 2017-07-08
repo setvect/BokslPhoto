@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto.test.photo;
 
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -684,13 +686,11 @@ public class PhotoControllerTestCase extends MainTestBase {
 		resultActions.andExpect(content().string("true"));
 
 		PhotoVo photo = photoRepository.findOne(photoId);
-		System.out.println(photo);
 
 		Assert.assertThat(photo.getFolders().size(), CoreMatchers.is(2));
 
 		FolderVo folder = folderRepository.findOne(folderSeq);
 		List<PhotoVo> s = folder.getPhotos();
-		System.out.println(s);
 
 		// 3. 폴더 연결 삭제
 		callRequest = MockMvcRequestBuilders.get("/photo/deleteRelationFolder.do");
@@ -701,16 +701,14 @@ public class PhotoControllerTestCase extends MainTestBase {
 		resultActions.andExpect(content().string("true"));
 
 		photo = photoRepository.findOne(photoId);
-		System.out.println(photo);
 
 		Assert.assertThat(photo.getFolders().size(), CoreMatchers.is(1));
 
 		folder = folderRepository.findOne(folderSeq);
 		s = folder.getPhotos();
-		System.out.println(s);
-		// TODO Mapping된 값을 가져오지 못함.
-		// Assert.assertThat(folder.getPhotos().get(0).getPhotoId(),
-		// CoreMatchers.is(photoId));
+
+		Set<String> photoIdSet = s.stream().map(photo1 -> photo1.getPhotoId()).collect(toSet());
+		Assert.assertTrue("폴더에 특정 이미지가 포함되어 있지는지", photoIdSet.contains(photoId));
 
 		System.out.println("끝.");
 	}
