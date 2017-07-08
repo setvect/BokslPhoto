@@ -470,22 +470,27 @@ public class PhotoControllerTestCase extends MainTestBase {
 		Assert.assertThat(f.getName(), CoreMatchers.is("수정했음"));
 		Assert.assertThat(f.getParentId(), CoreMatchers.is(baseFolder.getParentId()));
 
-		// 폴더 삭제
+		// 루트 폴더 삭제
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		callRequest = MockMvcRequestBuilders.get("/photo/deleteFolder.do");
-
 		Optional<FolderVo> rootFolder = allFolder.stream().filter(p -> p.getName().equals("ROOT")).findAny();
-
-		// 루트 폴더 삭제
 		callRequest.param("folderSeq", String.valueOf(rootFolder.get().getFolderSeq()));
 
 		resultActions = mockMvc.perform(callRequest);
-		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(status().is(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+
+		// 서브 폴더 삭제
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/deleteFolder.do");
+		Optional<FolderVo> subFolder = allFolder.stream().filter(p -> p.getName().equals("수정했음")).findAny();
+		callRequest.param("folderSeq", String.valueOf(subFolder.get().getFolderSeq()));
+		resultActions = mockMvc.perform(callRequest);
+
 		resultActions.andDo(MockMvcResultHandlers.print());
 		mvcResult = resultActions.andReturn();
 
 		allAfter = folderRepository.findAll();
-		Assert.assertThat(allAfter.size(), CoreMatchers.is(0));
+		Assert.assertThat(allAfter.size(), CoreMatchers.is(3));
 	}
 
 	private List<FolderVo> getFolderPath(int folderSeq, boolean includeRoot)

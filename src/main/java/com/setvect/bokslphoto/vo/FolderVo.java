@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,19 +17,34 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.setvect.bokslphoto.repository.FolderRepository;
+import com.setvect.bokslphoto.repository.PhotoRepository;
 
 /**
  * 사진 분류 폴더
  */
 @Entity
 @Table(name = "TBBB_FOLDER")
+@EntityListeners(FolderListener.class)
 public class FolderVo implements Serializable {
 	/** */
 	private static final long serialVersionUID = -2233365039548913827L;
+
+	/** 포토 관련 DB */
+	@Autowired
+	@Transient
+	private PhotoRepository photoRepository;
+
+	/** 분류 폴더 */
+	@Autowired
+	@Transient
+	private FolderRepository folderRepository;
 
 	/** 일련번호 */
 	@Id
@@ -52,7 +68,8 @@ public class FolderVo implements Serializable {
 	/**
 	 * 자식<br>
 	 */
-	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "parent", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE,
+			CascadeType.DETACH })
 	@JsonIgnore
 	private List<FolderVo> children;
 
@@ -148,7 +165,7 @@ public class FolderVo implements Serializable {
 	}
 
 	/**
-	 * @return
+	 * @return 부모 폴더
 	 */
 	public FolderVo getParent() {
 		return parent;
@@ -156,13 +173,14 @@ public class FolderVo implements Serializable {
 
 	/**
 	 * @param parent
+	 *            부모 폴더
 	 */
-	public void setParent(FolderVo parent) {
+	public void setParent(final FolderVo parent) {
 		this.parent = parent;
 	}
 
 	/**
-	 * @return
+	 * @return 자식 폴더들
 	 */
 	public List<FolderVo> getChildren() {
 		return children;
@@ -170,8 +188,9 @@ public class FolderVo implements Serializable {
 
 	/**
 	 * @param children
+	 *            자식 폴더들
 	 */
-	public void setChildren(List<FolderVo> children) {
+	public void setChildren(final List<FolderVo> children) {
 		this.children = children;
 	}
 

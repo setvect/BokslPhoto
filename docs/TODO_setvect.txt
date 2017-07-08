@@ -67,8 +67,11 @@ NEW_20170422: 디자인 페이지 적용하기
 
 
 [진행 된 것]
+NEW_20170708: 폴더 삭제 시 @EntityListeners이용해 @PreRemove 처리
+
 NEW_20170706(20170708): 분명히 데이터가 있는데 아래처럼 오류가 남. 미쳐 버리겠다.
 		org.springframework.dao.EmptyResultDataAccessException: No class com.setvect.bokslphoto.vo.FolderVo entity with id 3 exists!
+		=> 정확인 뭔지 모르겠음... 다른 거 하면서 해결됨
 NEW_20170702(20170708): 분류 폴더 삭제
 NEW_20170702(20170708): 분류 폴더 수정
 NEW_20170702(20170708): 하위 분류 폴더 추가

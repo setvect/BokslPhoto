@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.setvect.bokslphoto.ApplicationRuntimeException;
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.repository.FolderRepository;
@@ -595,7 +596,13 @@ public class PhotoController {
 	@RequestMapping("/photo/deleteFolder.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> deleteFolder(@RequestParam("folderSeq") final int folderSeq) {
-		photoService.deleteFolder(folderSeq);
+		try {
+			photoService.deleteFolder(folderSeq);
+		} catch (ApplicationRuntimeException e) {
+			logger.warn(e.getMessage());
+			return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.setvect.bokslphoto.ApplicationRuntimeException;
 import com.setvect.bokslphoto.ApplicationUtil;
 import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.BokslPhotoConstant.ImageMeta;
@@ -61,12 +61,12 @@ public class PhotoService {
 	@Autowired
 	private FolderRepository folderRepository;
 
-	/** 로깅 */
-	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
-
 	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
 	@Autowired
 	private EntityManager entityManager;
+
+	/** 로깅 */
+	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
 	// ============== 조회 관련 ==============
 
@@ -345,7 +345,7 @@ public class PhotoService {
 		});
 
 		// 일련번호와 부모 아이디가 같은 경우는 root 폴더.
-		Optional<FolderVo> data = folderAll.stream().filter(f -> f.getFolderSeq() == f.getParentId()).findAny();
+		Optional<FolderVo> data = folderAll.stream().filter(f -> isRootFolder(f)).findAny();
 		FolderVo rootData = data.get();
 
 		Map<Integer, List<FolderVo>> folderListByParentId = folderAll.stream()
@@ -489,29 +489,21 @@ public class PhotoService {
 	 *            분류 폴더 아이디
 	 */
 	public void deleteFolder(final int folderSeq) {
-		TreeNode<FolderVo> folder = getFolderTree();
+		FolderVo folder = folderRepository.findOne(folderSeq);
+		if (isRootFolder(folder)) {
+			throw new ApplicationRuntimeException("Deleting the root folder is prohibited.");
+		}
+		// 내부에서 재귀적으로 호출하여 하위 폴더 삭제함.
+		folderRepository.delete(folder);
+		folderRepository.flush();
+	}
 
-		FolderVo findFolder = new FolderVo();
-		findFolder.setFolderSeq(folderSeq);
-
-		TreeNode<FolderVo> targetFolder = folder.getTreeNode(findFolder);
-		List<TreeNode<FolderVo>> targetFolderList = targetFolder.exploreTree();
-
-		// 자식보다 부모가 먼저 삭제되는 걸 방지하기 위해 리버스
-		Collections.reverse(targetFolderList);
-		targetFolderList.forEach(f -> {
-			FolderVo deleteFolder = f.getData();
-			entityManager.refresh(deleteFolder);
-			logger.info(deleteFolder.getFolderSeq() + ": " + deleteFolder.getName());
-
-			deleteFolder.getPhotos().forEach(p -> {
-				p.setFolders(new HashSet<>());
-			});
-
-			photoRepository.flush();
-			entityManager.refresh(deleteFolder);
-			folderRepository.delete(deleteFolder);
-			folderRepository.flush();
-		});
+	/**
+	 * @param folder
+	 *            비교 폴더
+	 * @return 루트 폴더면 true, 아니면 false
+	 */
+	private boolean isRootFolder(final FolderVo folder) {
+		return folder.getFolderSeq() == folder.getParentId();
 	}
 }

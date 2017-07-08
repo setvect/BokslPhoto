@@ -63,7 +63,7 @@ public class MainTestBase {
 	@Autowired
 	private UserRepository userRepository;
 
-	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
+	/** 엔티티의 refrash, merge 등을 관리하기 위해*/
 	@Autowired
 	private EntityManager entityManager;
 
