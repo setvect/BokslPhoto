@@ -41,10 +41,10 @@ REF_20170507: 의존성 제거
 				Waves.attach('.menu .list a', ['waves-block']);
 				Waves.init();
 
-NEW_20170422: 디자인 페이지 적용하기
-
 
 [진행 된 것]
+NEW_20170422: 디자인 페이지 적용하기
+	=> 예전부터 하고 있었음.
 NEW_20170527(20170608): 아래코드 동작 되게
 		Assert.assertThat(folder.getPhotos().get(0).getPhotoId(), CoreMatchers.is(photoId));
 

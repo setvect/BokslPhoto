@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
@@ -63,7 +63,7 @@ public class MainTestBase {
 	@Autowired
 	private UserRepository userRepository;
 
-	/** 엔티티의 refrash, merge 등을 관리하기 위해*/
+	/** 엔티티의 refrash, merge 등을 관리하기 위해 */
 	@Autowired
 	private EntityManager entityManager;
 
