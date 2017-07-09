@@ -7,7 +7,7 @@
 				<div class="form-inline">
 					<div class="form-group">
 						<span>보기 형태</span> 
-						<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" selectpicker >
+						<select class="selectpicker show-tick" data-ng-model="searchOption.searchDateGroup" selectpicker>
 							<option value="DATE">일 단위</option>
 							<option value="MONTH">월 단위</option>
 							<option value="YEAR">년 단위</option>
@@ -52,11 +52,12 @@
 								role="button" aria-haspopup="true" aria-expanded="false"> <i class="material-icons">more_vert</i>
 						</a>
 							<ul class="dropdown-menu pull-right">
-								<li><a href="javascript:void(0);">월단위 검색</a></li>
-								<li><a href="javascript:void(0);">일단위 검색</a></li>
+								<li><a href="javascript:void(0);" data-ng-click="searchRange('YEAR', group)" data-ng-show="searchOption.searchDateGroup == 'MONTH' || searchOption.searchDateGroup == 'DATE'">년단위 검색</a></li>
+								<li><a href="javascript:void(0);" data-ng-click="searchRange('MONTH', group)" data-ng-show="searchOption.searchDateGroup == 'YEAR' || searchOption.searchDateGroup == 'DATE'">월단위 검색</a></li>
+								<li><a href="javascript:void(0);" data-ng-click="searchRange('DATE', group)" data-ng-show="searchOption.searchDateGroup == 'YEAR' || searchOption.searchDateGroup == 'MONTH'">일단위 검색</a></li>
 							</ul>
 						</li>
-					</ul>					
+					</ul>
 				</div>
 				<div class="body">
 					<div class="row">

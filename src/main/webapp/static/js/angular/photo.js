@@ -59,6 +59,24 @@ photoApp.directive('datepicker', function() {
 	}
 });
 
+photoApp.directive('selectpicker', function($timeout) {
+	return {
+		restrict : 'A',
+		link : function(scope, element, attributes) {
+			$timeout(function() {
+				scope.$apply(function() {
+					element.selectpicker({
+						showSubtext : true
+					});
+				});
+				scope.$watch('searchOption.searchDateGroup', function(newValue, old) {
+					$('.selectpicker').selectpicker('refresh');
+				});
+			}, 0);
+		}
+	};
+});
+
 photoApp.config(function($routeProvider) {
 	$routeProvider.when("/list", {
 		templateUrl : CONTEXT_PATH + "/photo/list.do",
@@ -116,6 +134,12 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.path.name ="";
 	$scope.path.type="";
 	$scope.path.functionButton = false;
+	
+	$scope.dateViewShow = {};
+	$scope.dateViewShow.year = true;
+	$scope.dateViewShow.month = false;
+	$scope.dateViewShow.day = true;
+	
 	
 	// 날짜별 무한 스크롤 처리 
 	$(document).scroll(function() {
@@ -177,8 +201,6 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			$scope.dateGroup.forEach(function(entry) {
 				$scope.moreLoadImage(entry);
 			});
-			// F5 새로고침 했을 때 셀렉트 박스가 안나오는 경우 있음. 이를 해결하기 위해 아래 코드 넣었음
-			$('.selectpicker').selectpicker();
 			$scope.lazyDateGroup = [];
 			$scope.loadMore();
 		});
@@ -221,6 +243,34 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	
 	// 검색
 	$scope.search = function(){
+		$scope.listGroup();
+	};
+	
+	// 날짜 범위 지정
+	$scope.searchRange = function(dateType, dateRange){
+		$scope.searchOption.searchDateGroup = dateType;
+		var from = new Date(dateRange.from);
+		var to = new Date(dateRange.to);
+		
+		switch(dateType){
+		case 'MONTH':
+			from.setMonth(0);
+			from.setDate(1);
+			to.setMonth(11);
+			to.setDate(31);
+			break;
+		case 'DATE':
+			break;
+		}
+
+		if(dateType == 'YEAR'){
+			$scope.searchOption.searchFrom = "";
+			$scope.searchOption.searchTo=  "";
+		}
+		else{
+			$scope.searchOption.searchFrom = $filter("date")(from, "yyyyMMdd");
+			$scope.searchOption.searchTo=  $filter("date")(to, "yyyyMMdd");
+		}
 		$scope.listGroup();
 	};
 		
