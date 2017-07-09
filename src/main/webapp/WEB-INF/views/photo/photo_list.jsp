@@ -20,7 +20,11 @@
 						<input type="text" class="form-control" placeholder="종료일" data-ng-model="searchOption.searchTo" datepicker/>
 					</div>
 					<div class="form-group">
+						<input type="text" class="form-control" placeholder="메모" data-ng-model="searchOption.searchMemo"/>
+					</div>
+					<div class="form-group">
 						<button type="button" class="btn btn-primary waves-effect" data-ng-click="search();">검색</button>
+						<button type="button" class="btn btn-primary waves-effect" data-ng-show="isSearch()" data-ng-click="searchCancle();">검색취소</button>
 					</div>
 				</div>
 			</div>

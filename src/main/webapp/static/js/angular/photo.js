@@ -127,6 +127,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.searchOption.searchDateGroup = "YEAR";
 	$scope.searchOption.searchFrom = "";
 	$scope.searchOption.searchTo= "";
+	$scope.searchOption.searchMemo= "";
 	
 	// 상단 경로(분류, 디렉토리)표시
 	$scope.path = {};
@@ -190,6 +191,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			"searchDateGroup" : $scope.searchOption.searchDateGroup,
 			"searchFrom" : $scope.searchOption.searchFrom,
 			"searchTo" : $scope.searchOption.searchTo,
+			"searchMemo" : $scope.searchOption.searchMemo,
 			"searchDirectory" : decodedirectoryName,
 			"searchFolderSeq" : folderSeq
 		};
@@ -212,6 +214,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		var params = {
 			"startCursor" : startCursor,
 			"returnCount" : 4,
+			"searchMemo" : $scope.searchOption.searchMemo,
 			"searchDirectory" : decodedirectoryName,
 			"searchFolderSeq" : folderSeq
 		};
@@ -244,6 +247,21 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	// 검색
 	$scope.search = function(){
 		$scope.listGroup();
+	};
+
+	// 검색 취소
+	$scope.searchCancle = function(){
+		$scope.searchOption.searchFrom = "";
+		$scope.searchOption.searchTo = "";
+		$scope.searchOption.searchMemo = "";
+		$scope.listGroup();
+	};
+
+	// 검색중인 여부
+	$scope.isSearch = function(){
+		return $scope.searchOption.searchFrom != "" 
+			|| $scope.searchOption.searchTo != "" 
+			|| $scope.searchOption.searchMemo != "";
 	};
 	
 	// 날짜 범위 지정
