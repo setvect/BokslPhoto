@@ -15,11 +15,13 @@ import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ImportResource;
 
 /**
  * Spring boot application 시작점.
  */
 @SpringBootApplication
+@ImportResource({ "classpath:/spring/context-transaction.xml" })
 public class BokslPhotoApplication extends SpringBootServletInitializer {
 	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";

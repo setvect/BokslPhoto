@@ -42,6 +42,8 @@ REF_20170507: 의존성 제거
 
 
 [진행 된 것]
+PBM_20170709: 아래 문제 해결 
+	javax.persistence.TransactionRequiredException: No EntityManager with actual transaction available fo
 NEW_20170709: 폴더 목록 중 이미지 선택 여부 조회 테스트 케이스
 NEW_20170624(20170708): 모바일 스크롤 이벤트
 	=> 모바일 브라우저 캐시도 하나의 문제였음.
