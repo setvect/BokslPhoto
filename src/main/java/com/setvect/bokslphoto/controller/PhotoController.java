@@ -1,6 +1,5 @@
 package com.setvect.bokslphoto.controller;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
@@ -8,12 +7,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -430,8 +431,28 @@ public class PhotoController {
 		if (p == null || f == null) {
 			return new ResponseEntity<>(false, HttpStatus.OK);
 		}
-
 		p.addFolder(f);
+		photoRepository.saveAndFlush(p);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	/**
+	 * 사진 관련 폴더 추가
+	 *
+	 * @param photoId
+	 *            사진 파일 아이디
+	 * @param folderSeq
+	 *            폴더 일련 번호
+	 * @return 처리 결과
+	 */
+	@RequestMapping("/photo/addRelationFolders.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> addRelationFolders(@RequestParam("photoId") final String photoId,
+			@RequestParam("folderSeq") final int[] folderSeq) {
+		PhotoVo p = photoRepository.findOne(photoId);
+		Set<FolderVo> mappingFolder = Arrays.stream(folderSeq).mapToObj(seq -> folderRepository.findOne(seq))
+				.collect(toSet());
+		p.setFolders(mappingFolder);
 		photoRepository.saveAndFlush(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}

@@ -42,6 +42,7 @@ REF_20170507: 의존성 제거
 
 
 [진행 된 것]
+NEW_20170709: 하나의 이미지에 복수의 폴더 맵핑 테스트 케이스
 PBM_20170709: 아래 문제 해결 
 	javax.persistence.TransactionRequiredException: No EntityManager with actual transaction available fo
 NEW_20170709: 폴더 목록 중 이미지 선택 여부 조회 테스트 케이스

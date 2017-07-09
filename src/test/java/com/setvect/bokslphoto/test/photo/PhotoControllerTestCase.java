@@ -719,8 +719,30 @@ public class PhotoControllerTestCase extends MainTestBase {
 		// resultActions.andDo(MockMvcResultHandlers.print());
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));
 		resultActions.andExpect(content().string("true"));
+		entityManager.refresh(photoList.get(0));
+		Set<FolderVo> folderByPhoto = photoList.get(0).getFolders();
+		Assert.assertThat(folderByPhoto.size(), CoreMatchers.is(1));
+		Assert.assertThat(folderByPhoto.size(), CoreMatchers.is(1));
 
-		// 2. 연관 폴더 등록
+		// 2. 복수의 연관 폴더 등록
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolders.do");
+		photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		callRequest.param("folderSeq", String.valueOf(folderList.get(0).getFolderSeq()),
+				String.valueOf(folderList.get(1).getFolderSeq()));
+		resultActions = mockMvc.perform(callRequest);
+		// resultActions.andDo(MockMvcResultHandlers.print());
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+		entityManager.refresh(photoList.get(0));
+		folderByPhoto = photoList.get(0).getFolders();
+		Assert.assertThat(folderByPhoto.size(), CoreMatchers.is(2));
+		Set<Integer> folderSeqSet = folderByPhoto.stream().map(f -> f.getFolderSeq()).collect(toSet());
+		Assert.assertTrue("폴더 포함 여부", folderSeqSet.contains(folderList.get(0).getFolderSeq()));
+		Assert.assertTrue("폴더 포함 여부", folderSeqSet.contains(folderList.get(1).getFolderSeq()));
+
+		// 3. 연관 폴더 등록
 		callRequest = MockMvcRequestBuilders.get("/photo/addRelationFolder.do");
 		callRequest.param("photoId", photoId);
 		callRequest.param("folderSeq", String.valueOf(folderList.get(1).getFolderSeq()));
@@ -735,7 +757,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		FolderVo folder = folderRepository.findOne(folderSeq);
 		List<PhotoVo> s = folder.getPhotos();
 
-		// 3. 폴더 연결 삭제
+		// 4. 폴더 연결 삭제
 		callRequest = MockMvcRequestBuilders.get("/photo/deleteRelationFolder.do");
 		callRequest.param("photoId", photoId);
 		callRequest.param("folderSeq", String.valueOf(folderList.get(1).getFolderSeq()));

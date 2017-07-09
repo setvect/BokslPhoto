@@ -241,6 +241,13 @@ public class PhotoVo {
 	}
 
 	/**
+	 * 가지고 있는 폴더 제거
+	 */
+	public void clearFolder() {
+		folders = new HashSet<>();
+	}
+
+	/**
 	 * @param f
 	 *            삭제 할 폴더
 	 */
