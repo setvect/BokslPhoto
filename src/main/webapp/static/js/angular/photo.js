@@ -116,7 +116,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.path.name ="";
 	$scope.path.type="";
 	$scope.path.functionButton = false;
-
+	
 	// 날짜별 무한 스크롤 처리 
 	$(document).scroll(function() {
 		$scope.$apply(function(){
@@ -153,11 +153,9 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			var pathArray = [];
 			
 			response.data.forEach(function(value, idx){
-				console.log("value", value);
 				pathArray.push(value.name);
 			});
 
-			console.log(pathArray);
 			$scope.path.name = pathArray.join("/"); 
 		});
 	}
@@ -227,7 +225,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	};
 		
 	// 메모 추가
-	$scope.openMemoLayer = function(item, groupIdx, listIdx) {
+	$scope.openMemoLayer = function(item) {
 		swal({
 			title : "메모 입력",
 			text : "느낌 나는 데로 입력:",
@@ -250,13 +248,8 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			});
 		});
 	};
-
-	// 폴더 지정
-	$scope.openFolderLayer = function(){
-		alert("todo 폴더");
-	};
-
-	// 메모 수정
+	
+	//메모 수정
 	$scope.updatePhoto = function(photoId, memo) {
 		$http({
 			method : 'POST',
@@ -266,10 +259,54 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			},
 			params : {"photoId": photoId, "memo": memo }
 		}).then(function(response) {
-			// 아무런 동작 없음.
+			// nothing
+		});
+	};
+	
+	// 폴더 지정
+	$scope.openFolderLayer = function(item){
+		$scope.folderList = [];
+		$scope.folderSelect = [];
+		$scope.folderByPhotoId = item.photoId;
+		$http({
+			method : 'GET',
+			url : CONTEXT_PATH + "/photo/folderAddtionList.json",
+			headers: {
+				'Content-Type': undefined
+			},
+			params : {"photoId": item.photoId}
+		}).then(function(response) {
+			response.data.forEach(function(data, idx){
+				$scope.folderList.push({id:data.folder.folderSeq, name:"__".repeat(data.level) + data.folder.name});
+				if(data.select){
+					$scope.folderSelect.push(data.folder.folderSeq.toString()); 
+				}
+			});
+		});
+		$("#folderSelectModal").modal("show");
+	};
+	
+	// 폴더 맵핑 
+	$scope.updateFolderMapping = function(){
+		$("#folderSelectModal").modal("hide");
+		$http({
+			method : 'POST',
+			url : CONTEXT_PATH + "/photo/addRelationFolders.do",
+			headers: {
+				'Content-Type': undefined
+			},
+			params : {"photoId": $scope.folderByPhotoId, "folderSeq": $scope.folderSelect}
+		}).then(function(response) {
+			// nothing
 		});
 	};
 
+	// 선택 지우기 
+	$scope.deselectFolderAll = function(){
+		$scope.folderSelect = [];
+	};
+	
+	
 	// 스크롤 이벤트. 
 	$scope.loadMore = function() {
 		if($scope.dateGroup == null){

@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -448,10 +448,14 @@ public class PhotoController {
 	@RequestMapping("/photo/addRelationFolders.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> addRelationFolders(@RequestParam("photoId") final String photoId,
-			@RequestParam("folderSeq") final int[] folderSeq) {
+			@RequestParam(value = "folderSeq", required = false) final int[] folderSeq) {
 		PhotoVo p = photoRepository.findOne(photoId);
-		Set<FolderVo> mappingFolder = Arrays.stream(folderSeq).mapToObj(seq -> folderRepository.findOne(seq))
-				.collect(toSet());
+		Set<FolderVo> mappingFolder;
+		if (folderSeq == null) {
+			mappingFolder = Collections.emptySet();
+		} else {
+			mappingFolder = Arrays.stream(folderSeq).mapToObj(seq -> folderRepository.findOne(seq)).collect(toSet());
+		}
 		p.setFolders(mappingFolder);
 		photoRepository.saveAndFlush(p);
 		return new ResponseEntity<>(true, HttpStatus.OK);
