@@ -194,6 +194,13 @@ public class FolderVo implements Serializable {
 		this.children = children;
 	}
 
+	/**
+	 * @return true: 최상위 루트 폴더, false: 최상위 루트 폴더 아님
+	 */
+	public boolean isRoot() {
+		return folderSeq == parentId;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

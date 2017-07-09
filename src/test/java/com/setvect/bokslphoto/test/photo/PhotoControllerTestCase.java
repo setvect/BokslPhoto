@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.CoreMatchers;
@@ -50,6 +52,7 @@ import com.setvect.bokslphoto.controller.GroupByDate;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.service.DateGroup;
+import com.setvect.bokslphoto.service.FolderAddtion;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.test.MainTestBase;
@@ -76,6 +79,10 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 	@Autowired
 	private MockHttpSession session;
+
+	/** 개체 refresh 하기위해 */
+	@Autowired
+	private EntityManager entityManager;
 
 	/**
 	 * 이미지 탐색 후 저장. <br>
@@ -490,6 +497,46 @@ public class PhotoControllerTestCase extends MainTestBase {
 
 		allAfter = folderRepository.findAll();
 		Assert.assertThat(allAfter.size(), CoreMatchers.is(3));
+	}
+
+	/**
+	 * 폴더 목록 중 이미지 선택 여부 조회 테스트 케이스
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testFolderAddInfo() throws Exception {
+		// 분류 폴더가 있는 사진을 가져옴
+		List<FolderVo> folderAll = folderRepository.findAll();
+		Optional<FolderVo> folderOptional = folderAll.stream().filter(f -> f.getName().equals("SUB2-1")).findAny();
+		FolderVo baseFolder = folderOptional.get();
+		entityManager.refresh(baseFolder);
+
+		String photoId = baseFolder.getPhotos().get(0).getPhotoId();
+
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/folderAddtionList.json");
+		callRequest.param("photoId", photoId);
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andDo(MockMvcResultHandlers.print());
+		MvcResult mvcResult = resultActions.andReturn();
+		String jsonFolder = mvcResult.getResponse().getContentAsString();
+
+		@SuppressWarnings("serial")
+		Type confType = new TypeToken<List<FolderAddtion>>() {
+		}.getType();
+
+		Gson gson = new Gson();
+		List<FolderAddtion> response = gson.fromJson(jsonFolder, confType);
+
+		System.out.println(response);
+		// 최상위 루트 폴더 제외된 건수
+		Assert.assertThat(response.size(), CoreMatchers.is(folderAll.size() - 1));
+
+		long count = response.stream().filter(f -> f.isSelect())
+				.filter(f -> f.getFolder().getFolderSeq() == baseFolder.getFolderSeq()).count();
+		Assert.assertThat(count, CoreMatchers.is(1L));
 	}
 
 	private List<FolderVo> getFolderPath(int folderSeq, boolean includeRoot)

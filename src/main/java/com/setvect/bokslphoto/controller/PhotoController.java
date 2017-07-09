@@ -1,5 +1,8 @@
 package com.setvect.bokslphoto.controller;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,6 +12,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +48,7 @@ import com.setvect.bokslphoto.BokslPhotoConstant;
 import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
+import com.setvect.bokslphoto.service.FolderAddtion;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.service.ThumbnailImageConvert;
@@ -218,10 +223,25 @@ public class PhotoController {
 	}
 
 	/**
+	 * 전체 분류 폴더와, 해당 이미지가 포함된 폴더 정보를 반환
+	 *
+	 * @param photoId
+	 *            사진 아이디
+	 * @return 부가정보가 포함된 모든 분류 폴더. 최상위 루트 폴더 제외
+	 */
+	@RequestMapping("/photo/folderAddtionList.json")
+	@ResponseBody
+	public ResponseEntity<List<FolderAddtion>> getFolderAddtionList(@RequestParam("photoId") final String photoId) {
+		List<FolderAddtion> result = photoService.getFolderAddtionList(photoId);
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	/**
 	 * @param folderSeq
 	 *            폴더 아이디
 	 * @param includeRoot
-	 *            TODO
+	 *            최상위 폴더 포함 여부
 	 * @return 현재 분류폴더 까지 경로 반환 테스트 케이스<br>
 	 *         ex)홈 > 추억 > 고등학교
 	 */

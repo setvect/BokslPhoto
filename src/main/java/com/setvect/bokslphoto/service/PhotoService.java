@@ -1,6 +1,7 @@
 package com.setvect.bokslphoto.service;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import javax.persistence.EntityManager;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -58,6 +61,10 @@ public class PhotoService {
 	/** 분류 폴더 */
 	@Autowired
 	private FolderRepository folderRepository;
+
+	/** 개체 refresh 하기위해 */
+	@Autowired
+	private EntityManager entityManager;
 
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
@@ -346,6 +353,32 @@ public class PhotoService {
 
 		findSubFolder(rootNode, folderListByParentId);
 		return rootNode;
+	}
+
+	/**
+	 * 전체 분류 폴더와, 해당 이미지가 포함된 폴더 정보를 반환
+	 *
+	 * @param photoId
+	 *            사진 아이디
+	 * @return 부가정보가 포함된 모든 분류 폴더. 최상위 루트 폴더 제외
+	 */
+	public List<FolderAddtion> getFolderAddtionList(final String photoId) {
+		TreeNode<FolderVo> folder = getFolderTree();
+
+		// 해당 사진에 포함될 폴더 아이디 확보
+		PhotoVo photo = photoRepository.findOne(photoId);
+		// 폴더(릴레이션) 정보를 가져오기 위함
+		entityManager.refresh(photo);
+		Set<FolderVo> selectFolder = photo.getFolders();
+		Set<Integer> selectFolderSeq = selectFolder.stream().map(f -> f.getFolderSeq()).collect(toSet());
+
+		List<TreeNode<FolderVo>> folderList = folder.exploreTree();
+		List<FolderAddtion> result = folderList.stream().filter(f -> !f.getData().isRoot()).map(f -> {
+			boolean select = selectFolderSeq.contains(f.getData().getFolderSeq());
+			FolderAddtion folderInfo = new FolderAddtion(f.getData(), f.getLevel(), select);
+			return folderInfo;
+		}).collect(toList());
+		return result;
 	}
 
 	/**
