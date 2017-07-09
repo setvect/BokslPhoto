@@ -296,7 +296,7 @@ public class PhotoVo {
 	 * @param deny
 	 *            이미지를 볼 수 없는 경우 true.
 	 */
-	public void setDeny(boolean deny) {
+	public void setDeny(final boolean deny) {
 		this.deny = deny;
 	}
 
