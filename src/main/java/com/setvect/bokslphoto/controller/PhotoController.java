@@ -364,8 +364,8 @@ public class PhotoController {
 	 * @return 이미지 메타 정보
 	 */
 	@ResponseBody
-	@RequestMapping("/photo/getMeta.do")
-	public ResponseEntity<Map<String, String>> getImage(@RequestParam("photoId") final String photoId) {
+	@RequestMapping("/photo/getMeta.json")
+	public ResponseEntity<Map<String, String>> getMeta(@RequestParam("photoId") final String photoId) {
 		PhotoVo photo = photoRepository.findOne(photoId);
 		Map<String, String> meta = PhotoService.getImageMeta(photo.getFullPath());
 		return new ResponseEntity<>(meta, HttpStatus.OK);

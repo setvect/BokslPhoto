@@ -627,7 +627,7 @@ public class PhotoControllerTestCase extends MainTestBase {
 		String photoId = targetPhoto.getPhotoId();
 
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getMeta.do");
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/getMeta.json");
 		callRequest.param("photoId", photoId);
 		ResultActions resultActions = mockMvc.perform(callRequest);
 		resultActions.andExpect(status().is(HttpStatus.SC_OK));

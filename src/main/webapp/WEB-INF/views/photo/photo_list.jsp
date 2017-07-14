@@ -78,6 +78,9 @@
 										<button type="button" class="btn bg-light-blue waves-effect btn-xs" data-ng-click="openFolderLayer(item)">
 											<i class="material-icons">folder_open</i>
 										</button>
+										<button type="button" class="btn bg-indigo waves-effect btn-xs" data-ng-click="openInfoLayer(item)">
+											<i class="material-icons">info_outline</i>
+										</button>
 									</div>
 								</div>
 								<div class="caption photo_memo">
@@ -96,7 +99,7 @@
 
 	<!-- Modal -->
 	<div class="modal fade" id="folderSelectModal" role="dialog">
-		<div class="modal-dialog modal-sm"">
+		<div class="modal-dialog modal-sm">
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
@@ -117,4 +120,40 @@
 		</div>
 	</div>
 
+
+	<div class="modal fade" id="photoInfoModal" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">사진 정보</h4>
+				</div>
+				<div class="modal-body photo_info_scroll">
+				
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>메타테그</th>
+								<th>값</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-ng-repeat="(key, value) in photoMeta">
+								<th scope="row">{{$index + 1}}</th>
+								<td>{{key}}</td>
+								<td>{{value}}</td>
+							</tr>
+						</tbody>
+					</table>
+					
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-ng-click="javascript:void(1)">삭제</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

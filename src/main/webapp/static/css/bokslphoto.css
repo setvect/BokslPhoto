@@ -62,7 +62,7 @@ section.content {
 .photo_button {
 	position: absolute;
 	bottom: 10px;
-	right: 25px;
+	right: 10px;
 }
 
 .photo_path_btn{
@@ -72,3 +72,10 @@ section.content {
 .photo_path_btn button{
 	font-size: 11px !important;;
 }
+
+/* 모달창 스크롤 */
+.photo_info_scroll{
+	height: 350px; 
+	overflow-y: auto;
+}
+

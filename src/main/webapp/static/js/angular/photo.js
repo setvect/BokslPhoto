@@ -368,6 +368,31 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			// nothing
 		});
 	};
+	
+	// 메타 정보
+	$scope.photoMeta = {};
+	
+	// 사진 정보 오픈
+	$scope.openInfoLayer = function(item){
+		$http({
+			method : 'GET',
+			url : CONTEXT_PATH + "/photo/getMeta.json",
+			headers: {
+				'Content-Type': undefined
+			},
+			params : {"photoId": item.photoId}
+		}).then(function(response) {
+
+			$scope.photoMeta = response.data;
+			console.log(response.data);
+			
+			$.each(response.data, function(value, key){
+				console.log(value, key);
+			});
+			
+		});
+		$("#photoInfoModal").modal("show");
+	};	
 
 	// 선택 지우기 
 	$scope.deselectFolderAll = function(){
