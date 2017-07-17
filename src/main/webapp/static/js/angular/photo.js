@@ -450,7 +450,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 
 	// 보호 이미지 처리 
 	// protect: true 보호 이미지, false 보호 이미지 풀기
-	$scope.protectImage = function(protect){
+	$scope.protectImage = function(choicePhoto, protect){
 		swal({
 			title : "보호 이미지 " + (protect ? "셋팅" : "해제") + " 할거야?",
 			type : "warning",
@@ -466,19 +466,13 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 					headers: {
 						'Content-Type': undefined
 					},
-					params : {"photoId": $scope.currentPhoto.photoId, "protect": protect}
+					params : {"photoId": choicePhoto.photoId, "protect": protect}
 				}).then(function(response) {
-					$scope.photoMeta = response.data;
+					swal("보호 이미지", "보호 이미지 " + (protect ? "셋팅" : "해제") + " 했다.", "success");
+					choicePhoto.protectF = protect;
 				});
-				
-				$scope.setProtectPhotoByList($scope.currentPhoto, protect);
 			});
 		});
-	};
-
-	// 선택된 이미지 보호이미지 처리
-	$scope.setProtectPhotoByList = function(photo, protect){
-		
 	};
 	
 	// 선택 지우기 

@@ -70,12 +70,15 @@
 								<div class="photo_area">
 
 									<a href="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" >
-										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170" class="img-responsive thumbnail image_center">
+										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170&d={{item.protectF}}" class="img-responsive thumbnail image_center">
 									</a>
 
 									<div class="photo_button">
 										<button type="button" class="btn bg-indigo waves-effect btn-xs" data-ng-click="openInfoLayer(item)">
 											<i class="material-icons">info_outline</i>
+										</button>
+										<button type="button" class="btn bg-orange waves-effect btn-xs" data-ng-click="protectImage(item, false)" data-ng-show="posibleProtect && item.protectF">
+											<i class="material-icons">lock</i>
 										</button>
 									</div>
 								</div>
@@ -123,8 +126,8 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-info waves-effect" data-ng-click="openMemoLayer()">메모입력</button>
 					<button type="button" class="btn btn-info waves-effect" data-ng-click="openFolderLayer()">폴더 맵핑</button>
-					<button type="button" class="btn btn-danger waves-effect" data-ng-click="protectImage(false)" data-ng-show="posibleProtect && currentPhoto.protectF">보호이미지 해제</button>
-					<button type="button" class="btn btn-danger waves-effect" data-ng-click="protectImage(true)" data-ng-show="!currentPhoto.protectF">보호이미지 셋팅</button>
+					<button type="button" class="btn btn-danger waves-effect" data-ng-click="protectImage(currentPhoto, false)" data-ng-show="posibleProtect && currentPhoto.protectF">보호이미지 해제</button>
+					<button type="button" class="btn btn-danger waves-effect" data-ng-click="protectImage(currentPhoto, true)" data-ng-show="!currentPhoto.protectF">보호이미지 셋팅</button>
 					<button type="button" class="btn btn-danger waves-effect" data-ng-click="deleteImage()">삭제</button>
 					<button type="button" class="btn btn-default waves-effect" data-dismiss="modal">닫기</button>
 				</div>
