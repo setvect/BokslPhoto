@@ -292,13 +292,16 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		$scope.listGroup();
 	};
 		
+	// 현재 선택된 포토
+	$scope.currentItem;
+	
 	// 메모 추가
-	$scope.openMemoLayer = function(item) {
+	$scope.openMemoLayer = function() {
 		swal({
 			title : "메모 입력",
 			text : "느낌 나는 데로 입력:",
 			type : "input",
-			inputValue: item.memo,
+			inputValue: $scope.currentItem.memo,
 			showCancelButton : true,
 			closeOnConfirm : false,
 			inputPlaceholder : "아무거나 입력해라."
@@ -310,8 +313,8 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 					swal.showInputError("입력 안 했다.");
 					return false
 				}
-				item.memo = inputValue;
-				$scope.updatePhoto(item.photoId, item.memo);
+				$scope.currentItem.memo = inputValue;
+				$scope.updatePhoto($scope.currentItem.photoId, $scope.currentItem.memo);
 				swal("입력 완료", "", "success");
 			});
 		});
@@ -332,17 +335,17 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	};
 	
 	// 폴더 지정
-	$scope.openFolderLayer = function(item){
+	$scope.openFolderLayer = function(){
 		$scope.folderList = [];
 		$scope.folderSelect = [];
-		$scope.folderByPhotoId = item.photoId;
+		$scope.folderByPhotoId = $scope.currentItem.photoId;
 		$http({
 			method : 'GET',
 			url : CONTEXT_PATH + "/photo/folderAddtionList.json",
 			headers: {
 				'Content-Type': undefined
 			},
-			params : {"photoId": item.photoId}
+			params : {"photoId": $scope.currentItem.photoId}
 		}).then(function(response) {
 			response.data.forEach(function(data, idx){
 				$scope.folderList.push({id:data.folder.folderSeq, name:"__".repeat(data.level) + data.folder.name});
@@ -371,8 +374,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	
 	// 메타 정보
 	$scope.photoMeta = {};
-	$scope.currentItem;
-	
+
 	// 사진 정보 오픈
 	$scope.openInfoLayer = function(item){
 		$scope.currentItem = item;
