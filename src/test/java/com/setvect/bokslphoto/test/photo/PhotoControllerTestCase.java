@@ -869,11 +869,16 @@ public class PhotoControllerTestCase extends MainTestBase {
 			Assert.assertNull(p.getName());
 		});
 
+		byte[] protectImageByte;
+		try (InputStream in = new FileInputStream(BokslPhotoConstant.Photo.PROTECT_IMAGE);) {
+			protectImageByte = IOUtils.toByteArray(in);
+		}
+
 		byte[] receive = getImageByte(photoId);
-		Assert.assertArrayEquals(new byte[0], receive);
+		Assert.assertArrayEquals(receive, protectImageByte);
 
 		receive = getImageOrgByte(photoId);
-		Assert.assertArrayEquals(new byte[0], receive);
+		Assert.assertArrayEquals(receive, protectImageByte);
 
 		// 전체 조회. 허가 IP
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();

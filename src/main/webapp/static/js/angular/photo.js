@@ -141,6 +141,18 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.dateViewShow.month = false;
 	$scope.dateViewShow.day = true;
 	
+	// 보호이미지 해제 가능 여부
+	$scope.posibleProtect = false;
+	
+	$http({
+		method : 'GET',
+		url : CONTEXT_PATH + "/photo/isAllowAccessProtected.json",
+		headers: {
+			'Content-Type': undefined
+		}
+	}).then(function(response) {
+		$scope.posibleProtect = response.data;
+	});
 	
 	// 날짜별 무한 스크롤 처리 
 	$(document).scroll(function() {
@@ -293,7 +305,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	};
 		
 	// 현재 선택된 포토
-	$scope.currentItem;
+	$scope.currentPhoto;
 	
 	// 메모 추가
 	$scope.openMemoLayer = function() {
@@ -301,7 +313,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			title : "메모 입력",
 			text : "느낌 나는 데로 입력:",
 			type : "input",
-			inputValue: $scope.currentItem.memo,
+			inputValue: $scope.currentPhoto.memo,
 			showCancelButton : true,
 			closeOnConfirm : false,
 			inputPlaceholder : "아무거나 입력해라."
@@ -313,8 +325,8 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 					swal.showInputError("입력 안 했다.");
 					return false
 				}
-				$scope.currentItem.memo = inputValue;
-				$scope.updatePhoto($scope.currentItem.photoId, $scope.currentItem.memo);
+				$scope.currentPhoto.memo = inputValue;
+				$scope.updatePhoto($scope.currentPhoto.photoId, $scope.currentPhoto.memo);
 				swal("입력 완료", "", "success");
 			});
 		});
@@ -338,14 +350,14 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.openFolderLayer = function(){
 		$scope.folderList = [];
 		$scope.folderSelect = [];
-		$scope.folderByPhotoId = $scope.currentItem.photoId;
+		$scope.folderByPhotoId = $scope.currentPhoto.photoId;
 		$http({
 			method : 'GET',
 			url : CONTEXT_PATH + "/photo/folderAddtionList.json",
 			headers: {
 				'Content-Type': undefined
 			},
-			params : {"photoId": $scope.currentItem.photoId}
+			params : {"photoId": $scope.currentPhoto.photoId}
 		}).then(function(response) {
 			response.data.forEach(function(data, idx){
 				$scope.folderList.push({id:data.folder.folderSeq, name:"__".repeat(data.level) + data.folder.name});
@@ -377,7 +389,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 
 	// 사진 정보 오픈
 	$scope.openInfoLayer = function(item){
-		$scope.currentItem = item;
+		$scope.currentPhoto = item;
 		$http({
 			method : 'GET',
 			url : CONTEXT_PATH + "/photo/getMeta.json",
@@ -400,24 +412,23 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			confirmButtonColor : "#DD6B55",
 			confirmButtonText : "Yes",
 			closeOnConfirm : false
-			}, function() {
-				$scope.$apply(function () {
-					
-					$http({
-						method : 'POST',
-						url : CONTEXT_PATH + "/photo/deletePhoto.do",
-						headers: {
-							'Content-Type': undefined
-						},
-						params : {"photoId": $scope.currentItem.photoId}
-					}).then(function(response) {
-						$scope.photoMeta = response.data;
-					});
-					
-					$scope.removePhotoByList($scope.currentItem);
-					$("#photoInfoModal").modal("hide");
-					swal("삭제", "이미지 삭제 했다.", "success");
+		}, function() {
+			$scope.$apply(function () {
+				$http({
+					method : 'POST',
+					url : CONTEXT_PATH + "/photo/deletePhoto.do",
+					headers: {
+						'Content-Type': undefined
+					},
+					params : {"photoId": $scope.currentPhoto.photoId}
+				}).then(function(response) {
+					$scope.photoMeta = response.data;
 				});
+				
+				$scope.removePhotoByList($scope.currentPhoto);
+				$("#photoInfoModal").modal("hide");
+				swal("삭제", "이미지 삭제 했다.", "success");
+			});
 		});
 	};
 
@@ -426,7 +437,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		$scope.lazyDateGroup.forEach(function(photoGroup, idx){
 			var deleteIdx = -1;
 			for(var pIdx = 0; pIdx < photoGroup.photo.list.length; pIdx++){
-				if(photoGroup.photo.list[pIdx].photoId == $scope.currentItem.photoId){
+				if(photoGroup.photo.list[pIdx].photoId == $scope.currentPhoto.photoId){
 					deleteIdx = pIdx;
 					break;
 				}
@@ -435,8 +446,41 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 				photoGroup.photo.list.splice(deleteIdx, 1); 
 			}
 		});
-	}
+	};
 
+	// 보호 이미지 처리 
+	// protect: true 보호 이미지, false 보호 이미지 풀기
+	$scope.protectImage = function(protect){
+		swal({
+			title : "보호 이미지 " + (protect ? "셋팅" : "해제") + " 할거야?",
+			type : "warning",
+			showCancelButton : true,
+			confirmButtonColor : "#DD6B55",
+			confirmButtonText : "Yes",
+			closeOnConfirm : false
+		}, function() {
+			$scope.$apply(function () {
+				$http({
+					method : 'POST',
+					url : CONTEXT_PATH + "/photo/updateProtect.do",
+					headers: {
+						'Content-Type': undefined
+					},
+					params : {"photoId": $scope.currentPhoto.photoId, "protect": protect}
+				}).then(function(response) {
+					$scope.photoMeta = response.data;
+				});
+				
+				$scope.setProtectPhotoByList($scope.currentPhoto, protect);
+			});
+		});
+	};
+
+	// 선택된 이미지 보호이미지 처리
+	$scope.setProtectPhotoByList = function(photo, protect){
+		
+	};
+	
 	// 선택 지우기 
 	$scope.deselectFolderAll = function(){
 		$scope.folderSelect = [];

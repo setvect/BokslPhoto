@@ -284,8 +284,10 @@ public class PhotoController {
 		String clientIp = request.getRemoteAddr();
 		// 허가된 아이피가 아니면 비공개 이미지의 경로 정보를 제거함
 		if (!isAllowAccessProtected(clientIp) && photo.isProtectF()) {
-			logger.warn("deny access image. client ip:{}", clientIp);
-			return null;
+			logger.info("deny access image. client ip:{}", clientIp);
+			try (InputStream in = new FileInputStream(BokslPhotoConstant.Photo.PROTECT_IMAGE);) {
+				return IOUtils.toByteArray(in);
+			}
 		}
 		File photoFile = photo.getFullPath();
 
@@ -316,10 +318,13 @@ public class PhotoController {
 		PhotoVo photo = photoRepository.findOne(photoId);
 
 		String clientIp = request.getRemoteAddr();
+
 		// 허가된 아이피가 아니면 비공개 이미지의 경로 정보를 제거함
 		if (!isAllowAccessProtected(clientIp) && photo.isProtectF()) {
-			logger.warn("deny access image. client ip:{}", clientIp);
-			return null;
+			logger.info("deny access image. client ip:{}", clientIp);
+			try (InputStream in = new FileInputStream(BokslPhotoConstant.Photo.PROTECT_IMAGE);) {
+				return IOUtils.toByteArray(in);
+			}
 		}
 
 		// 입력값이 재대로 입력되지 않으면 그냥 리턴

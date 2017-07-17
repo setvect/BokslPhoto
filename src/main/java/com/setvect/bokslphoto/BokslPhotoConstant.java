@@ -43,6 +43,10 @@ public final class BokslPhotoConstant {
 		/** 썸네일 이미지 저장 기본 경로 */
 		public static final File THUMBNAIL_DIR = new File(EnvirmentProperty.getString("com.setvect.photo.thumbnail"));
 
+		/** 보호된 이미 표시 용 */
+		public static final File PROTECT_IMAGE = new File(
+				BokslPhotoConstant.class.getResource("/protect_img.png").getFile());
+
 		/**
 		 * 웹으로 업로드한 이미지 저장 경로<br>
 		 * BASE_DIR 하위 디렉토리로 함.<br>
