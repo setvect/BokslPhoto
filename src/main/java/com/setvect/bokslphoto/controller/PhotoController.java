@@ -59,6 +59,7 @@ import com.setvect.bokslphoto.util.TreeNode;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
+import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
 import com.setvect.bokslphoto.vo.UserVo;
 
 /**
@@ -519,6 +520,26 @@ public class PhotoController {
 	}
 
 	/**
+	 * 촬영일 정보 업데이트
+	 *
+	 * @param photoId
+	 *            사진 파일 아이디
+	 * @param shotDate
+	 *            사진에 추가할 메모
+	 * @return 처리 결과
+	 */
+	@RequestMapping("/photo/updateShotDate.do")
+	@ResponseBody
+	public ResponseEntity<Boolean> updateShotDate(@RequestParam("photoId") final String photoId,
+			@RequestParam("shotDate") final Date shotDate) {
+		PhotoVo p = photoRepository.findOne(photoId);
+		p.setShotDate(shotDate);
+		p.setShotDateType(ShotDateType.MANUAL);
+		photoRepository.save(p);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	/**
 	 * 보호 이미지 지정
 	 *
 	 * @param photoId
@@ -551,7 +572,7 @@ public class PhotoController {
 	}
 
 	/**
-	 * 분류 폴더 삭제
+	 * 분류 폴더 수정
 	 *
 	 * @param folder
 	 *            폴더

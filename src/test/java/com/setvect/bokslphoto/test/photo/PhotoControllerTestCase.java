@@ -63,6 +63,7 @@ import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserVo;
+import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
 
 public class PhotoControllerTestCase extends MainTestBase {
 	@Autowired
@@ -929,6 +930,30 @@ public class PhotoControllerTestCase extends MainTestBase {
 		photo = photoRepository.findOne(photoId);
 		Assert.assertFalse("보호 이미지 여부", photo.isProtectF());
 
+		System.out.println("끝.");
+	}
+
+	/**
+	 * 촬영 날짜 업데이트
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testUploadShotDate() throws Exception {
+		List<PhotoVo> photoList = photoRepository.findAll();
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/updateShotDate.do");
+		String photoId = photoList.get(0).getPhotoId();
+		callRequest.param("photoId", photoId);
+		String updateDate = "20120101";
+		callRequest.param("shotDate", updateDate);
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+
+		PhotoVo photo = photoRepository.findOne(photoId);
+		Assert.assertThat(DateUtil.getFormatString(photo.getShotDate(), "yyyyMMdd"), CoreMatchers.is(updateDate));
+		Assert.assertThat(photo.getShotDateType(), CoreMatchers.is(ShotDateType.MANUAL));
 		System.out.println("끝.");
 	}
 
