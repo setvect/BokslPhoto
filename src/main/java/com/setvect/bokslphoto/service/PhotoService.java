@@ -460,7 +460,7 @@ public class PhotoService {
 		photo.setDirectory(dir);
 		photo.setName(imageFile.getName());
 		photo.setShotDate(shotDate);
-		photo.setShotDataType(ShotDateType.MANUAL);
+		photo.setShotDataType(shotDate != null ? ShotDateType.META : ShotDateType.MANUAL);
 		photo.setRegData(new Date());
 		GeoCoordinates geo = getGeo(imageFile);
 		if (geo != null) {
