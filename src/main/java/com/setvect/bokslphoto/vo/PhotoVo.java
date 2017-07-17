@@ -52,7 +52,7 @@ public class PhotoVo {
 	/** 촬영일 데이터 형태 */
 	@Column(name = "SHOT_DATE_TYPE", nullable = true, length = 10)
 	@Enumerated(EnumType.STRING)
-	private ShotDateType shotDataType;
+	private ShotDateType shotDateType;
 
 	/** 메모 */
 	@Column(name = "MEMO", nullable = true, length = 500)
@@ -157,16 +157,16 @@ public class PhotoVo {
 	/**
 	 * @return 촬영일 데이터 형태
 	 */
-	public ShotDateType getShotDataType() {
-		return shotDataType;
+	public ShotDateType getShotDateType() {
+		return shotDateType;
 	}
 
 	/**
-	 * @param shotDataType
+	 * @param shotDateType
 	 *            촬영일 데이터 형태
 	 */
-	public void setShotDataType(final ShotDateType shotDataType) {
-		this.shotDataType = shotDataType;
+	public void setShotDateType(final ShotDateType shotDateType) {
+		this.shotDateType = shotDateType;
 	}
 
 	/**

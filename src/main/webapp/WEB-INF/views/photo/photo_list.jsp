@@ -105,6 +105,11 @@
 					<h4 class="modal-title">사진 정보</h4>
 				</div>
 				<div class="modal-body photo_info_scroll">
+					<p>촬영일</p>
+					<p>
+						{{currentPhoto.shotDate | date : 'yyyy-MM-dd'}} ({{currentPhoto.shotDateType == 'META' ? '메타정보' : '직접입력'}})
+						<button type="button" class="btn bg-cyan btn-xs waves-effect" data-ng-show="currentPhoto.shotDateType != 'META'">촬영일 변경</button>
+					</p>
 					<p>소속폴더</p>
 					<div class="button-demo">
 						<button type="button" class="btn bg-cyan btn-xs" data-ng-repeat="folder in currentPhoto.folders">{{folder.name}}</button>
