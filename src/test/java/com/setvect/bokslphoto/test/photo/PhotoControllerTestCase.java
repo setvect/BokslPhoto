@@ -1060,4 +1060,30 @@ public class PhotoControllerTestCase extends MainTestBase {
 		resultActions.andDo(MockMvcResultHandlers.print());
 	}
 
+	/**
+	 * 접속 아이피가 보호 이미지 해제 할수 있는 여부 확인
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testProtectPossible() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MockHttpServletRequestBuilder callRequest = MockMvcRequestBuilders.get("/photo/isAllowAccessProtected.json");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr("111.111.111.111");
+			return paramMockHttpServletRequest;
+		});
+		ResultActions resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("false"));
+
+		callRequest = MockMvcRequestBuilders.get("/photo/isAllowAccessProtected.json");
+		callRequest.with((paramMockHttpServletRequest) -> {
+			paramMockHttpServletRequest.setRemoteAddr(BokslPhotoConstant.Photo.ALLOW_IP);
+			return paramMockHttpServletRequest;
+		});
+		resultActions = mockMvc.perform(callRequest);
+		resultActions.andExpect(status().is(HttpStatus.SC_OK));
+		resultActions.andExpect(content().string("true"));
+	}
 }

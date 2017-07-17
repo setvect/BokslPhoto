@@ -652,6 +652,20 @@ public class PhotoController {
 	}
 
 	// ============== CRUD 성격 아님 ==============
+	/**
+	 * 접속 아이피가 보호 이미지 해제 할수 있는 여부를 알려줌
+	 *
+	 * @param request
+	 *            request
+	 * @return true: 접속 PC 보호 이미지 해제 가능, false: 해제 불가능
+	 */
+	@RequestMapping("/photo/isAllowAccessProtected.json")
+	@ResponseBody
+	public ResponseEntity<Boolean> isProtect(final HttpServletRequest request) {
+		String clientIp = request.getRemoteAddr();
+		boolean result = isAllowAccessProtected(clientIp);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
 	/**
 	 * 비공개 이미지 접근 여부
