@@ -388,17 +388,19 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.photoMeta = {};
 
 	// 사진 정보 오픈
-	$scope.openInfoLayer = function(item){
-		$scope.currentPhoto = item;
+	$scope.openInfoLayer = function(choicePhoto){
+		$scope.currentPhoto = choicePhoto;
+		console.log(choicePhoto);
 		$http({
 			method : 'GET',
 			url : CONTEXT_PATH + "/photo/getMeta.json",
 			headers: {
 				'Content-Type': undefined
 			},
-			params : {"photoId": item.photoId}
+			params : {"photoId": $scope.currentPhoto.photoId}
 		}).then(function(response) {
 			$scope.photoMeta = response.data;
+			
 		});
 		$("#photoInfoModal").modal("show");
 	};
