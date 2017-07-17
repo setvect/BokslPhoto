@@ -150,7 +150,7 @@
 					
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-ng-click="javascript:void(1)">삭제</button>
+					<button type="button" class="btn btn-danger" data-ng-click="deleteImage()">삭제</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
 				</div>
 			</div>

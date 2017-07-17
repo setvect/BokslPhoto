@@ -371,9 +371,11 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	
 	// 메타 정보
 	$scope.photoMeta = {};
+	$scope.currentItem;
 	
 	// 사진 정보 오픈
 	$scope.openInfoLayer = function(item){
+		$scope.currentItem = item;
 		$http({
 			method : 'GET',
 			url : CONTEXT_PATH + "/photo/getMeta.json",
@@ -382,17 +384,56 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			},
 			params : {"photoId": item.photoId}
 		}).then(function(response) {
-
 			$scope.photoMeta = response.data;
-			console.log(response.data);
-			
-			$.each(response.data, function(value, key){
-				console.log(value, key);
-			});
-			
 		});
 		$("#photoInfoModal").modal("show");
-	};	
+	};
+
+	// 이미지 삭제
+	$scope.deleteImage = function(){
+		swal({
+			title : "삭제할거야?",
+			type : "warning",
+			showCancelButton : true,
+			confirmButtonColor : "#DD6B55",
+			confirmButtonText : "Yes",
+			closeOnConfirm : false
+			}, function() {
+				$scope.$apply(function () {
+					
+					$http({
+						method : 'POST',
+						url : CONTEXT_PATH + "/photo/deletePhoto.do",
+						headers: {
+							'Content-Type': undefined
+						},
+						params : {"photoId": $scope.currentItem.photoId}
+					}).then(function(response) {
+						$scope.photoMeta = response.data;
+					});
+					
+					$scope.removePhotoByList($scope.currentItem);
+					$("#photoInfoModal").modal("hide");
+					swal("삭제", "이미지 삭제 했다.", "success");
+				});
+		});
+	};
+
+	// 화면 목록에서 해당 이미지를 삭제함.
+	$scope.removePhotoByList = function(removePhoto){
+		$scope.lazyDateGroup.forEach(function(photoGroup, idx){
+			var deleteIdx = -1;
+			for(var pIdx = 0; pIdx < photoGroup.photo.list.length; pIdx++){
+				if(photoGroup.photo.list[pIdx].photoId == $scope.currentItem.photoId){
+					deleteIdx = pIdx;
+					break;
+				}
+			}
+			if(deleteIdx != -1){
+				photoGroup.photo.list.splice(deleteIdx, 1); 
+			}
+		});
+	}
 
 	// 선택 지우기 
 	$scope.deselectFolderAll = function(){

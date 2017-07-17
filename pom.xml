@@ -19,7 +19,7 @@
 		<java.version>1.8</java.version>
 		<test>com.setvect.bokslphoto.test.BokslPhotoAllTests</test>
 		<checkstyle.config.location>docs/check_style.xml</checkstyle.config.location>
-
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
 

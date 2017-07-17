@@ -575,7 +575,7 @@ public class PhotoController {
 	 */
 	@RequestMapping("/photo/deletePhoto.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> deleteProtect(@RequestParam("photoId") final String photoId) {
+	public ResponseEntity<Boolean> deletePhoto(@RequestParam("photoId") final String photoId) {
 		PhotoVo p = photoRepository.findOne(photoId);
 		if (p == null) {
 			return new ResponseEntity<>(false, HttpStatus.OK);
