@@ -556,11 +556,47 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 				
 			});
 		});
+		
+		
 	};
 	
 	// 하위 분류 추가
 	$scope.folderAdd = function(){
-		alert("폴더 추가");
+
+		var currentFolder = findFolder($rootScope.photoFolder, folderSeq);
+		
+		swal({
+			title : "하위 분류 추가",
+			type : "input",
+			inputValue: "",
+			showCancelButton : true,
+			closeOnConfirm : false,
+			inputPlaceholder : "분류"
+		}, function(inputValue) {
+			$scope.$apply(function () {
+				if (inputValue === false)
+					return false;
+				if (inputValue === "") {
+					swal.showInputError("입력 안 했다.");
+					return false
+				}
+				
+				var newFolder = {};
+				newFolder["parentId"] = currentFolder.folderSeq;
+				newFolder["name"] =  inputValue;
+				$http({
+					method : 'POST',
+					url : CONTEXT_PATH + "/photo/addFolder.do",
+					headers: {
+						'Content-Type': undefined
+					},
+					params : newFolder
+				}).then(function(response) {
+					swal("등록 완료", "", "success");
+				});
+				
+			});
+		});
 	};
 
 	// 현재 분류 삭제 
