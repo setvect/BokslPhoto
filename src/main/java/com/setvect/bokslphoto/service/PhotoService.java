@@ -590,6 +590,16 @@ public class PhotoService {
 	}
 
 	/**
+	 * DB에 있는데 물리적인 파일이 없는 경우 DB에 있는 내용 삭제
+	 */
+	public void deleteNonexistPhoto() {
+		List<PhotoVo> allPhoto = photoRepository.findAll();
+		List<PhotoVo> noExistPhoto = allPhoto.stream().filter(p -> !p.getFullPath().exists()).collect(toList());
+		photoRepository.delete(noExistPhoto);
+		logger.info("Delete nonexistent pictures: {}", noExistPhoto.size());
+	}
+
+	/**
 	 * @param folder
 	 *            비교 폴더
 	 * @return 루트 폴더면 true, 아니면 false
@@ -597,4 +607,5 @@ public class PhotoService {
 	private boolean isRootFolder(final FolderVo folder) {
 		return folder.getFolderSeq() == folder.getParentId();
 	}
+
 }

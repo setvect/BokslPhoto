@@ -486,6 +486,8 @@ public class PhotoController {
 			photoService.syncPhotoAndSave(StoreType.UPDATE);
 		}
 
+		photoService.deleteNonexistPhoto();
+
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
