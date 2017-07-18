@@ -663,7 +663,7 @@ photoApp.controller('photoUploadController', [ '$scope', '$rootScope', '$http', 
 	$scope.showBtns = false;
 
 	$scope.dzOptions = {
-		url : '/photo/uploadProc.do',
+		url : CONTEXT_PATH + '/photo/uploadProc.do',
 		dictDefaultMessage : 'Add files to show dropzone methods (few)',
 		acceptedFiles : 'image/jpeg, images/jpg, image/png',
 		parallelUploads : 5,
