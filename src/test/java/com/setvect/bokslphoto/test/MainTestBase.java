@@ -39,7 +39,7 @@ import com.setvect.bokslphoto.vo.UserVo;
 @RunWith(SpringRunner.class)
 @Transactional
 @SpringBootTest(classes = { BokslPhotoApplication.class })
-@TestPropertySource(locations = "classpath:test.properties")
+@TestPropertySource(locations = "file:" + BokslPhotoApplication.CONFIG_CONFIG_PROPERTIES_TEST)
 public class MainTestBase {
 	static {
 		System.setProperty(BokslPhotoConstant.TEST_CHECK_PROPERTY_NAME, "true");

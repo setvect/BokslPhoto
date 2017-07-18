@@ -1,5 +1,6 @@
 package com.setvect.bokslphoto;
 
+import java.io.File;
 import java.net.URL;
 
 import org.apache.catalina.Container;
@@ -26,7 +27,7 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	/** 설정 파일 경로. */
 	private static final String CONFIG_CONFIG_PROPERTIES = "/application.properties";
 	/** 테스트 설정 파일 경로 */
-	private static final String CONFIG_CONFIG_PROPERTIES_TEST = "/test.properties";
+	public static final String CONFIG_CONFIG_PROPERTIES_TEST = "./src/test/resources/test.properties";
 
 	/**
 	 * Application 시작점.
@@ -55,13 +56,14 @@ public class BokslPhotoApplication extends SpringBootServletInitializer {
 	InitializingBean init() {
 		return () -> {
 			String testEnv = System.getProperty(BokslPhotoConstant.TEST_CHECK_PROPERTY_NAME);
-			URL configUrl;
 			if (Boolean.parseBoolean(testEnv)) {
-				configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES_TEST);
+				File configFile = new File(CONFIG_CONFIG_PROPERTIES_TEST);
+				EnvirmentProperty.init(configFile);
 			} else {
-				configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
+				URL configUrl = BokslPhotoApplication.class.getResource(CONFIG_CONFIG_PROPERTIES);
+				EnvirmentProperty.init(configUrl);
 			}
-			EnvirmentProperty.init(configUrl);
+
 		};
 	}
 

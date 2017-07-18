@@ -20,6 +20,7 @@
 		<test>com.setvect.bokslphoto.test.BokslPhotoAllTests</test>
 		<checkstyle.config.location>docs/check_style.xml</checkstyle.config.location>
 		<maven.test.skip>true</maven.test.skip>
+		<m2eclipse.wtp.contextRoot>/photo</m2eclipse.wtp.contextRoot>
 	</properties>
 
 
