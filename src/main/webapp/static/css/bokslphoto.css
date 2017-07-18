@@ -75,7 +75,7 @@ section.content {
 
 /* 모달창 스크롤 */
 .photo_info_scroll{
-	height: 350px; 
+	height: 420px; 
 	overflow-y: auto;
 }
 /* 모달창에 input 박스*/
