@@ -101,6 +101,10 @@ photoApp.controller('photoFolderController', [ '$scope', '$http', '$rootScope', 
 		location.href = "#!/listFolder/" + folder.folderSeq;
 	}
 
+	$scope.viewRootFolder = function() {
+		location.href = "#!/listFolder/1";
+	}
+
 	$http.get(CONTEXT_PATH + "/photo/folder.json").then(function(response) {
 		$rootScope.photoFolder = response.data;
 	});
@@ -135,6 +139,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.path.name ="";
 	$scope.path.type="";
 	$scope.path.functionButton = false;
+	$scope.path.isCurrentRoot = false;
 	
 	$scope.dateViewShow = {};
 	$scope.dateViewShow.year = true;
@@ -180,6 +185,9 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		$scope.path.type = "분류 경로";
 		$scope.path.view = true;
 		$scope.path.functionButton = true;
+		
+		// 루트 폴더 아이디는 1로 고정됨.
+		$scope.path.isCurrentRoot = $routeParams.folderSeq == 1;
 
 		// 분류 경로 불러오기 
 		$http({
@@ -192,7 +200,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			response.data.forEach(function(value, idx){
 				pathArray.push(value.name);
 			});
-
+	
 			$scope.path.name = pathArray.join("/"); 
 		});
 	}
@@ -207,7 +215,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			"searchDirectory" : decodedirectoryName,
 			"searchFolderSeq" : folderSeq
 		};
-
+		
 		$http.get(CONTEXT_PATH + "/photo/groupByDate.json", {
 			"params" : params
 		}).then(function(response) {
