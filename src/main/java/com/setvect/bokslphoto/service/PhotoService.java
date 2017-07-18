@@ -492,6 +492,7 @@ public class PhotoService {
 
 			// 디렉토리 경로만 변경
 			before.setDirectory(dir);
+			before.setName(imageFile.getName());
 			entityManager.merge(before);
 			return true;
 		}
