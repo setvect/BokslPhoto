@@ -541,12 +541,21 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 					swal.showInputError("입력 안 했다.");
 					return false
 				}
+				
 				currentFolder.name = inputValue;
-				swal("수정 완료", "", "success");
+				$http({
+					method : 'POST',
+					url : CONTEXT_PATH + "/photo/updateFolder.do",
+					headers: {
+						'Content-Type': undefined
+					},
+					params : currentFolder
+				}).then(function(response) {
+					swal("수정 완료", "", "success");
+				});
+				
 			});
 		});
-		
-//		alert("폴더 이름 수정");
 	};
 	
 	// 하위 분류 추가

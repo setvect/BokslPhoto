@@ -85,7 +85,7 @@
 						<a href="#!/list"> <i class="material-icons">date_range</i> <span>시간 흐름 순</span></a>
 					</li>
 					<li data-ng-controller="photoFolderController">
-						<a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류 기준</span></a>
+						<a href="javascript:void(0);" data-ng-click="viewFolder(1)" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류 기준</span></a>
 						<ul class="ml-menu">
 							<li data-ng-repeat="folder in photoFolder.children" data-ng-include="'folder_renderer.html'" photo-folder-directive>
 								<a href="javascript:void(0);"> <span>{{folder.data.name}}</span></a>
