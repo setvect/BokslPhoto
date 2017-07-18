@@ -106,10 +106,25 @@
 				</div>
 				<div class="modal-body photo_info_scroll">
 					<p>촬영일</p>
-					<p>
-						{{currentPhoto.shotDate | date : 'yyyy-MM-dd'}} ({{currentPhoto.shotDateType == 'META' ? '메타정보' : '직접입력'}})
-						<button type="button" class="btn bg-cyan btn-xs waves-effect" data-ng-show="currentPhoto.shotDateType != 'META'">촬영일 변경</button>
-					</p>
+					<div>
+						<div class="row clearfix" data-ng-show="currentPhoto.shotDateType == 'META'">
+							<div class="col-md-12">
+								<div class="input-group">
+									{{currentPhoto.shotDate | date : 'yyyy-MM-dd'}} ({{currentPhoto.shotDateType == 'META' ? '메타정보' : '직접입력'}}) </span>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row clearfix" data-ng-show="currentPhoto.shotDateType == 'MANUAL'">
+							<div class="col-md-12">
+								<div class="input-group">
+									<input type="text" class="form-control modal_input _shotdate" data-ng-model="shotDate" placeholder="Ex: 2011-10-03">
+									<button type="button" class="btn bg-cyan waves-effect" data-ng-click="updateShotDate()">촬영일 변경</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
 					<p>소속폴더</p>
 					<div class="button-demo">
 						<button type="button" class="btn bg-cyan btn-xs" data-ng-repeat="folder in currentPhoto.folders">{{folder.name}}</button>

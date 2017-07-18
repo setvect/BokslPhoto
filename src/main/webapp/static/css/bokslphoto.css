@@ -78,4 +78,10 @@ section.content {
 	height: 350px; 
 	overflow-y: auto;
 }
-
+/* 모달창에 input 박스*/
+.modal_input{
+	width: auto !important;
+	border: 1px solid #ccc !important;
+	padding-left: 10px !important;
+	margin-right: 10px !important;
+}

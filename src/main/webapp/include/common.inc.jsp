@@ -85,6 +85,8 @@
 <!-- SweetAlert Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/sweetalert/sweetalert.min.js"></script>
 
+<!-- Bootstrap Tags Input Plugin Js -->
+<script src="${pageContext.request.contextPath}/static/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>

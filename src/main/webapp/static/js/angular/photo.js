@@ -307,6 +307,54 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	// 현재 선택된 포토
 	$scope.currentPhoto;
 	
+	// 메타 정보
+	$scope.photoMeta = {};
+	
+	// 사용자 입력 촬영일
+	$scope.shotDate;
+
+	// 사진 정보 오픈
+	$scope.openInfoLayer = function(choicePhoto){
+		$scope.currentPhoto = choicePhoto;
+		
+		$('._shotdate').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
+		$scope.shotDate = $filter("date")($scope.currentPhoto.shotDate, "yyyy-MM-dd")
+		
+		$http({
+			method : 'GET',
+			url : CONTEXT_PATH + "/photo/getMeta.json",
+			headers: {
+				'Content-Type': undefined
+			},
+			params : {"photoId": $scope.currentPhoto.photoId}
+		}).then(function(response) {
+			$scope.photoMeta = response.data;
+			
+		});
+		$("#photoInfoModal").modal("show");
+	};
+	
+	// 촬영일 업데이트
+	$scope.updateShotDate = function(){
+		var valid = moment($scope.shotDate, 'YYYY-MM-DD',true).isValid();
+		if(valid){
+			var shotDate = $scope.shotDate.replace(/-/gi, "");
+			$http({
+				method : 'POST',
+				url : CONTEXT_PATH + "/photo/updateShotDate.do",
+				headers: {
+					'Content-Type': undefined
+				},
+				params : {"photoId": $scope.currentPhoto.photoId, "shotDate": shotDate }
+			}).then(function(response) {
+				swal("변경 했다.", "", "success");
+				$scope.currentPhoto.shotDate = moment(shotDate, "YYYYMMDD").toDate().getTime();
+			});
+		} else {
+			swal("날짜 형식에 맞게 입력해", "", "error");
+		}
+	};
+	
 	// 메모 추가
 	$scope.openMemoLayer = function() {
 		swal({
@@ -384,27 +432,6 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		});
 	};
 	
-	// 메타 정보
-	$scope.photoMeta = {};
-
-	// 사진 정보 오픈
-	$scope.openInfoLayer = function(choicePhoto){
-		$scope.currentPhoto = choicePhoto;
-		console.log(choicePhoto);
-		$http({
-			method : 'GET',
-			url : CONTEXT_PATH + "/photo/getMeta.json",
-			headers: {
-				'Content-Type': undefined
-			},
-			params : {"photoId": $scope.currentPhoto.photoId}
-		}).then(function(response) {
-			$scope.photoMeta = response.data;
-			
-		});
-		$("#photoInfoModal").modal("show");
-	};
-
 	// 이미지 삭제
 	$scope.deleteImage = function(){
 		swal({
