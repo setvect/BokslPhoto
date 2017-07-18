@@ -426,14 +426,17 @@ public class PhotoService {
 	 * 이미지가 있고 DB에 없는 경우 -> 등록<br>
 	 * 이미지가 있고 DB도 있는 경우 -> 저장 경로 업데이트<br>
 	 * 이미지 없고 DB가 있는 경우 -> DB에 있는 내용 삭제
+	 *
+	 * @param storeType
+	 *            저장 형식
 	 */
-	public void syncPhotoAndSave() {
+	public void syncPhotoAndSave(final StoreType storeType) {
 		List<File> imageFiles = findImageFiles();
 
 		imageFiles.stream().peek(action -> {
 			logger.info(action.toString());
 		}).forEach(p -> {
-			savePhoto(p);
+			savePhoto(p, storeType);
 		});
 	}
 
@@ -463,33 +466,46 @@ public class PhotoService {
 		String dir = ApplicationUtil.getRelativePath(baseFile, dirFile);
 		dir = "/" + dir;
 
+		if (!imageFile.exists()) {
+			logger.warn("Skip. Image not exist.({})", imageFile.getAbsolutePath());
+			return false;
+		}
+
 		PhotoVo photo = new PhotoVo();
 		Date shotDate = getShotDate(imageFile);
 		String photoId = ApplicationUtil.getMd5(imageFile);
 		PhotoVo before = photoRepository.findOne(photoId);
 
+		File beforeFile = null;
+		if (before != null) {
+			beforeFile = before.getFullPath();
+		}
+
 		// 기존에 이미지가 있으면 새로운 이미지 제 업로드 하지 않음.
 		if (storeType == StoreType.NO_OVERWRITE && before != null) {
 			logger.info("Skip. Already have the same image.({})", before.getPhotoId());
-			// 업로드된 이미지를 삭제함.
-			boolean delete = dirFile.delete();
-			logger.info("file delete. ({}) ({})", delete, before.getFullPath().getAbsolutePath());
+
+			// 업로드된 이미지와 기존 저장된 이미지가 다르면 업로드된 이미지 삭제
+			if (!imageFile.equals(beforeFile)) {
+				deleteImageFile(imageFile);
+			}
 			return false;
 		}
 
 		if (storeType == StoreType.OVERWRITE && before != null) {
 			// 기존 이미지 삭제
-			logger.info("Already have the same file. delete. ({})", before.getFullPath().getAbsolutePath());
+			logger.info("Already have the same file. delete. ({})", beforeFile.getAbsolutePath());
 
-			// 기존 물리적인 이미지 삭제
-			boolean delete = before.getFullPath().delete();
-			logger.info("file delete. ({}) ({})", delete, before.getFullPath().getAbsolutePath());
+			// 업로드된 이미지와 기존 저장된 이미지가 다르면 기존 이미지 삭제
+			if (!imageFile.equals(beforeFile)) {
+				deleteImageFile(beforeFile);
+			}
 		} else if (storeType == StoreType.UPDATE && before != null) {
-			logger.info("Already have the same file. ({})", before.getFullPath().getAbsolutePath());
-			// 기존 물리적인 이미지 삭제
-			boolean delete = before.getFullPath().delete();
-			logger.info("file delete. ({}) ({})", delete, before.getFullPath().getAbsolutePath());
-
+			logger.info("Already have the same file. ({})", beforeFile.getAbsolutePath());
+			// 업로드된 이미지와 기존 저장된 이미지가 다르면 기존 이미지 삭제
+			if (!imageFile.equals(beforeFile)) {
+				deleteImageFile(beforeFile);
+			}
 			// 디렉토리 경로만 변경
 			before.setDirectory(dir);
 			before.setName(imageFile.getName());
@@ -510,6 +526,17 @@ public class PhotoService {
 		}
 		photoRepository.save(photo);
 		return true;
+	}
+
+	/**
+	 * 이미지 파일 삭제
+	 *
+	 * @param imageFile
+	 *            이미지 파일
+	 */
+	private void deleteImageFile(final File imageFile) {
+		boolean delete = imageFile.delete();
+		logger.info("file delete. ({}) ({})", delete, imageFile.getAbsolutePath());
 	}
 
 	// ============== 데이터 수정 관련 ==============

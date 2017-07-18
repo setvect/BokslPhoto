@@ -469,14 +469,23 @@ public class PhotoController {
 	}
 
 	/**
-	 * 이미지 탐색 후 저장
+	 * 서버 저장된 이미지 탐색 후 저장
 	 *
+	 * @param existUpdate
+	 *            true: 이미지 자료가 DB에 있어도 이미지 경로 정보를 업데이트<br>
+	 *            false: 업로드 이미지가 이미 DB에 저장되어 있다면 이미지 업데이트하지 않음.
 	 * @return 처리결과
 	 */
 	@RequestMapping("/photo/retrievalAndSave.do")
 	@ResponseBody
-	public ResponseEntity<Boolean> retrievalAndSave() {
-		photoService.syncPhotoAndSave();
+	public ResponseEntity<Boolean> retrievalAndSave(
+			@RequestParam(name = "existUpdate", required = false) final Boolean existUpdate) {
+		if (existUpdate == null || !existUpdate) {
+			photoService.syncPhotoAndSave(StoreType.NO_OVERWRITE);
+		} else {
+			photoService.syncPhotoAndSave(StoreType.UPDATE);
+		}
+
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 

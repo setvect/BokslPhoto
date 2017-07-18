@@ -27,6 +27,7 @@ import com.setvect.bokslphoto.repository.FolderRepository;
 import com.setvect.bokslphoto.repository.PhotoRepository;
 import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.service.PhotoService.StoreType;
 import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.UserRoleVo;
@@ -109,7 +110,7 @@ public class MainTestBase {
 		File tempFolder = new File("./test_data/temp_folder");
 		FileUtils.copyDirectory(tempFolder, baseFolder);
 
-		photoService.syncPhotoAndSave();
+		photoService.syncPhotoAndSave(StoreType.UPDATE);
 
 		List<PhotoVo> allList = photoRepository.findAll();
 		allList.get(0).setMemo("메모 1");
