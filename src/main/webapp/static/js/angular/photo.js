@@ -557,12 +557,10 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			});
 		});
 		
-		
 	};
 	
 	// 하위 분류 추가
 	$scope.folderAdd = function(){
-
 		var currentFolder = findFolder($rootScope.photoFolder, folderSeq);
 		
 		swal({
@@ -601,7 +599,32 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 
 	// 현재 분류 삭제 
 	$scope.folderDelete = function(){
-		alert("폴더 삭제");
+		var currentFolder = findFolder($rootScope.photoFolder, folderSeq);
+		
+		swal({
+			title : "삭제할거야?",
+			type : "warning",
+			showCancelButton : true,
+			confirmButtonColor : "#DD6B55",
+			confirmButtonText : "Yes",
+			closeOnConfirm : false
+		}, function() {
+			$scope.$apply(function () {
+				$http({
+					method : 'POST',
+					url : CONTEXT_PATH + "/photo/deleteFolder.do",
+					headers: {
+						'Content-Type': undefined
+					},
+					params : {"folderSeq": currentFolder.folderSeq}
+				}).then(function(response) {
+					$scope.photoMeta = response.data;
+				});
+				
+				swal("삭제", "이미지 삭제 했다.", "success");
+				location.href = "#!/listFolder/" + currentFolder.parentId;
+			});
+		});
 	};
 	
 	/**
