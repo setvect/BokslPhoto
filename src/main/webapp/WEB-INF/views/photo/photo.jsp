@@ -103,7 +103,6 @@
 					<li class="{{menu == 'upload' ? 'active' : ''}}">
 						<!-- TODO --> <a href="#!/upload"> <i class="material-icons">file_upload</i> <span>사진 업로드</span></a>
 					</li>
-					<li><a href="javascript:void(0);"> <i class="material-icons">settings</i> <span>환경 설정</span></a></li>
 				</ul>
 			</div>
 			<!-- #Menu -->

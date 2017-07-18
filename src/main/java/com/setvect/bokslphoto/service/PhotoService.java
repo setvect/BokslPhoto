@@ -276,7 +276,9 @@ public class PhotoService {
 			Map<String, String> result = StreamSupport.stream(metadata.getDirectories().spliterator(), false)
 					.flatMap(p -> p.getTags().stream()).filter(Objects::nonNull).collect(Collectors.toMap(p -> {
 						return "[" + p.getDirectoryName() + "]" + p.getTagName();
-					}, p -> p.getDescription(), (v1, v2) -> v1, TreeMap::new));
+					}, p -> {
+						return p.getDescription() == null ? "" : p.getDescription();
+					}, (v1, v2) -> v1, TreeMap::new));
 
 			return result;
 		} catch (Exception e) {

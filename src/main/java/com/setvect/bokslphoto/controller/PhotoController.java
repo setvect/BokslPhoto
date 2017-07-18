@@ -96,7 +96,7 @@ public class PhotoController {
 	@RequestMapping(value = "/")
 	public String index(final HttpServletRequest request) {
 		// TODO 강제 로그인. 추후 변경
-		constraintLogin(request);
+		// constraintLogin(request);
 
 		return "redirect:/photo";
 	}
