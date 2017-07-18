@@ -52,6 +52,7 @@ import com.setvect.bokslphoto.repository.UserRepository;
 import com.setvect.bokslphoto.service.FolderAddtion;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
+import com.setvect.bokslphoto.service.PhotoService.StoreType;
 import com.setvect.bokslphoto.service.ThumbnailImageConvert;
 import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.GenericPage;
@@ -407,7 +408,7 @@ public class PhotoController {
 
 			File saveFile = File.createTempFile(nameWithOutExt, "." + ext, BokslPhotoConstant.Photo.SAVE_DIR);
 			uploadFile.transferTo(saveFile);
-			boolean result = photoService.savePhoto(saveFile, false);
+			boolean result = photoService.savePhoto(saveFile, StoreType.UPDATE);
 			if (result) {
 				logger.info("upload {} -> {}", uploadFile.getOriginalFilename(), saveFile.getAbsolutePath());
 			} else {
@@ -475,7 +476,7 @@ public class PhotoController {
 	@RequestMapping("/photo/retrievalAndSave.do")
 	@ResponseBody
 	public ResponseEntity<Boolean> retrievalAndSave() {
-		photoService.retrievalPhotoAndSave();
+		photoService.syncPhotoAndSave();
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 

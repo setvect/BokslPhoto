@@ -69,6 +69,21 @@ public class PhotoService {
 	/** 로깅 */
 	private static Logger logger = LoggerFactory.getLogger(PhotoService.class);
 
+	/**
+	 * 이미지 업로드 유형
+	 */
+	public enum StoreType {
+		/** 같이 이미지가 이미 있으면 기존거 지우고 새롭게 등록. */
+		OVERWRITE,
+		/**
+		 * 같은 이미지가 이미 있으면 이전 이미지 파일 삭제하고 업데이트. 즉 이전 데이터(메모, 맵핑 폴더)를 그대로 유지하고 이미지
+		 * 경로만 새롭게 업데이트 함.
+		 */
+		UPDATE,
+		/** 같은 이미지가 이미 있으면 업로드 취소. 현재 등록된 이미지 파일 삭제 */
+		NO_OVERWRITE;
+	}
+
 	// ============== 조회 관련 ==============
 
 	/**
@@ -407,9 +422,12 @@ public class PhotoService {
 	// ============== 데이터 저장 관련 ==============
 
 	/**
-	 * 이미지 탐색 후 저장
+	 * DB와 물리적인 이미지 저장값과 동기화.<br>
+	 * 이미지가 있고 DB에 없는 경우 -> 등록<br>
+	 * 이미지가 있고 DB도 있는 경우 -> 저장 경로 업데이트<br>
+	 * 이미지 없고 DB가 있는 경우 -> DB에 있는 내용 삭제
 	 */
-	public void retrievalPhotoAndSave() {
+	public void syncPhotoAndSave() {
 		List<File> imageFiles = findImageFiles();
 
 		imageFiles.stream().peek(action -> {
@@ -426,7 +444,7 @@ public class PhotoService {
 	 *            이미지 파일
 	 */
 	public void savePhoto(final File imageFile) {
-		savePhoto(imageFile, true);
+		savePhoto(imageFile, StoreType.UPDATE);
 	}
 
 	/**
@@ -434,12 +452,11 @@ public class PhotoService {
 	 *
 	 * @param imageFile
 	 *            이미지 파일
-	 * @param overwrite
-	 *            true 동일한 md5를 같는 파일이 있으면 현재 업로드 파일로 기준으로 교체. 기존 파일은 지우지 않음<br>
-	 *            false 동일한 md5를 같는 파일이 있으면 현재 업로드 취소. 업로드 파일은 삭제함.
+	 * @param storeType
+	 *            이미지 저장 유형
 	 * @return 저장 성공여부
 	 */
-	public boolean savePhoto(final File imageFile, final boolean overwrite) {
+	public boolean savePhoto(final File imageFile, final StoreType storeType) {
 		File baseFile = BokslPhotoConstant.Photo.BASE_DIR;
 
 		File dirFile = imageFile.getParentFile();
@@ -449,13 +466,34 @@ public class PhotoService {
 		PhotoVo photo = new PhotoVo();
 		Date shotDate = getShotDate(imageFile);
 		String photoId = ApplicationUtil.getMd5(imageFile);
-		if (!overwrite) {
-			PhotoVo before = photoRepository.findOne(photoId);
-			if (before != null) {
-				logger.info("Already have the same file.({})", before.getFullPath().getAbsolutePath());
-				imageFile.delete();
-				return false;
-			}
+		PhotoVo before = photoRepository.findOne(photoId);
+
+		// 기존에 이미지가 있으면 새로운 이미지 제 업로드 하지 않음.
+		if (storeType == StoreType.NO_OVERWRITE && before != null) {
+			logger.info("Skip. Already have the same image.({})", before.getPhotoId());
+			// 업로드된 이미지를 삭제함.
+			boolean delete = dirFile.delete();
+			logger.info("file delete. ({}) ({})", delete, before.getFullPath().getAbsolutePath());
+			return false;
+		}
+
+		if (storeType == StoreType.OVERWRITE && before != null) {
+			// 기존 이미지 삭제
+			logger.info("Already have the same file. delete. ({})", before.getFullPath().getAbsolutePath());
+
+			// 기존 물리적인 이미지 삭제
+			boolean delete = before.getFullPath().delete();
+			logger.info("file delete. ({}) ({})", delete, before.getFullPath().getAbsolutePath());
+		} else if (storeType == StoreType.UPDATE && before != null) {
+			logger.info("Already have the same file. ({})", before.getFullPath().getAbsolutePath());
+			// 기존 물리적인 이미지 삭제
+			boolean delete = before.getFullPath().delete();
+			logger.info("file delete. ({}) ({})", delete, before.getFullPath().getAbsolutePath());
+
+			// 디렉토리 경로만 변경
+			before.setDirectory(dir);
+			entityManager.merge(before);
+			return true;
 		}
 
 		photo.setPhotoId(photoId);

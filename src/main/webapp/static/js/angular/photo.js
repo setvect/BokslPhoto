@@ -669,7 +669,7 @@ photoApp.controller('photoUploadController', [ '$scope', '$rootScope', '$http', 
 		parallelUploads : 5,
 		addRemoveLinks : true,
 		autoProcessQueue : false,
-		maxFilesize : 5, //MB 
+		maxFilesize : 10, //MB 
 	};
 
 	$scope.dzMethods = {};

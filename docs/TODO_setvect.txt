@@ -6,6 +6,11 @@
 	ISS_yyyyMMdd: ISS - Issue				- 이슈사항
 
 [메모]
+				insert into TBAA_USER values('userid', 'N','userid@domain.com', '문학소년', 'passwd암호화');
+				insert into TBAB_ROLE  values('1', 'ROLE_ADMIN', 'userid');	
+				insert into TBAB_ROLE  values('2', 'ROLE_USER', 'userid');	
+				insert into TBBB_FOLDER  values('1', 'ROOT', 1);	
+				
 사용가능한 이미지 메타 정보
 	[JPEG] Image Height - 2988 pixels
 	[JPEG] Image Width - 5312 pixels
@@ -18,8 +23,6 @@
 [진행 해야된는 것]
 NEW_20170718: maven update해도 프로젝트 설정 변경 없이 되게 
 PBM_20170718: 폴더 삭제 시  포함된 이미지 삭제 되면 삭제된 이미지가 삭제되지 않은 폴더에 있으면 그것도 삭제됨(이해되지?)
-
-NEW_20170718: 물리적으로 삭제된 이미지 DB에서 제거하는 기능 만듦. (동기화)
 PBM_20170718: 지도 API 연계
 PBM_20170708: IE에서 섬네일 이미지 안 나오는 것
 PBM_20170624: 세로 이미지가 있는 경우 불특정하게 바둑판 모양이 깨져 이미지들 출력되는 문제 
@@ -33,6 +36,9 @@ REF_20170507: 의존성 제거
 				Waves.init();
 
 [진행 된 것]
+NEW_20170718: upload size 조정 
+	File is too big (5.79MiB). Max filesize: 5MiB.
+NEW_20170718: 물리적으로 삭제된 이미지 DB에서 제거하는 기능 만듦. (동기화)
 PBM_20170718: 업로드 안되는 문제.
 NEW_20170718: ROOT에서도 폴더 추가 할 수 있게
 NEW_20170718: 분류 폴더 삭제

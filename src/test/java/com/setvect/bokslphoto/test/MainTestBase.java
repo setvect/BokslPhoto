@@ -109,7 +109,7 @@ public class MainTestBase {
 		File tempFolder = new File("./test_data/temp_folder");
 		FileUtils.copyDirectory(tempFolder, baseFolder);
 
-		photoService.retrievalPhotoAndSave();
+		photoService.syncPhotoAndSave();
 
 		List<PhotoVo> allList = photoRepository.findAll();
 		allList.get(0).setMemo("메모 1");

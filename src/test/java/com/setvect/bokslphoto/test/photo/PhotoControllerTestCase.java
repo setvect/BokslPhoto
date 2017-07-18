@@ -997,10 +997,11 @@ public class PhotoControllerTestCase extends MainTestBase {
 		String jsonDirectory = mvcResult.getResponse().getContentAsString();
 		System.out.println(jsonDirectory);
 
+		// 이미지 업로드 되면서 중복파일 제거되 '0'이 나옴
 		Gson gson = new Gson();
 		List<String> result = gson.fromJson(jsonDirectory, new TypeToken<List<String>>() {
 		}.getType());
-		Assert.assertThat(result.size(), CoreMatchers.is(1));
+		Assert.assertThat(result.size(), CoreMatchers.is(0));
 
 		// 두 번째 - 중복 데이터 나오면 안됨.
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
