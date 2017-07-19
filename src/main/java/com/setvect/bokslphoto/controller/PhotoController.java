@@ -346,8 +346,7 @@ public class PhotoController {
 		// 섬네일 이미지 파일이름 만들기
 		// e.g) imagename_w33_h44.jpg
 		String name = photoFile.getName();
-		String tempImg = FilenameUtils.getBaseName(name) + "_w" + width + "_h" + height + "."
-				+ FilenameUtils.getExtension(name);
+		String tempImg = photoId + "_w" + width + "_h" + height + "." + FilenameUtils.getExtension(name);
 
 		// 섬네일 버전된 경로
 		File toThumbnailFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
