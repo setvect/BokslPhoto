@@ -91,4 +91,8 @@ public final class BokslPhotoConstant {
 	/** 테스트 실행 여부을 알수 있는 System property 이름 */
 	public static final String TEST_CHECK_PROPERTY_NAME = "test_run";
 
+	/** 지도 API Key(다음 카카오) */
+	public static final String KAKAO_API_KEY = EnvirmentProperty.getString("com.setvect.photo.kakao.apikey",
+			"_nothing_");
+
 }

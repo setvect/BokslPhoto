@@ -1,3 +1,4 @@
+<%@page import="com.setvect.bokslphoto.BokslPhotoConstant"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <!-- Favicon-->
 <link rel="icon" href="${pageContext.request.contextPath}/static/favicon.ico" type="image/x-icon">
@@ -87,6 +88,9 @@
 
 <!-- Bootstrap Tags Input Plugin Js -->
 <script src="${pageContext.request.contextPath}/static/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
+
+<!-- 지도 API -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=BokslPhotoConstant.KAKAO_API_KEY%>"></script>
 
 <!-- 복슬포토에 의존된 Js -->
 <script src="${pageContext.request.contextPath}/static/js/bokslphoto.js"></script>

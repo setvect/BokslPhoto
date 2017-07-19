@@ -124,12 +124,16 @@
 							</div>
 						</div>
 					</div>
-
 					<p>소속폴더</p>
 					<div class="button-demo">
 						<button type="button" class="btn bg-cyan btn-xs" data-ng-repeat="folder in currentPhoto.folders">{{folder.name}}</button>
 						<button type="button" class="btn btn-xs" data-ng-show="currentPhoto.folders.length == 0">등록된 폴더가 없음</button>
 					</div>
+
+					<p data-ng-show="isGeo(currentPhoto)">지도</p>
+					<div id="_map" style="width: 100%; height: 300px;" data-ng-show="isGeo(currentPhoto)"> 
+					</div>
+
 					<p>이미지 메타정보</p>
 					<table class="table table-striped">
 						<thead>

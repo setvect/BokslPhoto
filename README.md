@@ -23,6 +23,7 @@
 
 주요 설정 항목 
 - com.setvect.photo.home: 어플리케이션 기본 디렉토리. 프로젝트 홈 경로를 입력
+- com.setvect.photo.kakao.apikey: 지도 API. GEO좌표가있는 이미지 지도 표시. [API 신청](http://apis.map.daum.net "API 신청")
 
 테스트 코드
 --------------------------------------

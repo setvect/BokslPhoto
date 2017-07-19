@@ -321,10 +321,17 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	// 사용자 입력 촬영일
 	$scope.shotDate;
 
+	// 사진이 GEO 좌표가 있는지 여부.
+	// true: 있음, false: 없음
+	$scope.isGeo = function(photo){
+		return photo != null && photo.latitude != null && photo.longitude != null
+	}
+	
 	// 사진 정보 오픈
 	$scope.openInfoLayer = function(choicePhoto){
 		$scope.currentPhoto = choicePhoto;
-		
+		console.log($scope.currentPhoto);
+	
 		$('._shotdate').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
 		$scope.shotDate = $filter("date")($scope.currentPhoto.shotDate, "yyyy-MM-dd")
 		
@@ -339,8 +346,35 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 			$scope.photoMeta = response.data;
 			
 		});
+		
+	$("#photoInfoModal").on('shown.bs.modal', function() {
+		if($scope.isGeo($scope.currentPhoto)){
+			$scope.showMap($scope.currentPhoto);
+		}
+	})
 		$("#photoInfoModal").modal("show");
 	};
+
+	// 사진 촬영 지도 표시
+	$scope.showMap = function(choicePhoto){
+		var container = document.getElementById('_map');
+		var options = {
+				center : new daum.maps.LatLng(choicePhoto.latitude, choicePhoto.longitude),
+				level : 3
+		};
+		var map = new daum.maps.Map(container, options);
+		
+		// 마커가 표시될 위치입니다 
+		var markerPosition = new daum.maps.LatLng(choicePhoto.latitude, choicePhoto.longitude);
+		
+		// 마커를 생성합니다
+		var marker = new daum.maps.Marker({
+			position : markerPosition
+		});
+		
+		// 마커가 지도 위에 표시되도록 설정합니다
+		marker.setMap(map);
+	}
 	
 	// 촬영일 업데이트
 	$scope.updateShotDate = function(){
