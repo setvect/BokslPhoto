@@ -53,9 +53,10 @@ section.content {
 
 .photo_memo {
 	text-align: center;
+	height: 15px;
 }
 
-.photo_area { 
+.photo_area {
 	position: relative;
 }
 
@@ -65,23 +66,66 @@ section.content {
 	right: 10px;
 }
 
-.photo_path_btn{
+.photo_path_btn {
 	display: inline-block;
-	vertical-align:middle;
+	vertical-align: middle;
 }
-.photo_path_btn button{
+
+.photo_path_btn button {
 	font-size: 11px !important;;
 }
 
 /* 모달창 스크롤 */
-.photo_info_scroll{
-	height: 420px; 
+.photo_info_scroll {
+	height: 420px;
 	overflow-y: auto;
 }
 /* 모달창에 input 박스*/
-.modal_input{
+.modal_input {
 	width: auto !important;
 	border: 1px solid #ccc !important;
 	padding-left: 10px !important;
 	margin-right: 10px !important;
+}
+
+.thumbnail-wrappper {
+	width: 25%;
+}
+
+.thumbnail_area {
+	position: relative;
+	padding-top: 50%; /* 1:1 ratio */
+	overflow: hidden;
+}
+
+.thumbnail_area .centered {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	-webkit-transform: translate(50%, 50%);
+	-ms-transform: translate(50%, 50%);
+	transform: translate(50%, 50%);
+}
+
+.thumbnail_area .centered img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	max-width: 100%;
+	height: auto;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+img.landscape {
+	width: auto !important;
+	height: 100% !important;
+}
+
+img.portrait {
+	width: 100%;
+	height: auto;
 }

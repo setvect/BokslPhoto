@@ -233,7 +233,7 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 		var startCursor = dateGroup.photo == null ? 0 : dateGroup.photo.list.length;
 		var params = {
 			"startCursor" : startCursor,
-			"returnCount" : 4,
+			"returnCount" : 6,
 			"searchMemo" : $scope.searchOption.searchMemo,
 			"searchDirectory" : decodedirectoryName,
 			"searchFolderSeq" : folderSeq

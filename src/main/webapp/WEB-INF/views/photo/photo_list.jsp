@@ -65,28 +65,26 @@
 				</div>
 				<div class="body">
 					<div class="row">
-						<div class="col-sm-6 col-md-3" data-ng-repeat="item in group.photo.list" lightgallery>
-							<div>
-								<div class="photo_area">
-
-									<a href="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" >
-										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=170&d={{item.protectF}}" class="img-responsive thumbnail image_center">
+						<div class="col-sm-6 col-md-2" style="margin-bottom: 0" data-ng-repeat="item in group.photo.list" lightgallery>
+							<div class="photo_area thumbnail-wrapper">
+								<div class="thumbnail_area">
+									<a href="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" class="centered">
+										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=330&d={{item.protectF}}" class="img-responsive thumbnail image_center portrait">
 									</a>
-
-									<div class="photo_button">
-										<button type="button" class="btn bg-indigo waves-effect btn-xs" data-ng-click="openInfoLayer(item)">
-											<i class="material-icons">info_outline</i>
-										</button>
-										<button type="button" class="btn bg-orange waves-effect btn-xs" data-ng-click="protectImage(item, false)" data-ng-show="posibleProtect && item.protectF">
-											<i class="material-icons">lock</i>
-										</button>
-									</div>
 								</div>
-								<div class="caption photo_memo" data-ng-if="!item.protectF">
-									<p>
-										{{item.memo}}
-									</p>
+								<div class="photo_button">
+									<button type="button" class="btn bg-indigo waves-effect btn-xs" data-ng-click="openInfoLayer(item)">
+										<i class="material-icons">info_outline</i>
+									</button>
+									<button type="button" class="btn bg-orange waves-effect btn-xs" data-ng-click="protectImage(item, false)" data-ng-show="posibleProtect && item.protectF">
+										<i class="material-icons">lock</i>
+									</button>
 								</div>
+							</div>
+							<div class="caption photo_memo" data-ng-if="!item.protectF">
+								<p>
+									{{item.memo}}
+								</p>
 							</div>
 						</div>
 					</div>
