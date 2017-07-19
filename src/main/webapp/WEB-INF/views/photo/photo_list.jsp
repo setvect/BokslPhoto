@@ -65,11 +65,11 @@
 				</div>
 				<div class="body">
 					<div class="row">
-						<div class="col-sm-6 col-md-2" style="margin-bottom: 0" data-ng-repeat="item in group.photo.list" lightgallery>
-							<div class="photo_area thumbnail-wrapper">
-								<div class="thumbnail_area">
+						<div class="col-sm-6 col-md-2" data-ng-repeat="item in group.photo.list" lightgallery>
+							<div class="photo_area thumbnail-wrapper thumbnail ">
+								<div class="thumbnail_area ">
 									<a href="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" class="centered">
-										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=330&d={{item.protectF}}" class="img-responsive thumbnail image_center portrait">
+										<img data-ng-src="${pageContext.request.contextPath}/photo/getImage.do?photoId={{item.photoId}}&w=330&h=330&d={{item.protectF}}" class="img-responsive image_center landscape">
 									</a>
 								</div>
 								<div class="photo_button">

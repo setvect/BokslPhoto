@@ -94,8 +94,14 @@ section.content {
 
 .thumbnail_area {
 	position: relative;
-	padding-top: 50%; /* 1:1 ratio */
+	padding-top: 100%; /* 1:1 ratio */
 	overflow: hidden;
+}
+
+.thumbnail_area img {
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 .thumbnail_area .centered {
@@ -120,12 +126,19 @@ section.content {
 	transform: translate(-50%, -50%);
 }
 
-img.landscape {
-	width: auto !important;
-	height: 100% !important;
+.thumbnail_area img.portrait {
+	width: 100%;
+	max-width: none;
+	height: auto;
 }
 
-img.portrait {
-	width: 100%;
-	height: auto;
+.thumbnail_area img.landscape {
+	width: auto;
+	max-width: none;
+	height: 100%;
+}
+
+/* bootstrap.css 재정의 */ 
+.thumbnail{
+	margin-bottom: 0;
 }
