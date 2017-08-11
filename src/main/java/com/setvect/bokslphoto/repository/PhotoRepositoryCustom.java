@@ -28,6 +28,8 @@ public interface PhotoRepositoryCustom {
 	public Map<String, Integer> getPhotoDirectoryList();
 
 	/**
+	 * @param condition
+	 *            검색 조건
 	 * @return 날짜별 사진 건수
 	 */
 	public List<ImmutablePair<Date, Integer>> getGroupShotDate(PhotoSearchParam condition);

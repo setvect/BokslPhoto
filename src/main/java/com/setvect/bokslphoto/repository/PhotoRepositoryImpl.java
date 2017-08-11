@@ -73,7 +73,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ImmutablePair<Date, Integer>> getGroupShotDate(PhotoSearchParam condition) {
+	public List<ImmutablePair<Date, Integer>> getGroupShotDate(final PhotoSearchParam condition) {
 		// H2 Database 의존 쿼리
 		String queryStatement = "SELECT to_char(p.SHOT_DATE, 'YYYYMMDD') as DATE_STRING, COUNT(*) " //
 				+ " FROM TBBA_PHOTO P LEFT OUTER JOIN TBBC_MAPPING  F ON P.PHOTO_ID = F.PHOTO_ID ";
@@ -132,40 +132,36 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 	 * @return Where조건이 포함된 질의
 	 */
 	private Query makeListQueryWhere(final PhotoSearchParam pageCondition, final String queryStatement) {
+		Map<String, Object> bindMap = new HashMap<>();
+
 		String where = " WHERE 1=1 ";
 		if (pageCondition.isSearchDateNoting()) {
 			where += " AND p.shotDate IS NULL ";
 		} else if (pageCondition.isDateBetween()) {
 			where += " AND p.shotDate BETWEEN :from and :to ";
+			bindMap.put("from", pageCondition.getSearchFrom());
+			bindMap.put("to", pageCondition.getSearchToEnd());
 		}
 
 		if (StringUtils.isNotEmpty(pageCondition.getSearchDirectory())) {
 			where += " AND p.directory = :directory";
+			bindMap.put("directory", pageCondition.getSearchDirectory());
 		}
 		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
 			where += " AND p.memo like :memo";
+			bindMap.put("memo", "%" + pageCondition.getSearchMemo() + "%");
 		}
 		if (pageCondition.getSearchFolderSeq() != 0) {
 			where += " AND f.folderSeq = :folderSeq";
+			bindMap.put("folderSeq", pageCondition.getSearchFolderSeq());
 		}
 
 		String queryString = queryStatement.replace(BokslPhotoConstant.SQL_WHERE, where);
 		Query query = em.createQuery(queryString);
-		if (!pageCondition.isSearchDateNoting() && pageCondition.isDateBetween()) {
-			query.setParameter("from", pageCondition.getSearchFrom());
-			query.setParameter("to", pageCondition.getSearchToEnd());
-		}
-		if (StringUtils.isNotEmpty(pageCondition.getSearchDirectory())) {
-			query.setParameter("directory", pageCondition.getSearchDirectory());
-		}
-		if (StringUtils.isNotEmpty(pageCondition.getSearchMemo())) {
-			query.setParameter("memo", "%" + pageCondition.getSearchMemo() + "%");
-		}
-		if (pageCondition.getSearchFolderSeq() != 0) {
-			query.setParameter("folderSeq", pageCondition.getSearchFolderSeq());
-		}
 
+		bindMap.entrySet().stream().forEach(entry -> {
+			query.setParameter(entry.getKey(), entry.getValue());
+		});
 		return query;
 	}
-
 }
