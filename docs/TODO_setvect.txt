@@ -22,6 +22,9 @@
 	
 	/photo/retrievalAndSave.do?existUpdate=true
 	
+	update TBBA_PHOTO set  ORIENTATION  = 0
+	SELECT * FROM TBBA_PHOTO 
+	
 [진행 해야된는 것]
 PBM_20170719: 썸네일 이미지하고 실제 이미지가 가로, 세로가 바뀐 경우 
 PBM_20170718: 폴더 삭제 시  포함된 이미지 삭제 되면 삭제된 이미지가 삭제되지 않은 폴더에 있으면 그것도 삭제됨(이해되지?)

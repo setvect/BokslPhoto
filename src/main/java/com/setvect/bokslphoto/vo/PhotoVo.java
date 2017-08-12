@@ -66,6 +66,10 @@ public class PhotoVo {
 	@Column(name = "LONGITUDE", nullable = true)
 	private Double longitude;
 
+	/** 이미지 회전 메타 정보 */
+	@Column(name = "ORIENTATION", nullable = false)
+	private int orientation;
+
 	/** 보호 이미지 */
 	@Column(name = "PROTECT_F", nullable = false, length = 1)
 	@Type(type = "yes_no")
@@ -286,6 +290,21 @@ public class PhotoVo {
 	 */
 	public void setLongitude(final Double longitude) {
 		this.longitude = longitude;
+	}
+
+	/**
+	 * @return 이미지 회전 메타 정보
+	 */
+	public int getOrientation() {
+		return orientation;
+	}
+
+	/**
+	 * @param orientation
+	 *            이미지 회전 메타 정보
+	 */
+	public void setOrientation(final int orientation) {
+		this.orientation = orientation;
 	}
 
 	/**

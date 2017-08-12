@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,7 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import com.setvect.bokslphoto.ApplicationRuntimeException;
@@ -76,8 +81,8 @@ public class PhotoService {
 		/** 같이 이미지가 이미 있으면 기존거 지우고 새롭게 등록. */
 		OVERWRITE,
 		/**
-		 * 같은 이미지가 이미 있으면 이전 이미지 파일 삭제하고 업데이트. 즉 이전 데이터(메모, 맵핑 폴더)를 그대로 유지하고 이미지
-		 * 경로만 새롭게 업데이트 함.
+		 * 같은 이미지가 이미 있으면 이전 이미지 파일 삭제하고 업데이트. 즉 이전 데이터(메모, 맵핑 폴더)를 그대로 유지하고 이미지 경로만 새롭게
+		 * 업데이트 함.
 		 */
 		UPDATE,
 		/** 같은 이미지가 이미 있으면 업로드 취소. 현재 등록된 이미지 파일 삭제 */
@@ -195,7 +200,7 @@ public class PhotoService {
 		Set<String> dirs = photoPathAndCount.keySet();
 
 		Integer photoCount = getPhotoCount(photoPathAndCount, "/");
-		TreeNode<PhotoDirectory> rootNode = new TreeNode<PhotoDirectory>(new PhotoDirectory("/", photoCount));
+		TreeNode<PhotoDirectory> rootNode = new TreeNode<>(new PhotoDirectory("/", photoCount));
 
 		for (String dir : dirs) {
 			List<String> pathAppend = new ArrayList<>();
@@ -305,49 +310,43 @@ public class PhotoService {
 	/**
 	 * GEO 좌표
 	 *
-	 * @param imageFile
+	 * @param metadata
 	 *            이미지 파일
 	 * @return GEO 좌표
 	 */
-	public static GeoCoordinates getGeo(final File imageFile) {
-		try {
-			Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
-			GpsDirectory meta = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+	public static GeoCoordinates getGeo(final Metadata metadata) {
+		GpsDirectory meta = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
-			if (meta == null) {
+		if (meta == null) {
+			return null;
+		}
+		Pattern regex = Pattern.compile(RegexPattern.GPS);
+
+		// 37° 28' 46.12"
+		Map<String, Double> geo = meta.getTags().stream()
+				.filter(tag -> tag.getTagName().equals(ImageMeta.GPS_LATITUDE)
+						|| tag.getTagName().equals(ImageMeta.GPS_LONGITUDE))
+				.filter(tag -> tag.getDescription() != null).collect(Collectors.toMap(p -> p.getTagName(), p -> {
+					String coordinates = p.getDescription();
+					Matcher matcher = regex.matcher(coordinates);
+					if (!matcher.find()) {
+						return null;
+					}
+
+					double degree = Double.parseDouble(matcher.group(1));
+					double minutes = Double.parseDouble(matcher.group(2));
+					double seconds = Double.parseDouble(matcher.group(3));
+					double value = degree + minutes / 60 + seconds / 3600;
+					return value;
+				}));
+		if (geo.size() == 2) {
+			Double latitude = geo.get(ImageMeta.GPS_LATITUDE);
+			Double longitude = geo.get(ImageMeta.GPS_LONGITUDE);
+
+			if (latitude == null || longitude == null) {
 				return null;
 			}
-			Pattern regex = Pattern.compile(RegexPattern.GPS);
-
-			// 37° 28' 46.12"
-			Map<String, Double> geo = meta.getTags().stream()
-					.filter(tag -> tag.getTagName().equals(ImageMeta.GPS_LATITUDE)
-							|| tag.getTagName().equals(ImageMeta.GPS_LONGITUDE))
-					.filter(tag -> tag.getDescription() != null).collect(Collectors.toMap(p -> p.getTagName(), p -> {
-						String coordinates = p.getDescription();
-						Matcher matcher = regex.matcher(coordinates);
-						if (!matcher.find()) {
-							return null;
-						}
-
-						double degree = Double.parseDouble(matcher.group(1));
-						double minutes = Double.parseDouble(matcher.group(2));
-						double seconds = Double.parseDouble(matcher.group(3));
-						double value = degree + minutes / 60 + seconds / 3600;
-						return value;
-					}));
-			if (geo.size() == 2) {
-				Double latitude = geo.get(ImageMeta.GPS_LATITUDE);
-				Double longitude = geo.get(ImageMeta.GPS_LONGITUDE);
-
-				if (latitude == null || longitude == null) {
-					return null;
-				}
-				return new GeoCoordinates(latitude, longitude);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage() + ": " + imageFile.getAbsolutePath(), e);
-			return null;
+			return new GeoCoordinates(latitude, longitude);
 		}
 		return null;
 	}
@@ -366,7 +365,7 @@ public class PhotoService {
 				.filter(f -> f.getFolderSeq() != rootData.getFolderSeq())
 				.collect(Collectors.groupingBy(FolderVo::getParentId, Collectors.toList()));
 
-		TreeNode<FolderVo> rootNode = new TreeNode<FolderVo>(rootData);
+		TreeNode<FolderVo> rootNode = new TreeNode<>(rootData);
 
 		findSubFolder(rootNode, folderListByParentId);
 		return rootNode;
@@ -519,13 +518,40 @@ public class PhotoService {
 		photo.setShotDate(shotDate);
 		photo.setShotDateType(shotDate != null ? ShotDateType.META : ShotDateType.MANUAL);
 		photo.setRegData(new Date());
-		GeoCoordinates geo = getGeo(imageFile);
-		if (geo != null) {
-			photo.setLatitude(geo.getLatitude());
-			photo.setLongitude(geo.getLongitude());
+
+		try {
+			Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+			GeoCoordinates geo = getGeo(metadata);
+			if (geo != null) {
+				photo.setLatitude(geo.getLatitude());
+				photo.setLongitude(geo.getLongitude());
+			}
+			int orientationValue = getOrientation(metadata);
+			photo.setOrientation(orientationValue);
+		} catch (ImageProcessingException | IOException e) {
+			logger.error(e.getMessage() + ": " + imageFile.getAbsolutePath(), e);
 		}
 		photoRepository.save(photo);
 		return true;
+	}
+
+	/**
+	 * @param metadata
+	 *            이미지 메타 테그
+	 * @return 회원 정보. 추출하지 못하면 0을 반환
+	 */
+	private int getOrientation(final Metadata metadata) {
+		Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+		if (directory != null) {
+			try {
+				int result = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+				return result;
+			} catch (MetadataException e) {
+				logger.warn("fail extract TAG_ORIENTATION.");
+				return 0;
+			}
+		}
+		return 0;
 	}
 
 	/**
