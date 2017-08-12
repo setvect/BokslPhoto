@@ -348,6 +348,11 @@ public class PhotoController {
 		String name = photoFile.getName();
 		String tempImg = photoId + "_w" + width + "_h" + height + "." + FilenameUtils.getExtension(name);
 
+		if (!BokslPhotoConstant.Photo.THUMBNAIL_DIR.exists()) {
+			BokslPhotoConstant.Photo.THUMBNAIL_DIR.mkdirs();
+			logger.info("make thumbnail directory: ", BokslPhotoConstant.Photo.THUMBNAIL_DIR.getAbsolutePath());
+		}
+
 		// 섬네일 버전된 경로
 		File toThumbnailFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
 		boolean thumbnailExist = toThumbnailFile.exists();
