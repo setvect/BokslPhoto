@@ -195,12 +195,6 @@ function photoCommonController($scope, $filter, $http){
 	
 	// 보호이미지 해제 가능 여부
 	$scope.posibleProtect = false;
-	
-	// 이미지 원본 경로 
-	$scope.getOrgFullUrl = function(photoId) {
-		return CONTEXT_PATH + "/photo/getImageOrg.do?photoId=" + photoId;
-	};
-	
 
 	// 현재 선택된 포토
 	$scope.currentPhoto;
@@ -211,6 +205,21 @@ function photoCommonController($scope, $filter, $http){
 	// 사용자 입력 촬영일
 	$scope.shotDate;
 
+	$http({
+		method : 'GET',
+		url : CONTEXT_PATH + "/photo/isAllowAccessProtected.json",
+		headers: {
+			'Content-Type': undefined
+		}
+	}).then(function(response) {
+		$scope.posibleProtect = response.data;
+	});
+	
+	// 이미지 원본 경로 
+	$scope.getOrgFullUrl = function(photoId) {
+		return CONTEXT_PATH + "/photo/getImageOrg.do?photoId=" + photoId;
+	};
+	
 	// 사진이 GEO 좌표가 있는지 여부.
 	// true: 있음, false: 없음
 	$scope.isGeo = function(photo){
@@ -442,18 +451,6 @@ function photoCommonController($scope, $filter, $http){
 	};
 	
 	
-	// 스크롤 이벤트. 
-	$scope.loadMore = function() {
-		if($scope.dateGroup == null){
-			return;
-		}
-
-		var currentSize = $scope.lazyDateGroup.length;
-		for(var i = currentSize; i < $scope.dateGroup.length && i < currentSize + 3; i++){
-			$scope.lazyDateGroup.push($scope.dateGroup[i]);
-		}
-	};
-	
 	// 분류 이름 수정
 	$scope.folderModify = function(){
 		var currentFolder = findFolder($rootScope.photoFolder, folderSeq);
@@ -606,17 +603,19 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	$scope.searchCancle = function(){
 		$scope.initSearchOption(()=>{$scope.listGroup()});
 	};
-	
-	$http({
-		method : 'GET',
-		url : CONTEXT_PATH + "/photo/isAllowAccessProtected.json",
-		headers: {
-			'Content-Type': undefined
+
+	// 스크롤 이벤트. 
+	$scope.loadMore = function() {
+		if($scope.dateGroup == null){
+			return;
 		}
-	}).then(function(response) {
-		$scope.posibleProtect = response.data;
-	});
-	
+
+		var currentSize = $scope.lazyDateGroup.length;
+		for(var i = currentSize; i < $scope.dateGroup.length && i < currentSize + 3; i++){
+			$scope.lazyDateGroup.push($scope.dateGroup[i]);
+		}
+	};
+
 	// 날짜별 무한 스크롤 처리 
 	$(document).scroll(function() {
 		$scope.$apply(function(){
@@ -719,136 +718,57 @@ photoApp.controller('photoListController', [ '$scope', '$rootScope', '$http', '$
 	
 	$scope.listGroup();
 } ]);
-
-
 
 // 사진 전체 목록
 photoApp.controller('photoListAllController', [ '$scope', '$rootScope', '$http', '$filter', '$routeParams',
  function($scope, $rootScope, $http, $filter, $routeParams) {
 	angular.extend(this, new photoSearchController($scope, $filter));
 	angular.extend(this, new photoCommonController($scope, $filter, $http));
+
+	// 사진 목록 및 전체 갯수 정보
+	$scope.photoCollection;
 	
-	$scope.dateViewShow = {};
-	$scope.dateViewShow.year = true;
-	$scope.dateViewShow.month = false;
-	$scope.dateViewShow.day = true;
-	
-	// 보호이미지 해제 가능 여부
-	$scope.posibleProtect = false;
-	
-	$http({
-		method : 'GET',
-		url : CONTEXT_PATH + "/photo/isAllowAccessProtected.json",
-		headers: {
-			'Content-Type': undefined
-		}
-	}).then(function(response) {
-		$scope.posibleProtect = response.data;
-	});
-	
-	// 날짜별 무한 스크롤 처리 
-	$(document).scroll(function() {
-		$scope.$apply(function(){
-			var maxHeight = $(document).height();
-			var currentScroll = $(window).scrollTop() + $(window).height();
-			
-			// NOTE. 일반 브라우저에서 10만 해도 충문한데 모바일에선 넉넉히 해야 됨. 
-			if (maxHeight <= currentScroll + 70) {
-				$scope.loadMore();
-			}
-		});
-	});
-	
-	var decodedirectoryName;
-	if ($routeParams.directoryName != null) {
-		decodedirectoryName = decodeURIComponent(window.atob($routeParams.directoryName));
-		$scope.path.view = true;
-		$scope.path.type = "디렉토리 경로";
-		$scope.path.name = decodedirectoryName;
-	}
-	var folderSeq;
-	if ($routeParams.folderSeq != null) {
-		folderSeq = $routeParams.folderSeq;
-		$scope.path.type = "분류 경로";
-		$scope.path.view = true;
-		$scope.path.functionButton = true;
-		
-		// 루트 폴더 아이디는 1로 고정됨.
-		$scope.path.isCurrentRoot = $routeParams.folderSeq == 1;
-	
-		// 분류 경로 불러오기 
-		$http({
-			method : 'GET',
-			url : CONTEXT_PATH + "/photo/folderPath.json",
-			params : {"folderSeq": folderSeq, "includeRoot": false}
-		}).then(function(response) {
-			var pathArray = [];
-			
-			response.data.forEach(function(value, idx){
-				pathArray.push(value.name);
-			});
-	
-			$scope.path.name = pathArray.join("/"); 
-		});
-	}
-	
-	// 최초 사진 목록 로드  
-	$scope.listGroup = function() {
-		var params = {
-			"searchDateGroup" : $scope.searchOption.searchDateGroup,
-			"searchFrom" : $scope.searchOption.searchFrom,
-			"searchTo" : $scope.searchOption.searchTo,
-			"searchMemo" : $scope.searchOption.searchMemo,
-			"searchDirectory" : decodedirectoryName,
-			"searchFolderSeq" : folderSeq
-		};
-		
-		$http.get(CONTEXT_PATH + "/photo/groupByDate.json", {
-			"params" : params
-		}).then(function(response) {
-			$scope.dateGroup = response.data;
-			$scope.dateGroup.forEach(function(entry) {
-				$scope.moreLoadImage(entry);
-			});
-			$scope.lazyDateGroup = [];
-			$scope.loadMore();
-		});
+	// 검색
+	$scope.search = function(){
+		$scope.photoCollection = null;
+		$scope.moreList();
+	};
+
+	// 검색 취소
+	$scope.searchCancle = function(){
+		$scope.photoCollection = null;
+		$scope.initSearchOption(()=>{$scope.moreList()});
 	};
 	
 	// 사진 더 불러오기
-	$scope.moreLoadImage = function(dateGroup) {
-		var startCursor = dateGroup.photo == null ? 0 : dateGroup.photo.list.length;
+	$scope.moreList = function() {
+		var startCursor = $scope.photoCollection == null ? 0 : $scope.photoCollection.list.length;
 		var params = {
 			"startCursor" : startCursor,
-			"returnCount" : 6,
-			"searchMemo" : $scope.searchOption.searchMemo,
-			"searchDirectory" : decodedirectoryName,
-			"searchFolderSeq" : folderSeq
+			"returnCount" : 48,
+			"searchFrom" : $scope.searchOption.searchFrom,
+			"searchTo" : $scope.searchOption.searchTo,
+			"searchMemo" : $scope.searchOption.searchMemo
 		};
-	
-		var from = $filter("date")(dateGroup.from, "yyyyMMdd");
-		var to = $filter("date")(dateGroup.to, "yyyyMMdd");
-		params["searchFrom"] = from;
-		params["searchTo"] = to;
+		
 		// 촬영 날짜가 없는 경우 검색. true 경우 날짜 범위 검색 무시 
-		var dateNoting = dateGroup.from == 0;
+		var dateNoting = $scope.searchOption.searchFrom == null;
 		params["searchDateNoting"] = dateNoting;
 	
 		$http.get(CONTEXT_PATH + "/photo/list.json", {
 			"params" : params
 		}).then(function(response) {
 			// 최초 로딩
-			if (dateGroup.photo == null) {
-				dateGroup.photo = response.data;
+			if ($scope.photoCollection == null) {
+				$scope.photoCollection = response.data;
 			} else {
-				dateGroup.photo.list = dateGroup.photo.list.concat(response.data.list);
+				$scope.photoCollection.list = $scope.photoCollection.list.concat(response.data.list);
 			}
 		});
 	};
 	
-	$scope.listGroup();
+	$scope.moreList();
 } ]);
-
 
 // 사진 업로드
 photoApp.controller('photoUploadController', [ '$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {

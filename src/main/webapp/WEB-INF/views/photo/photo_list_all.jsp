@@ -36,7 +36,7 @@
 			<div class="card">
 				<div class="body">
 					<div class="row">
-						<div class="col-sm-6 col-md-1 no-padding" data-ng-repeat="item in group.photo.list" lightgallery>
+						<div class="col-sm-6 col-md-1 no-padding" data-ng-repeat="item in photoCollection.list" lightgallery>
 							<div class="photo_area thumbnail-wrapper thumbnail ">
 								<div class="thumbnail_area ">
 									<a href="{{getOrgFullUrl(item.photoId)}}" data-sub-html="{{item.memo}}" data-orientation="{{item.orientation}}" class="centered">
@@ -59,7 +59,7 @@
 							</div>
 						</div>
 					</div>
-					<button type="button" class="btn btn-block btn-lg btn-info waves-effect" data-ng-click="moreLoadImage(group)">더 불러오기({{group.photo.list.length}} / {{group.photo.totalCount}})</button>
+					<button type="button" class="btn btn-block btn-lg btn-info waves-effect" data-ng-click="moreList()">더 불러오기({{photoCollection.list.length}} / {{photoCollection.totalCount}})</button>
 				</div>
 			</div>
 		</div>
