@@ -126,6 +126,15 @@ public class PhotoController {
 	}
 
 	/**
+	 * @param request
+	 * @return 사진 목록 보기 페이지
+	 */
+	@RequestMapping("/photo/listAll.do")
+	public String allList() {
+		return "photo/photo_list_all";
+	}
+
+	/**
 	 * @return 사진 업로드 페이지
 	 */
 	@RequestMapping("/photo/upload.do")

@@ -84,6 +84,9 @@
 					<li class="{{menu == 'timeList' ? 'active' : ''}}"> 
 						<a href="#!/list"> <i class="material-icons">date_range</i> <span>시간 흐름 순</span></a>
 					</li>
+					<li class="{{menu == 'timeList' ? 'active' : ''}}"> 
+						<a href="#!/allList"> <i class="material-icons">list</i> <span>전체 보기</span></a>
+					</li>
 					<li data-ng-controller="photoFolderController">
 						<a href="javascript:void(0);" data-ng-click="viewRootFolder()" class="menu-toggle"> <i class="material-icons">folder_special</i> <span>분류 기준</span></a>
 						<ul class="ml-menu">
