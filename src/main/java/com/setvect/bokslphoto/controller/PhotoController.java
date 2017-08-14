@@ -274,12 +274,13 @@ public class PhotoController {
 	 * @param request
 	 *            servletRequest
 	 * @return 이미지 byte
-	 * @throws Exception
+	 * @throws IOException
+	 *             예외
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/photo/getImageOrg.do", produces = MediaType.IMAGE_JPEG_VALUE)
 	public byte[] getImageOrg(@RequestParam("photoId") final String photoId, final HttpServletRequest request)
-			throws Exception {
+			throws IOException {
 		PhotoVo photo = photoRepository.findOne(photoId);
 
 		String clientIp = request.getRemoteAddr();
