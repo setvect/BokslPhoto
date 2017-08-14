@@ -1,12 +1,7 @@
-package com.setvect.bokslphoto.test.temp.etc;
+package com.setvect.bokslphoto.test.temp.image;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import com.setvect.bokslphoto.util.LapTimeChecker;
 
@@ -17,8 +12,8 @@ public class ImageAutoRotate2 {
 
 		LapTimeChecker ck = new LapTimeChecker("aaa");
 		File input = new File("temp/aa.jpg");
-		BufferedImage image = Thumbnails.of(input).scale(1).asBufferedImage();
+		File out = new File("temp/aa-out1.jpg");
+		Thumbnails.of(input).scale(1).toFile(out);
 		ck.check("img");
-
 	}
 }

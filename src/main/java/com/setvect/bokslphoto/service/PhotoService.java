@@ -4,7 +4,9 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.stream.StreamSupport;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +56,8 @@ import com.setvect.bokslphoto.vo.FolderVo;
 import com.setvect.bokslphoto.vo.PhotoDirectory;
 import com.setvect.bokslphoto.vo.PhotoVo;
 import com.setvect.bokslphoto.vo.PhotoVo.ShotDateType;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 /**
  * 포토 로직
@@ -398,6 +403,115 @@ public class PhotoService {
 	}
 
 	/**
+	 * 원본이미지 정보. 디카 이미지 메타 정보를 파악해 회전 정보를 보정해서 반환
+	 *
+	 * @param photo
+	 *            포토
+	 * @return 이미지 바이너리 정보
+	 * @throws IOException
+	 *             예외
+	 */
+	public byte[] getImageOrg(final PhotoVo photo) throws IOException {
+		File photoFile;
+
+		if (photo.isRotate()) {
+			photoFile = rotateCorrection(photo);
+		} else {
+			photoFile = photo.getFullPath();
+		}
+
+		try (InputStream in = new FileInputStream(photoFile);) {
+			return IOUtils.toByteArray(in);
+		}
+	}
+
+	/**
+	 * 섬네일 이미지 만들기
+	 *
+	 * @param photo
+	 *            이미지
+	 * @param width
+	 *            최대 넓이
+	 * @param height
+	 *            최대 높이
+	 * @return 섬네일 이미지 byte
+	 * @throws IOException
+	 *             예외
+	 */
+	public byte[] makeThumbimage(final PhotoVo photo, final int width, final int height) throws IOException {
+		// 입력값이 재대로 입력되지 않으면 그냥 리턴
+		if (photo == null || width == 0 || height == 0) {
+			logger.warn("thumbnail error.");
+			return null;
+		}
+
+		File photoFile = photo.getFullPath();
+
+		// 파일이 존재 하지 않으면 그냥 종료
+		if (!photoFile.exists()) {
+			logger.warn("{} not exist.", photoFile);
+			return null;
+		}
+
+		// 섬네일 이미지 파일이름 만들기
+		// e.g) imagename_w33_h44.jpg
+		String name = photoFile.getName();
+		String tempImg = photo.getPhotoId() + "_w" + width + "_h" + height + "." + FilenameUtils.getExtension(name);
+
+		if (!BokslPhotoConstant.Photo.THUMBNAIL_DIR.exists()) {
+			BokslPhotoConstant.Photo.THUMBNAIL_DIR.mkdirs();
+			logger.info("make thumbnail directory: ", BokslPhotoConstant.Photo.THUMBNAIL_DIR.getAbsolutePath());
+		}
+
+		// 섬네일 버전된 경로
+		File toThumbnailFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
+		boolean thumbnailExist = toThumbnailFile.exists();
+		boolean oldThumbnail = toThumbnailFile.lastModified() < photoFile.lastModified();
+
+		// 기존에 섬네일로 변환된 파일이 있는냐?
+		// 섬네일로 변환된 파일이 없거나, 파일이 수정되었을 경우 섬네일 다시 만들기
+		if (!thumbnailExist || oldThumbnail) {
+			ThumbnailImageConvert.makeThumbnail(photoFile, toThumbnailFile, width, height);
+		}
+
+		try (InputStream in = new FileInputStream(toThumbnailFile);) {
+			return IOUtils.toByteArray(in);
+		}
+	}
+
+	/**
+	 * 이미지 회전 보정
+	 *
+	 * @param photo
+	 *            포토
+	 * @return 회전 된 파일 이름
+	 * @throws IOException
+	 *             예외
+	 */
+	private File rotateCorrection(final PhotoVo photo) throws IOException {
+		if (!BokslPhotoConstant.Photo.ROTATE_DIR.exists()) {
+			BokslPhotoConstant.Photo.ROTATE_DIR.mkdirs();
+			logger.info("make rotate directory: ", BokslPhotoConstant.Photo.ROTATE_DIR.getAbsolutePath());
+		}
+
+		File photoFile = photo.getFullPath();
+		String ext = FilenameUtils.getExtension(photoFile.getName());
+		File toRotate = new File(BokslPhotoConstant.Photo.ROTATE_DIR, photo.getPhotoId() + "." + ext);
+
+		boolean rotateExist = toRotate.exists();
+		boolean oldImage = toRotate.lastModified() < photoFile.lastModified();
+
+		// 기존에 회전 보정 변환된 파일이 있는냐?
+		// 회전 보정 변환된 파일이 없거나, 파일이 수정되었을 경우 회전 보정 다시 만들기
+		if (!rotateExist || oldImage) {
+			Thumbnails.of(photoFile).scale(1).toFile(toRotate);
+			logger.info(String.format("rotate corrention: %s -> %s", photoFile.getName(), toRotate.getName()));
+			return toRotate;
+		}
+		return toRotate;
+	}
+
+	/**
 	 * 전체 폴더에서 rootNode의 자식을 찾음
 	 *
 	 * @param rootNode
@@ -633,5 +747,4 @@ public class PhotoService {
 	private boolean isRootFolder(final FolderVo folder) {
 		return folder.getFolderSeq() == folder.getParentId();
 	}
-
 }

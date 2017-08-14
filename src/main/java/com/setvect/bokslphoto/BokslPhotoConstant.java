@@ -43,6 +43,9 @@ public final class BokslPhotoConstant {
 		/** 썸네일 이미지 저장 기본 경로 */
 		public static final File THUMBNAIL_DIR = new File(EnvirmentProperty.getString("com.setvect.photo.thumbnail"));
 
+		/** 이미지 회전 보정 저장 기본 경로 */
+		public static final File ROTATE_DIR = new File(EnvirmentProperty.getString("com.setvect.photo.rotate"));
+
 		/** 보호된 이미 표시 용 */
 		public static final File PROTECT_IMAGE = new File(
 				BokslPhotoConstant.class.getResource("/protect_img.png").getFile());

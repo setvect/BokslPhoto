@@ -53,7 +53,6 @@ import com.setvect.bokslphoto.service.FolderAddtion;
 import com.setvect.bokslphoto.service.PhotoSearchParam;
 import com.setvect.bokslphoto.service.PhotoService;
 import com.setvect.bokslphoto.service.PhotoService.StoreType;
-import com.setvect.bokslphoto.service.ThumbnailImageConvert;
 import com.setvect.bokslphoto.util.DateRange;
 import com.setvect.bokslphoto.util.GenericPage;
 import com.setvect.bokslphoto.util.TreeNode;
@@ -141,6 +140,7 @@ public class PhotoController {
 	 * @param request
 	 *            servletRequest
 	 */
+	@SuppressWarnings("unused")
 	private void constraintLogin(final HttpServletRequest request) {
 		UserVo userinfo = userRepository.findOne("admin");
 		List<GrantedAuthority> roles = ApplicationUtil.buildUserAuthority(userinfo.getUserRole());
@@ -274,13 +274,12 @@ public class PhotoController {
 	 * @param request
 	 *            servletRequest
 	 * @return 이미지 byte
-	 * @throws IOException
-	 *             파일 처리 오류
+	 * @throws Exception
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/photo/getImageOrg.do", produces = MediaType.IMAGE_JPEG_VALUE)
 	public byte[] getImageOrg(@RequestParam("photoId") final String photoId, final HttpServletRequest request)
-			throws IOException {
+			throws Exception {
 		PhotoVo photo = photoRepository.findOne(photoId);
 
 		String clientIp = request.getRemoteAddr();
@@ -291,11 +290,8 @@ public class PhotoController {
 				return IOUtils.toByteArray(in);
 			}
 		}
-		File photoFile = photo.getFullPath();
-
-		try (InputStream in = new FileInputStream(photoFile);) {
-			return IOUtils.toByteArray(in);
-		}
+		byte[] imageOrg = photoService.getImageOrg(photo);
+		return imageOrg;
 	}
 
 	/**
@@ -328,45 +324,7 @@ public class PhotoController {
 				return IOUtils.toByteArray(in);
 			}
 		}
-
-		// 입력값이 재대로 입력되지 않으면 그냥 리턴
-		if (photo == null || width == 0 || height == 0) {
-			logger.warn("thumbnail error.");
-			return null;
-		}
-
-		File photoFile = photo.getFullPath();
-
-		// 파일이 존재 하지 않으면 그냥 종료
-		if (!photoFile.exists()) {
-			logger.warn("{} not exist.", photoFile);
-			return null;
-		}
-
-		// 섬네일 이미지 파일이름 만들기
-		// e.g) imagename_w33_h44.jpg
-		String name = photoFile.getName();
-		String tempImg = photoId + "_w" + width + "_h" + height + "." + FilenameUtils.getExtension(name);
-
-		if (!BokslPhotoConstant.Photo.THUMBNAIL_DIR.exists()) {
-			BokslPhotoConstant.Photo.THUMBNAIL_DIR.mkdirs();
-			logger.info("make thumbnail directory: ", BokslPhotoConstant.Photo.THUMBNAIL_DIR.getAbsolutePath());
-		}
-
-		// 섬네일 버전된 경로
-		File toThumbnailFile = new File(BokslPhotoConstant.Photo.THUMBNAIL_DIR, tempImg);
-		boolean thumbnailExist = toThumbnailFile.exists();
-		boolean oldThumbnail = toThumbnailFile.lastModified() < photoFile.lastModified();
-
-		// 기존에 섬네일로 변환된 파일이 있는냐?
-		// 섬네일로 변환된 파일이 없거나, 파일이 수정되었을 경우 섬네일 다시 만들기
-		if (!thumbnailExist || oldThumbnail) {
-			ThumbnailImageConvert.makeThumbnail(photoFile, toThumbnailFile, width, height);
-		}
-
-		try (InputStream in = new FileInputStream(toThumbnailFile);) {
-			return IOUtils.toByteArray(in);
-		}
+		return photoService.makeThumbimage(photo, width, height);
 	}
 
 	/**

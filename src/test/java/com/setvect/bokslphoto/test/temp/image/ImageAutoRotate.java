@@ -1,4 +1,4 @@
-package com.setvect.bokslphoto.test.temp.etc;
+package com.setvect.bokslphoto.test.temp.image;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -37,6 +38,9 @@ public class ImageAutoRotate {
 		ck.check("#3");
 		BufferedImage c = transformImage(in, b);
 		ck.check("#4");
+		File out = new File("temp/aa-out.jpg");
+		ImageIO.write(c, "jpg", out);
+		ck.check("#5");
 	}
 
 	public static ImageInformation readImageInformation(File imageFile)

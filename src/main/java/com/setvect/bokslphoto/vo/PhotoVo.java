@@ -335,6 +335,13 @@ public class PhotoVo {
 		return new File(path, this.name);
 	}
 
+	/**
+	 * @return 이미지 회전여부. true: 회전, false: 회전 안 됨
+	 */
+	public boolean isRotate() {
+		return orientation != 0 && orientation != 1;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

@@ -26,4 +26,11 @@ public class ApplicationRuntimeException extends RuntimeException {
 		super(message);
 	}
 
+	/**
+	 * @param e
+	 *            예외
+	 */
+	public ApplicationRuntimeException(final Exception e) {
+		super(e);
+	}
 }
