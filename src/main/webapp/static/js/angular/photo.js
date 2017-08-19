@@ -27,7 +27,8 @@ photoApp.directive('lightgallery', function() {
 				$(element.parent()).lightGallery({
 					zoom: true,
 					fullScreen: true,
-					thumbnail:true,
+					// 사진이 많아지면 속도 느림
+					thumbnail:false,
 					selector:"a"
 				});
 			}
