@@ -6,8 +6,6 @@ import java.text.DecimalFormat;
 /**
  * 시간을 체크 한다.<br>
  * 프로그램 코드 진행 시간을 체크 할때 사용한다.
- * 
- * @version $Id$
  */
 public class LapTimeChecker {
 

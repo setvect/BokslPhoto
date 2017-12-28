@@ -97,5 +97,4 @@ public final class BokslPhotoConstant {
 	/** 지도 API Key(다음 카카오) */
 	public static final String KAKAO_API_KEY = EnvirmentProperty.getString("com.setvect.photo.kakao.apikey",
 			"_nothing_");
-
 }
